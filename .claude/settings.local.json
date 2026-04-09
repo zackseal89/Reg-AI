@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@latest . --typescript --tailwind --app --no-src-dir)",
+      "Bash(npx create-next-app@latest regwatch-tmp --typescript --tailwind --app --no-src-dir --yes)",
+      "Bash(npx create-next-app@latest regwatch --typescript --tailwind --app --no-src-dir --yes)",
+      "Bash(npm cache:*)",
+      "Bash(mv regwatch/app .)",
+      "Bash(mv regwatch/public .)",
+      "Bash(mv regwatch/package.json .)",
+      "Bash(mv regwatch/package-lock.json .)",
+      "Bash(mv regwatch/tsconfig.json .)",
+      "Bash(npm install:*)"
+    ]
+  }
+}
