@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RegWatch
+
+RegWatch is an AI-powered regulatory intelligence platform built by **MNL Advocates LLP (MN Legal)**, a Nairobi-based legal tech law firm. It delivers regulatory briefings, secure document management, and compliance chat to fintech and crypto startups, SMEs, and international organisations operating in Kenya.
+
+This is a specialized, human-in-the-loop platform where every piece of content reaching a client must be reviewed and approved by an MNL lawyer. It acts as an extension of MNL's legal practice.
+
+## Core Features
+
+- **Document Management**: Securely upload and assign regulatory documents directly to clients, with strict jurisdiction gating enforced at the database level.
+- **Regulatory Briefings**: Lawyers draft and approve briefings regarding changes in CBK or ODPC regulations, automatically sending notifications via email.
+- **AI Compliance Chat**: Clients can ask questions about regulations, with AI strictly grounded in the client's published documents using RAG (Retrieval-Augmented Generation).
+- **Role-Based Access**: Specialized portals for Admins, Lawyers, and Clients ensuring total separation of concerns and data privacy.
+
+## Tech Stack
+
+- **Frontend:** [Next.js 14](https://nextjs.org/) (App Router), TypeScript, Tailwind CSS
+- **Backend:** [Supabase](https://supabase.com/) (PostgreSQL, Auth, Storage, pgvector, Edge Functions)
+- **AI / Compute:** Anthropic Claude API (Claude 3.5 Sonnet) via RAG pipeline
+- **Email:** Resend + React Email
+- **Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+You need Node.js installed along with a package manager (`npm`, `yarn`, `pnpm`, or `bun`).
+
+### Installation
+
+1. Clone the repository and install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Set up your environment variables by copying `.env.local.example` or creating a `.env.local` file:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+   ANTHROPIC_API_KEY=your_anthropic_key
+   RESEND_API_KEY=your_resend_key
+   ```
+
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Development Constraints
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Human approval is mandatory**: No content gets to clients without a lawyer's approval.
+- **No self-signup**: All onboarding is handled strictly by the lawyers.
+- **Data Privacy**: RLS (Row Level Security) strictly isolates client data. AI cannot retrieve context from documents outside a client's specific jurisdiction and approved file list.
 
-## Learn More
+## Architecture & Roadmap
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Please refer to `architecture.md` and `ROADMAP.md` for in-depth system architecture and the current build phase targets leading up to the scheduled June 2026 Summit demo.
