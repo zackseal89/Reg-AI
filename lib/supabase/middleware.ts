@@ -6,7 +6,6 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
-  // Ignore completely paths like API if needed, but for now we apply to all matchers
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -33,42 +32,44 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const isAuthRoute = request.nextUrl.pathname.startsWith('/login')
+  const pathname = request.nextUrl.pathname
 
-  // Redirect users to login if they aren't authenticated and are trying to access protected routes
-  if (!user && !isAuthRoute && request.nextUrl.pathname !== '/') {
+  // Redirect unauthenticated users to login
+  if (!user && !isAuthRoute && pathname !== '/') {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
   }
 
-  // If user is logged in
+  // If user is logged in — fetch profile once and reuse
   if (user) {
-    // If they hit the login or home page, redirect to their role-based dashboard
-    if (isAuthRoute || request.nextUrl.pathname === '/') {
-      const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-      const role = profile?.role || 'client'
-      
-      const url = request.nextUrl.clone()
-      if (role === 'admin') {
-        url.pathname = '/admin'
-      } else if (role === 'lawyer') {
-        url.pathname = '/lawyer'
-      } else {
-        url.pathname = '/dashboard'
-      }
-      return NextResponse.redirect(url)
-    }
+    const needsProfile =
+      isAuthRoute ||
+      pathname === '/' ||
+      pathname.startsWith('/admin') ||
+      pathname.startsWith('/lawyer')
 
-    // Role-based protection
-    if (request.nextUrl.pathname.startsWith('/admin') || request.nextUrl.pathname.startsWith('/lawyer')) {
+    if (needsProfile) {
       const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
       const role = profile?.role || 'client'
-      
-      if (request.nextUrl.pathname.startsWith('/admin') && role !== 'admin') {
-        const url = request.nextUrl.clone(); url.pathname = '/dashboard'; return NextResponse.redirect(url)
+
+      // Redirect from login/home to role dashboard
+      if (isAuthRoute || pathname === '/') {
+        const url = request.nextUrl.clone()
+        url.pathname = role === 'admin' ? '/admin' : role === 'lawyer' ? '/lawyer' : '/dashboard'
+        return NextResponse.redirect(url)
       }
-      if (request.nextUrl.pathname.startsWith('/lawyer') && role !== 'lawyer' && role !== 'admin') {
-        const url = request.nextUrl.clone(); url.pathname = '/dashboard'; return NextResponse.redirect(url)
+
+      // Role-based protection for /admin and /lawyer
+      if (pathname.startsWith('/admin') && role !== 'admin') {
+        const url = request.nextUrl.clone()
+        url.pathname = '/dashboard'
+        return NextResponse.redirect(url)
+      }
+      if (pathname.startsWith('/lawyer') && role !== 'lawyer' && role !== 'admin') {
+        const url = request.nextUrl.clone()
+        url.pathname = '/dashboard'
+        return NextResponse.redirect(url)
       }
     }
   }

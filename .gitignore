@@ -38,5 +38,39 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# claude
-.claude/claude_code_config.json
+# local artifacts / noise (never commit)
+supabase/.temp/
+excalidraw.log
+.agents/
+skills/
+regwatch-intro/
+
+# AI tool configs (local only — never commit)
+.claude/
+.windsurf/
+.roo/
+.cursor/
+.augment/
+.codebuddy/
+.commandcode/
+.continue/
+.cortex/
+.crush/
+.factory/
+.goose/
+.iflow/
+.junie/
+.kilocode/
+.kode/
+.mcpjam/
+.mux/
+.neovate/
+.openhands/
+.pi/
+.pochi/
+.qoder/
+.qwen/
+.trae/
+.vibe/
+.zencoder/
+.adal/

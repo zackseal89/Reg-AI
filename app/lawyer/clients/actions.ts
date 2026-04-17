@@ -66,7 +66,20 @@ export async function createClientAction(formData: FormData) {
     await admin.from('client_jurisdictions').insert(junctionRows)
   }
 
-  // 5. Audit log
+  // 5. Create Gemini FileSearchStore for this client's RAG pipeline
+  try {
+    const { createClientStore } = await import('@/lib/gemini')
+    const storeName = await createClientStore(company.id)
+    await admin
+      .from('companies')
+      .update({ gemini_store_name: storeName })
+      .eq('id', company.id)
+  } catch (storeErr) {
+    console.error('[onboard] Failed to create Gemini store:', storeErr)
+    // Non-fatal — client can still be onboarded; store can be created later
+  }
+
+  // 6. Audit log
   await logAudit(admin, {
     userId: user.id,
     action: 'client_created',

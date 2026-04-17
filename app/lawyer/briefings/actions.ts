@@ -115,7 +115,7 @@ export async function sendBriefingAction(formData: FormData) {
     entityId: briefingId,
   })
 
-  // Email sending will be added in Phase 5
+  // Email sending will be added in Phase B (on_briefing_approved edge function + Resend)
   redirect('/lawyer/briefings')
 }
 

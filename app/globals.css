@@ -1,13 +1,25 @@
 @import "tailwindcss";
 
 @theme {
+  /* Brand colours — MNL Advocates */
   --color-primary: #1a2744;
   --color-accent: #8b1c3f;
   --color-cream: #f5f3ef;
+  --color-success: #2D8F5A;
+  --color-error: #ba1a1a;
 
-  /* Font variables matching the layout.tsx setup */
+  /* Surface scale built on cream */
+  --color-surface: #f5f3ef;
+  --color-surface-low: #edeae4;
+  --color-surface-high: #e4e0d8;
+  --color-surface-lowest: #ffffff;
+
+  --color-outline: #d1cdc5;
+
+  /* Fonts */
   --font-sans: var(--font-inter), sans-serif;
   --font-serif: var(--font-playfair), serif;
+  --font-label: var(--font-inter), sans-serif;
 }
 
 @layer base {

@@ -26,26 +26,20 @@ interface Message {
 
 function TypingIndicator() {
   return (
-    <div className="flex items-end gap-2">
-      <div className="w-7 h-7 rounded-full bg-[#1a2744] flex items-center justify-center flex-shrink-0">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="white"
-          strokeWidth={2}
-          className="w-3.5 h-3.5"
-        >
+    <div className="flex items-end gap-3.5">
+      {/* Avatar */}
+      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow border border-primary/20">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={1.5} className="w-4 h-4">
           <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
         </svg>
       </div>
-      <div className="bg-white border border-black/5 rounded-2xl rounded-bl-sm px-4 py-3">
-        <span className="flex gap-1 items-center h-4">
+      <div className="bg-white border border-primary/10 rounded-2xl rounded-bl-sm px-6 py-4 shadow-sm">
+        <span className="flex gap-1.5 items-center h-4">
           {[0, 1, 2].map((i) => (
             <span
               key={i}
-              className="w-1.5 h-1.5 rounded-full bg-[#1a2744]/40 animate-bounce"
-              style={{ animationDelay: `${i * 0.15}s`, animationDuration: '0.9s' }}
+              className="w-1.5 h-1.5 rounded-full bg-primary/40 animate-bounce"
+              style={{ animationDelay: `${i * 0.15}s`, animationDuration: '0.8s' }}
             />
           ))}
         </span>
@@ -58,59 +52,56 @@ function TypingIndicator() {
 // Message bubble
 // ---------------------------------------------------------------------------
 
-function MessageBubble({ message }: { message: Message }) {
+function MessageBubble({ message, index }: { message: Message; index: number }) {
   const isUser = message.role === 'user'
 
   if (isUser) {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] bg-[#8b1c3f] text-white rounded-2xl rounded-br-sm px-4 py-3">
-          <p className="text-sm leading-relaxed whitespace-pre-wrap">{message.content}</p>
+        <div
+          className="max-w-[85%] bg-accent text-white rounded-2xl rounded-br-sm px-5 py-3.5 shadow-md border border-accent"
+        >
+          <p className="text-[14px] font-sans leading-relaxed whitespace-pre-wrap">{message.content}</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="flex items-end gap-2">
-      <div className="w-7 h-7 rounded-full bg-[#1a2744] flex items-center justify-center flex-shrink-0">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="white"
-          strokeWidth={2}
-          className="w-3.5 h-3.5"
-        >
+    <div className="flex items-end gap-3.5">
+      {/* Avatar */}
+      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow border border-primary/20">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={1.5} className="w-4 h-4">
           <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
         </svg>
       </div>
-      <div className="max-w-[80%] space-y-2">
-        <div className="bg-white border border-black/5 rounded-2xl rounded-bl-sm px-4 py-3">
-          <p className="text-sm text-[#1a2744] leading-relaxed whitespace-pre-wrap">
+
+      <div className="max-w-[85%] space-y-3">
+        {/* Response bubble — legal document style */}
+        <div className="bg-white border border-primary/15 rounded-2xl rounded-bl-sm px-6 py-5 shadow-sm border-l-4 border-l-primary/30">
+          <p className="text-[14.5px] font-sans text-primary leading-loose whitespace-pre-wrap">
             {message.content}
           </p>
         </div>
+
+        {/* Citations — formal legal footnotes */}
         {message.citations && message.citations.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 pl-1">
-            {message.citations.map((c) => (
+          <div className="pl-2 space-y-1.5 border-l-2 border-primary/10 ml-2">
+            <p className="text-[10px] font-serif font-bold text-primary/40 uppercase tracking-widest mb-2">
+              Sources
+            </p>
+            {message.citations.map((c, ci) => (
               <Link
                 key={c.document_id}
                 href={`/dashboard/documents/${c.document_id}`}
-                className="inline-flex items-center gap-1 px-2.5 py-1 bg-[#1a2744]/5 hover:bg-[#1a2744]/10 border border-[#1a2744]/10 rounded-full text-[10px] text-[#1a2744]/70 transition-colors"
+                className="flex items-baseline gap-2 group"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                  className="w-3 h-3"
-                >
-                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                  <polyline points="14 2 14 8 20 8" />
-                </svg>
-                {c.document_title}
+                <span className="text-[10px] text-primary/40 font-mono shrink-0 w-4 text-right font-semibold">
+                  {ci + 1}.
+                </span>
+                <span className="text-[12px] font-sans text-primary/60 group-hover:text-accent transition-colors leading-tight underline decoration-primary/20 underline-offset-4 group-hover:decoration-accent/40">
+                  {c.document_title}
+                </span>
               </Link>
             ))}
           </div>
@@ -131,32 +122,34 @@ function EmptyState({ onPrompt }: { onPrompt: (text: string) => void }) {
   ]
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-6 text-center">
-      <div className="w-16 h-16 bg-[#8b1c3f]/10 rounded-full flex items-center justify-center mb-4">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-          className="w-8 h-8 text-[#8b1c3f]/60"
-        >
+    <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-16">
+      {/* Monogram mark */}
+      <div className="w-16 h-16 rounded-full border border-primary/10 bg-white flex items-center justify-center mb-6 shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1} className="w-7 h-7 text-primary/40">
           <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
         </svg>
       </div>
-      <h2 className="text-lg font-serif font-semibold text-[#1a2744] mb-2">
-        AI Regulatory Assistant
+
+      <h2 className="text-2xl font-serif font-semibold text-primary mb-2 tracking-tight">
+        AI Regulatory Counsel
       </h2>
-      <p className="text-sm text-[#1a2744]/50 max-w-xs leading-relaxed mb-6">
-        Ask questions about your regulatory documents. Responses are grounded in
-        content reviewed by your legal team.
+      <p className="text-[14px] font-sans text-primary/50 max-w-[320px] leading-relaxed mb-10">
+        Ask questions about your regulatory documents. Every response is grounded in content reviewed by your legal team at MN Legal.
       </p>
-      <div className="grid gap-2 w-full max-w-xs">
+
+      {/* Divider */}
+      <div className="flex items-center gap-4 mb-6 w-full max-w-sm">
+        <div className="flex-1 h-px bg-primary/5" />
+        <span className="text-[10px] text-primary/30 font-bold uppercase tracking-widest">Suggested Inquiries</span>
+        <div className="flex-1 h-px bg-primary/5" />
+      </div>
+
+      <div className="grid gap-3 w-full max-w-sm">
         {prompts.map((p) => (
           <button
             key={p}
             onClick={() => onPrompt(p)}
-            className="text-left px-4 py-3 bg-white border border-black/5 rounded-xl text-sm text-[#1a2744]/60 hover:border-[#1a2744]/20 hover:text-[#1a2744]/80 transition-colors"
+            className="text-left px-5 py-4 bg-white border border-primary/10 rounded-xl text-[13px] text-primary/60 hover:border-accent/40 hover:text-primary transition-all duration-300 leading-relaxed shadow-sm hover:shadow-md"
           >
             &ldquo;{p}&rdquo;
           </button>
@@ -186,12 +179,10 @@ function ChatContent() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const abortRef = useRef<AbortController | null>(null)
 
-  // Auto-scroll to latest message
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, showTyping])
 
-  // Auto-resize textarea
   useEffect(() => {
     const ta = textareaRef.current
     if (!ta) return
@@ -211,7 +202,6 @@ function ChatContent() {
       const userMessage: Message = { role: 'user', content: trimmed }
       setMessages((prev) => [...prev, userMessage])
 
-      // Build conversation history (exclude last user message — we send it as message)
       const history = messages.map((m) => ({ role: m.role, content: m.content }))
 
       const body: Record<string, unknown> = {
@@ -263,7 +253,6 @@ function ChatContent() {
                 if (firstToken) {
                   firstToken = false
                   setShowTyping(false)
-                  // Add assistant message placeholder
                   setMessages((prev) => [
                     ...prev,
                     { role: 'assistant', content: '', citations },
@@ -315,36 +304,23 @@ function ChatContent() {
   const hasMessages = messages.length > 0
 
   return (
-    <div className="flex flex-col h-full bg-[#f5f3ef]">
-      {/* Context pill */}
+    <div className="flex flex-col h-full bg-[var(--background)]">
+
+      {/* Document context pill */}
       {documentId && documentTitle && (
-        <div className="px-4 pt-3 pb-1 flex-shrink-0">
-          <div className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 bg-[#1a2744]/8 border border-[#1a2744]/10 rounded-full text-xs text-[#1a2744]/70">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              className="w-3 h-3 flex-shrink-0"
-            >
+        <div className="px-4 md:px-8 pt-4 pb-2 flex-shrink-0">
+          <div className="inline-flex items-center gap-2 pl-4 pr-2.5 py-2 bg-white border border-primary/10 rounded-full text-xs text-primary/60 shadow-sm transition-all hover:border-primary/20">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} className="w-3.5 h-3.5 text-accent flex-shrink-0">
               <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
               <polyline points="14 2 14 8 20 8" />
             </svg>
-            <span className="max-w-[200px] truncate font-medium">{documentTitle}</span>
+            <span className="max-w-[220px] truncate font-medium text-primary/80 font-sans tracking-wide">{documentTitle}</span>
             <button
               onClick={() => router.replace('/dashboard/chat')}
-              className="ml-1 w-4 h-4 rounded-full flex items-center justify-center hover:bg-[#1a2744]/10 transition-colors"
+              className="ml-1 w-5 h-5 rounded-full flex items-center justify-center text-primary/40 hover:text-accent hover:bg-accent/5 transition-colors cursor-pointer"
               aria-label="Remove context"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.5}
-                className="w-2.5 h-2.5"
-              >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-3 h-3">
                 <line x1="18" y1="6" x2="6" y2="18" />
                 <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
@@ -358,54 +334,47 @@ function ChatContent() {
         {!hasMessages && !showTyping ? (
           <EmptyState onPrompt={(p) => { setInput(p); sendMessage(p) }} />
         ) : (
-          <div className="px-4 py-4 space-y-4">
+          <div className="px-4 md:px-8 py-6 space-y-8">
             {messages.map((m, i) => (
-              <MessageBubble key={i} message={m} />
+              <MessageBubble key={i} message={m} index={i} />
             ))}
             {showTyping && <TypingIndicator />}
-            <div ref={bottomRef} />
+            <div ref={bottomRef} className="h-4" />
           </div>
         )}
       </div>
 
-      {/* Input bar — pinned above safe area */}
+      {/* Input bar */}
       <div
-        className="flex-shrink-0 px-4 pt-2 pb-4 bg-[#f5f3ef] border-t border-black/5"
-        style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
+        className="flex-shrink-0 px-4 md:px-8 pt-4 bg-gradient-to-t from-[var(--background)] via-[var(--background)] to-transparent"
+        style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
       >
-        <div className="flex items-end gap-2 bg-white border border-black/10 rounded-2xl px-4 py-2.5 shadow-sm">
+        <div className="flex items-end gap-3 bg-white/95 backdrop-blur-md border border-primary/10 rounded-2xl px-5 py-3.5 shadow-lg max-w-4xl mx-auto focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all duration-300">
           <textarea
             ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about your documents…"
+            placeholder="Ask about your regulatory landscape..."
             rows={1}
             disabled={isStreaming}
-            className="flex-1 text-sm bg-transparent focus:outline-none resize-none text-[#1a2744] placeholder:text-[#1a2744]/30 disabled:opacity-50 leading-relaxed"
-            style={{ maxHeight: 120 }}
+            className="flex-1 text-[15px] font-sans bg-transparent focus:outline-none resize-none text-primary placeholder:text-primary/30 disabled:opacity-50 leading-relaxed py-1"
+            style={{ maxHeight: 150 }}
           />
           <button
             onClick={() => sendMessage(input)}
             disabled={!input.trim() || isStreaming}
-            className="p-1.5 rounded-lg bg-[#8b1c3f] text-white disabled:opacity-30 transition-opacity flex-shrink-0 self-end mb-0.5"
+            className="p-2.5 rounded-xl bg-primary text-white disabled:opacity-30 transition-all duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent hover:shadow-md active:scale-95 cursor-pointer disabled:cursor-not-allowed"
             aria-label="Send"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              className="w-4 h-4"
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
               <line x1="22" y1="2" x2="11" y2="13" />
               <polygon points="22 2 15 22 11 13 2 9 22 2" />
             </svg>
           </button>
         </div>
-        <p className="text-[10px] text-[#1a2744]/30 text-center mt-2">
-          Responses grounded in documents published to your account only. Enter to send · Shift+Enter for new line.
+        <p className="text-[11px] font-sans text-primary/30 text-center mt-3 tracking-wide">
+          Responses grounded solely in documents published to your account · MN Legal AI
         </p>
       </div>
     </div>
@@ -421,7 +390,7 @@ export default function ChatPage() {
     <Suspense
       fallback={
         <div className="flex items-center justify-center h-full">
-          <p className="text-sm text-[#1a2744]/40">Loading…</p>
+          <p className="text-sm text-[#1a2744]/35">Loading…</p>
         </div>
       }
     >

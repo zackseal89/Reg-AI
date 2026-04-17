@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import Link from 'next/link'
 
 export default async function LawyerPage() {
   const supabase = await createClient()
@@ -14,23 +15,31 @@ export default async function LawyerPage() {
   ])
 
   return (
-    <div>
-      <h1 className="text-3xl font-semibold mb-2">Lawyer Overview</h1>
-      <p className="text-primary/70 mb-8">Manage clients, upload documents, and approve AI briefings.</p>
+    <div className="max-w-5xl">
+      <h1 className="text-3xl font-serif font-bold text-primary mb-3">Lawyer Overview</h1>
+      <p className="text-[15px] text-primary/60 mb-10 pb-6 border-b border-primary/5">
+        Manage your clients, verify regulatory intelligence, and distribute briefings securely.
+      </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <a href="/lawyer/briefings" className="p-6 border border-black/10 rounded-lg hover:border-accent/30 transition-colors">
-          <h3 className="font-serif text-lg font-medium mb-2">Pending Briefings</h3>
-          <p className="text-2xl font-semibold">{pendingBriefings ?? 0}</p>
-        </a>
-        <a href="/lawyer/clients" className="p-6 border border-black/10 rounded-lg hover:border-accent/30 transition-colors">
-          <h3 className="font-serif text-lg font-medium mb-2">My Clients</h3>
-          <p className="text-2xl font-semibold">{clientCount ?? 0}</p>
-        </a>
-        <a href="/lawyer/documents" className="p-6 border border-black/10 rounded-lg hover:border-accent/30 transition-colors">
-          <h3 className="font-serif text-lg font-medium mb-2">Documents Uploaded</h3>
-          <p className="text-2xl font-semibold">{docCount ?? 0}</p>
-        </a>
+        <Link href="/lawyer/briefings" className="group p-6 bg-white border border-primary/10 rounded-2xl shadow-sm hover:shadow-[0_8px_30px_-10px_rgba(26,39,68,0.12)] hover:border-accent/30 transition-all duration-300 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <h3 className="font-sans text-[13px] font-bold tracking-widest uppercase text-primary/50 mb-3 group-hover:text-accent transition-colors">Pending Briefings</h3>
+          <p className="text-4xl font-serif text-primary group-hover:text-accent transition-colors">{pendingBriefings ?? 0}</p>
+          <div className="w-8 h-1 bg-accent/20 mt-6 rounded-full group-hover:w-full group-hover:bg-accent/40 transition-all duration-500" />
+        </Link>
+        <Link href="/lawyer/clients" className="group p-6 bg-white border border-primary/10 rounded-2xl shadow-sm hover:shadow-[0_8px_30px_-10px_rgba(26,39,68,0.12)] hover:border-primary/30 transition-all duration-300 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <h3 className="font-sans text-[13px] font-bold tracking-widest uppercase text-primary/50 mb-3 group-hover:text-primary transition-colors">Active Clients</h3>
+          <p className="text-4xl font-serif text-primary">{clientCount ?? 0}</p>
+          <div className="w-8 h-1 bg-primary/20 mt-6 rounded-full group-hover:w-full transition-all duration-500" />
+        </Link>
+        <Link href="/lawyer/documents" className="group p-6 bg-white border border-primary/10 rounded-2xl shadow-sm hover:shadow-[0_8px_30px_-10px_rgba(26,39,68,0.12)] hover:border-primary/30 transition-all duration-300 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          <h3 className="font-sans text-[13px] font-bold tracking-widest uppercase text-primary/50 mb-3 group-hover:text-primary transition-colors">Total Documents</h3>
+          <p className="text-4xl font-serif text-primary">{docCount ?? 0}</p>
+          <div className="w-8 h-1 bg-primary/20 mt-6 rounded-full group-hover:w-full transition-all duration-500" />
+        </Link>
       </div>
     </div>
   )

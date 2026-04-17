@@ -7,8 +7,13 @@ const supabase = createClient(
 )
 
 async function seedAdmin() {
-  const email = 'zacharyongeri121@gmail.com'
-  const password = 'Ongeri89@'
+  const email = process.env.ADMIN_EMAIL
+  const password = process.env.ADMIN_PASSWORD
+
+  if (!email || !password) {
+    console.error('Set ADMIN_EMAIL and ADMIN_PASSWORD env vars before running this script')
+    process.exit(1)
+  }
 
   // Create auth user
   const { data: authData, error: authError } = await supabase.auth.admin.createUser({

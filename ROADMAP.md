@@ -1,168 +1,167 @@
 # RegWatch — Build Roadmap
 
-**Target:** Live demo with 2 active paying clients — Summit June 18–20, 2026  
-**Today:** April 10, 2026 — 69 days to go
+**Target:** Live demo with 2 active paying clients — Summit June 18–20, 2026
+**Updated:** April 17, 2026 — 62 days to go — **Phase A closed, Phase B active**
 
 ---
 
-## Current State
+## Current State (as of Apr 17)
 
-### Done
-| Area | Status |
+### Done ✓
+| Area | Linear |
 |---|---|
-| Supabase project (REGAI, eu-central-1) | ACTIVE_HEALTHY |
-| Database schema — all 10 tables | Migrated |
-| Row Level Security — all tables | Enforced |
-| Jurisdiction gating (client_briefings, client_documents, client_chunks) | Enforced at DB level |
-| RLS helper functions `is_admin()`, `is_lawyer()` | Done |
-| pgvector extension | Enabled |
-| Indexes for RLS scaling | Done |
-| Next.js App Router scaffold | Done |
-| Supabase SSR client (client.ts, server.ts, middleware.ts) | Done |
-| Middleware — role-based routing (admin/lawyer/client) | Done |
-| Landing page (Client Login + Request Access) | Done |
-| Login page (Supabase password auth, server action) | Done |
-| Dashboard layout — sidebar, nav, user email | Done |
-| Lawyer layout — sidebar, nav | Done |
-| Brand tokens — navy, burgundy, cream, Playfair + Inter | Done |
-| Architecture documented (architecture.md) | Done |
+| Supabase project (REGAI, eu-central-1) — ACTIVE_HEALTHY | — |
+| Database schema — all 10 tables, migrated | — |
+| Row Level Security — all tables enforced | — |
+| Jurisdiction gating at DB level | — |
+| RLS helper functions `is_admin()`, `is_lawyer()` | — |
+| Next.js App Router + Supabase SSR clients | — |
+| Middleware — role-based routing (admin / lawyer / client) | REG-8 ✓ |
+| Login page (no self-signup) | — |
+| Admin panel — metrics, lawyer mgmt, client mgmt, audit logs | REG-9–12 ✓ |
+| Lawyer portal — clients, documents, briefings with full status flows | — |
+| Client dashboard — briefings, documents, PDF viewer, profile | — |
+| AI chat UI — streaming, citations, conversation history | — |
+| Audit logging — all major actions | — |
+| Seed: CBK + ODPC jurisdictions, Zachary admin account | REG-5, 6 ✓ |
+| Supabase Storage bucket + RLS | REG-7 ✓ |
+| Fix hardcoded credentials in seed-admin.ts | REG-32 ✓ |
+| Fix double profile query in middleware | REG-35 ✓ |
+| **Phase A — Gemini File Search Migration (closed Apr 17)** | **REG-33, 34, 40, 41, 42 ✓** |
+| `GOOGLE_API_KEY` wired in all environments | REG-34 ✓ |
+| Schema migration `0006_gemini_migration.sql` — `companies.gemini_store_name`, `documents.gemini_file_id` | REG-41 ✓ |
+| `on_document_upload` Edge Function simplified (chunking/embedding removed) | REG-33 ✓ |
+| Chat API route rewritten — single Gemini `generateContent` + File Search tool | REG-40 ✓ |
+| DB cleanup `0007_cleanup_rag.sql` — `chunks` table, `match_chunks` RPC, legacy RLS/indexes dropped | REG-42 ✓ |
+| `scripts/migrate-existing-clients.ts` — retroactive Gemini store provisioning for legacy data | — |
 
-### Not Built Yet
-| Area | Notes |
-|---|---|
-| Jurisdictions seed data (CBK, ODPC) | No rows in DB yet |
-| Admin account seeded | No users in auth yet |
-| Supabase Storage bucket | Not configured |
-| All dashboard sub-pages (briefings, documents, chat) | Shell only |
-| Lawyer sub-pages (clients, documents, briefings) | Shell only |
-| Admin sub-pages (clients, lawyers, audit logs) | Shell only |
-| Client onboarding flow (lawyer creates client + sends invite) | Not built |
-| Document upload + assignment UI | Not built |
-| Briefing create / approve / send flow | Not built |
-| AI chat (RAG pipeline) | Not built |
-| Supabase Edge Functions (3) | Not built |
-| Email template + Resend integration | Not built |
-| Vercel deployment | Not deployed |
+### Known Gap Carried Into Phase B
+| Task | Linear | Notes |
+|---|---|---|
+| Re-index Gemini store when new client is assigned to already-published doc | REG-43 (High) | `assignDocumentsAction` in `app/lawyer/documents/actions.ts:240` does not call `triggerGeminiIndexing`. Fix in server action (recommended) rather than resurrecting a second Edge Function. |
 
----
-
-## Build Phases
-
-### Phase 1 — Foundation (Apr 10–16)
-Get a real user logged in and routed correctly.
-
-- [ ] Seed jurisdictions table (CBK, ODPC)
-- [ ] Create admin account (Zachary) via Supabase Auth
-- [ ] Create Supabase Storage bucket `documents` with RLS policy
-- [ ] Verify middleware routing end-to-end (login → correct portal)
-- [ ] Admin layout + stub sub-pages (clients, lawyers, audit-logs)
-- [ ] Fix `admin/layout.tsx` to mirror dashboard layout pattern (auth guard)
-
-**Exit criteria:** Zachary can log in, land on `/admin`, and see the platform shell.
+### Active Now — Phase B (Email Pipeline)
+| Task | Linear | Due |
+|---|---|---|
+| Build React Email briefing template (MNL brand) | REG-14 | Apr 24 |
+| Build `on_briefing_approved` Edge Function (Resend send + audit) | REG-13 | Apr 27 |
+| Configure Resend API key + verify domain | REG-15 | Apr 29 |
+| End-to-end test: approve briefing → client inbox | REG-16 | May 1 |
+| Fix REG-43 indexing gap | REG-43 | Apr 21 |
 
 ---
 
-### Phase 2 — Lawyer Portal (Apr 17–27)
-A lawyer can onboard a client and publish a document.
+## AI Stack Decision
 
-- [ ] `/lawyer/clients` — list clients, create client modal
-  - Create company + profile + auth invite in one flow
-  - Assign jurisdiction(s) on creation
-  - Client status: pending_review → active toggle
-- [ ] `/lawyer/documents` — upload document
-  - File upload to Supabase Storage
-  - Insert `documents` row (status: uploaded)
-  - Assign to client(s) → status: assigned
-  - Publish button → status: published
-  - Audit log entry on each status change
-- [ ] `/lawyer/briefings` — briefings list
-  - Create briefing (title, content, jurisdiction)
-  - Status: draft → approve → send flow
-  - Assign to client(s) before approving
+Consolidating to Gemini File Search for the full RAG pipeline. Claude is kept for chat generation.
 
-**Exit criteria:** Lawyer can onboard a client, upload a document, and publish it.
+| Role | Before | After |
+|---|---|---|
+| PDF text extraction | Claude API (pdfs-2024-09-25 beta) | Gemini File Search (automatic at upload) |
+| Chunking | Manual (2000 chars, 200 overlap) | Automatic (Google-managed) |
+| Embeddings | Voyage AI `voyage-3` (1024 dims) | Automatic (Google-managed) |
+| Vector search | pgvector `match_chunks` RPC | Gemini File Search tool |
+| Document scoping | `match_chunks` SECURITY DEFINER + client_id | Per-client FileSearchStore isolation |
+| Chat generation | Claude `claude-sonnet-4-20250514` | **Gemini `gemini-2.5-flash`** (same call as retrieval) |
 
----
+**What this eliminates:** Voyage AI, pgvector, `chunks` table, `match_chunks` RPC, manual chunking, embedding batches, separate Claude chat call, `ANTHROPIC_API_KEY`.
 
-### Phase 3 — Client Portal (Apr 28 – May 7)
-A client can log in and read their content.
+**Single API, single call:** Gemini `generateContent` with File Search tool does retrieval + generation together. Citations come from `groundingMetadata` in the response. No second API call needed.
 
-- [ ] `/dashboard/briefings` — list + read briefings (sent only, jurisdiction-matched)
-- [ ] `/dashboard/documents` — list + open/download published documents
-- [ ] Client sees only their own data (RLS verified end-to-end)
-- [ ] Magic link invite email (Supabase Auth invite flow)
-- [ ] "Book a Consultation" CTA on dashboard
-
-**Exit criteria:** Onboarded client can log in, read a briefing, and open a document.
+**New env var:** `GOOGLE_API_KEY` (replaces `VOYAGE_API_KEY` and `ANTHROPIC_API_KEY`)
 
 ---
 
-### Phase 4 — AI Chat (May 8–20)
-The RAG pipeline, end-to-end.
+## Phase A — Gemini File Search Migration ✓ DONE (closed Apr 17)
+**Issues:** REG-34, REG-41, REG-33, REG-40, REG-42 — all Done.
+**Carry-over:** REG-43 (indexing on new assignment) moved to Phase B active list.
 
-- [ ] Edge Function: `on_document_upload`
-  - Trigger on Storage insert
-  - Extract PDF text
-  - Chunk (500 tokens, 50 overlap)
-  - Generate embeddings via Anthropic API
-  - Insert into `chunks` table
-- [ ] `/dashboard/chat` — chat UI
-  - Text input + streaming response
-  - Server action: embed question → pgvector search → Claude prompt → stream
-  - Scoped strictly to client's published documents (RLS + explicit filter)
-- [ ] Chunk vector search function in Supabase (match_chunks RPC)
+**Architecture:**
+```
+On upload:
+  PDF in Supabase Storage
+  → on_document_upload Edge Function
+  → Create/reuse client's FileSearchStore (lazy, on first upload)
+  → Upload PDF to FileSearchStore
+  → Google auto-chunks, embeds, indexes
+  → companies.gemini_store_name saved
+  → documents.processed = true + audit log
 
-**Exit criteria:** Client can ask a question and get a grounded answer from their documents.
+On chat:
+  Client message
+  → Resolve gemini_store_name from authenticated client's company record
+  → Gemini generateContent with File Search tool (retrieval + generation in one call)
+  → Extract text + citations from groundingMetadata
+  → Stream SSE: citations event → text event → [DONE]
+```
 
----
-
-### Phase 5 — Briefing Email (May 21–27)
-Approved briefings reach clients automatically.
-
-- [ ] Edge Function: `on_briefing_approved`
-  - Trigger on briefings.status update to 'approved'
-  - Fetch assigned clients + emails
-  - Render React Email template (MNL brand: navy + burgundy)
-  - Send via Resend
-  - Update briefing status to 'sent'
-  - Write audit log entry
-- [ ] React Email template: `emails/briefing-template.tsx`
-- [ ] Set `RESEND_API_KEY` in Supabase secrets
-
-**Exit criteria:** Lawyer clicks Approve → clients receive a branded email.
+**Exit criteria:** Full RAG pipeline works with zero Voyage AI calls. Upload CBK PDF → chat returns grounded answer with citations → `chunks` table is empty.
 
 ---
 
-### Phase 6 — Admin Portal (May 28 – Jun 4)
-Zachary can oversee the entire platform.
+## Phase B — Email Pipeline
+**Target: Apr 23 – May 4** | Issues: REG-13, REG-14, REG-15, REG-16
 
-- [ ] `/admin/clients` — all clients, status management
-- [ ] `/admin/lawyers` — manage lawyer accounts
-- [ ] `/admin/audit-logs` — filterable audit trail (action, entity, user, date)
-- [ ] `/admin` overview — real metrics (total clients, active lawyers, docs published, briefings sent)
-- [ ] Usage stats queries (Supabase server components, no hardcoded zeros)
+- [ ] Build `emails/briefing-template.tsx` — React Email, MNL brand (REG-14)
+- [ ] Build `supabase/functions/on_briefing_approved/` Edge Function (REG-13)
+  - Trigger: DB webhook on `briefings` UPDATE where `status = 'approved'`
+  - Fetch assigned clients → send Resend email → audit log
+- [ ] Configure Resend API + verify domain (REG-15)
+- [ ] End-to-end test: approve briefing → client inbox (REG-16)
 
-**Exit criteria:** Zachary can see real data and manage all accounts from `/admin`.
-
----
-
-### Phase 7 — Demo Hardening (Jun 5–15)
-Make the demo bulletproof.
-
-- [ ] Deploy to Vercel, configure all env vars
-- [ ] Seed 2 pilot clients (CBK + ODPC jurisdiction)
-- [ ] Upload 2–3 real CBK/ODPC regulatory documents
-- [ ] Publish 1 briefing per client, send email
-- [ ] Run full demo scenario end-to-end
-- [ ] Error states on all forms (empty states, loading spinners)
-- [ ] Mobile responsiveness check
-- [ ] Remove all hardcoded zeros from dashboard/lawyer/admin pages
-
-**Exit criteria:** Full scenario walkthrough works without a single 404, blank page, or error.
+**Exit criteria:** Lawyer clicks Approve → clients receive branded email within 30 seconds.
 
 ---
 
-## Demo Scenario (Summit, Jun 18)
+## Phase C — Integration & Polish
+**Target: May 5–18** | Issues: REG-17, REG-18, REG-19, REG-20, REG-21
+
+- [ ] Run full demo scenario end-to-end, fix every bug (REG-17)
+- [ ] Verify AI chat document scoping with Gemini File Search (REG-18)
+- [ ] Add error states + empty states to all forms and pages (REG-19)
+- [ ] Add loading states + skeleton screens across all portals (REG-20)
+- [ ] Mobile responsiveness check on client dashboard (REG-21)
+
+**Exit criteria:** Complete 8-step demo scenario runs without a single blank page, 404, or unhandled error.
+
+---
+
+## Phase D — Vercel Deployment
+**Target: May 19–25** | Issues: REG-22, REG-23, REG-24
+
+- [ ] Configure Vercel project + all env vars (REG-22)
+  - `GOOGLE_API_KEY` (not `VOYAGE_API_KEY`)
+- [ ] Deploy to Vercel + production smoke test (REG-23)
+- [ ] Deploy Edge Functions to production + verify webhooks (REG-24)
+
+**Exit criteria:** Platform is live at a real URL. Localhost is no longer needed for demos.
+
+---
+
+## Phase E — Pilot Client Onboarding
+**Target: May 26 – Jun 7** | Issues: REG-25, REG-26, REG-27
+
+- [ ] Onboard Pilot Client 1 — CBK jurisdiction, fintech startup (REG-25)
+- [ ] Onboard Pilot Client 2 — ODPC jurisdiction, SME or intl org (REG-26)
+- [ ] Collect pilot feedback + fix issues (REG-27)
+
+**Exit criteria:** 2 active paying clients on the live platform with published documents and a sent briefing each.
+
+---
+
+## Phase F — Demo Hardening
+**Target: Jun 8–15** | Issues: REG-28, REG-29, REG-30, REG-31
+
+- [ ] Demo rehearsal #1 — run full scenario, document every issue (REG-28)
+- [ ] Remove all hardcoded placeholder data (REG-29)
+- [ ] Demo rehearsal #2 — fixes applied, full scenario again (REG-30)
+- [ ] Demo rehearsal #3 — final sign-off + backup plan (REG-31)
+
+**Exit criteria:** Full 8-step scenario rehearsed 3 times clean. Demo credentials in hand.
+
+---
+
+## Demo Scenario (Summit, Jun 18–20)
 
 ```
 1. Zachary logs in as admin → shows platform overview with real data
@@ -170,31 +169,36 @@ Make the demo bulletproof.
 3. Lawyer uploads a CBK circular → assigns and publishes to client
 4. Client receives magic link → logs in → sees the document
 5. Client opens Compliance Chat → asks "What are the licensing requirements?"
-6. Claude answers using the document → streamed live
-7. Lawyer writes a briefing → approves it → client receives email
+6. Gemini File Search retrieves relevant sections → Claude generates answer → streamed live
+7. Lawyer writes a briefing → approves it → client receives branded email
 8. Zachary shows audit log of all actions
 ```
 
 ---
 
-## Environment Variables Needed
+## Environment Variables
 
 ```
-NEXT_PUBLIC_SUPABASE_URL          ← already set
-NEXT_PUBLIC_SUPABASE_ANON_KEY     ← already set
-SUPABASE_SERVICE_ROLE_KEY         ← needed for Edge Functions
-ANTHROPIC_API_KEY                 ← needed for Phase 4
-RESEND_API_KEY                    ← needed for Phase 5
+# Next.js (.env.local + Vercel)
+NEXT_PUBLIC_SUPABASE_URL           ← set
+NEXT_PUBLIC_SUPABASE_ANON_KEY      ← set
+SUPABASE_SERVICE_ROLE_KEY          ← set
+GOOGLE_API_KEY                     ← NEEDED (Gemini File Search — retrieval + generation)
+# ANTHROPIC_API_KEY — no longer needed, remove from all environments
+RESEND_API_KEY                     ← set
+
+# Supabase Edge Function secrets
+SUPABASE_URL                       ← set automatically
+SUPABASE_SERVICE_ROLE_KEY          ← set
+GOOGLE_API_KEY                     ← NEEDED (add before Phase A)
+RESEND_API_KEY                     ← NEEDED (Phase B)
+
+# Remove after Phase A verified
+VOYAGE_API_KEY                     ← DELETE
+ANTHROPIC_API_KEY                  ← DELETE (no longer used)
 ```
 
 ---
 
 ## Out of Scope (Post-Summit)
-- WhatsApp alerts
-- CMA jurisdiction
-- Self-signup
-- Payment/billing infrastructure
-- Mobile app
-- Multi-language support
-- Public API
-- Weekly AI briefing cron (architecture.md mentions it — defer)
+- WhatsApp alerts, CMA jurisdiction, self-signup, payment/billing, mobile app, multi-language, public API, weekly AI briefing cron
