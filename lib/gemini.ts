@@ -28,7 +28,8 @@ export async function createClientStore(companyId: string): Promise<string> {
  * Upload a PDF and import it into a client's FileSearchStore.
  * Polls the long-running operation until indexing completes.
  *
- * @returns The Gemini file name (resource ID) for later deletion
+ * @returns The store document resource name (fileSearchStores/.../documents/...)
+ *          stored as documents.gemini_file_id — used for deletion on unpublish.
  */
 export async function indexDocumentInStore(
   storeName: string,
@@ -62,27 +63,36 @@ export async function indexDocumentInStore(
     op = await ai.operations.get({ operation: op })
   }
 
-  return uploaded.name! // Save as documents.gemini_file_id
+  // Step 4 — Extract the store document name from the completed operation.
+  // The operation response contains the created Document resource whose name is
+  // in format fileSearchStores/{store}/documents/{doc} — this is what we need
+  // to store for deletion, NOT the Files API resource name (files/xxx) which
+  // is a different namespace and would never match on lookup.
+  const storeDocName = (op.response as { document?: { name?: string } } | undefined)?.document?.name
+  if (!storeDocName) {
+    throw new Error(`[gemini] importFile operation completed but response.document.name is missing. op: ${JSON.stringify(op)}`)
+  }
+
+  return storeDocName
 }
 
 /**
  * Remove a document from a client's FileSearchStore (on unpublish).
- * Lists store documents and deletes any that match the given file ID.
+ *
+ * @param storeDocumentName  The store document resource name stored in
+ *                           documents.gemini_file_id, format:
+ *                           fileSearchStores/{store}/documents/{doc}
  */
 export async function removeDocumentFromStore(
-  storeName: string,
-  geminiFileId: string
+  _storeName: string,
+  storeDocumentName: string
 ): Promise<void> {
   try {
-    const docs = await ai.fileSearchStores.documents.list({
-      parent: storeName,
+    // force: true required — documents with chunks reject deletion without it.
+    await ai.fileSearchStores.documents.delete({
+      name: storeDocumentName,
+      force: true,
     })
-    for await (const doc of docs) {
-      if (doc.name?.includes(geminiFileId)) {
-        await ai.fileSearchStores.documents.delete({ name: doc.name })
-        break
-      }
-    }
   } catch (err) {
     console.error('[gemini] removeDocumentFromStore error:', err)
     // Non-fatal — the store is still usable; log and move on

@@ -208,3 +208,21 @@ Do not build any of the above. Redirect to post-summit roadmap.
 - **Summit:** June 18–20, 2026 — Villa Rosa Kempinski, Nairobi
 - **Demo target:** Live product with at least 2 active paying clients
 - **Demo format:** Single regulatory scenario walkthrough (not a feature tour)
+
+---
+
+## Coding Principles (Karpathy Skills)
+
+These four principles reduce common coding mistakes. Apply them on every task.
+
+**1. Think Before Coding**
+Don't assume. Don't hide confusion. Surface tradeoffs. When the request has multiple valid interpretations, present them and ask before proceeding. Never make silent decisions about ambiguous requirements.
+
+**2. Simplicity First**
+Minimum code that solves the problem. Nothing speculative. No unrequested features, no premature abstractions, no speculative error handling. The right solution is the smallest one that fully satisfies the stated goal.
+
+**3. Surgical Changes**
+Touch only what you must. Clean up only your own mess. When modifying existing code, scope changes narrowly to the request. Match the existing style. Only remove code that your own changes made unnecessary.
+
+**4. Goal-Driven Execution**
+Transform every task into measurable success criteria before starting. Define checkpoints that allow independent verification of completion. Prefer observable outcomes over vague objectives.
