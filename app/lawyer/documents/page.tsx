@@ -213,7 +213,7 @@ export default async function LawyerDocumentsPage({
               {doc.internal_notes && (
                 <div className="mt-3 p-4 bg-accent/[0.03] rounded-xl text-[14px] font-sans text-primary/80 border border-accent/10">
                   <span className="flex items-center gap-2 text-[11px] font-bold text-accent/70 uppercase tracking-widest mb-1.5">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" class="w-3.5 h-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                     Internal Notes (Not Visible to Clients)
                   </span>
                   <p className="leading-relaxed">{doc.internal_notes}</p>
