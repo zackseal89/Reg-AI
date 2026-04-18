@@ -91,7 +91,9 @@ export async function removeDocumentFromStore(
     // force: true required — documents with chunks reject deletion without it.
     await ai.fileSearchStores.documents.delete({
       name: storeDocumentName,
-      force: true,
+      config: {
+        force: true,
+      },
     })
   } catch (err) {
     console.error('[gemini] removeDocumentFromStore error:', err)
