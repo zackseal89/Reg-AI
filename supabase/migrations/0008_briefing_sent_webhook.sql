@@ -1,16 +1,18 @@
 -- Enable pg_net so we can make HTTP calls from Postgres triggers.
 create extension if not exists pg_net with schema extensions;
 
+-- The shared webhook secret is stored in Supabase Vault (not a GUC — hosted
+-- Supabase blocks custom GUCs). Insert once via the Dashboard SQL editor:
+--   select vault.create_secret('<random-string>', 'webhook_secret', 'on_briefing_sent shared secret');
+-- The same value must be set as WEBHOOK_SECRET in the Edge Function secrets.
+
 -- Trigger function: when a briefing's status transitions INTO 'sent',
 -- POST the row to the on_briefing_sent Edge Function asynchronously.
--- We read WEBHOOK_SECRET from a GUC set per-database so it doesn't live
--- in the migration file. Set it once via:
---   ALTER DATABASE postgres SET app.webhook_secret = '<random-string>';
 create or replace function public.notify_on_briefing_sent()
 returns trigger
 language plpgsql
 security definer
-set search_path = public, extensions
+set search_path = public, extensions, vault
 as $$
 declare
   webhook_url    text := 'https://uacfpdxmgzidecyvlyfm.supabase.co/functions/v1/on_briefing_sent';
@@ -21,9 +23,12 @@ begin
   if NEW.status <> 'sent' then return NEW; end if;
   if OLD.status = 'sent' then return NEW; end if;
 
-  -- Best-effort read of the shared secret GUC; empty string if unset.
+  -- Best-effort read of the shared secret from Vault; empty string if unset.
   begin
-    webhook_secret := current_setting('app.webhook_secret', true);
+    select decrypted_secret into webhook_secret
+    from vault.decrypted_secrets
+    where name = 'webhook_secret'
+    limit 1;
   exception when others then
     webhook_secret := '';
   end;
