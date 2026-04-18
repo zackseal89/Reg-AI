@@ -4,276 +4,209 @@
 > working in this codebase. It replaces the need to explore the file tree from
 > scratch. Read the relevant section, then open only the files you need to modify.
 
----
+## What This Is
+RegWatch is a regulatory intelligence platform built by MNL Advocates LLP (MN Legal), 
+a Nairobi-based legal tech law firm. It delivers AI-powered regulatory briefings, 
+document management, and compliance chat to fintech and crypto startups, SMEs, and 
+international organisations operating in Kenya.
 
-## 1. Project Identity
-
-**RegWatch** — AI-powered regulatory intelligence platform for MNL Advocates LLP  
-**Client types served:** Fintech/crypto startups, SMEs, international orgs in Kenya  
-**Core promise:** Every piece of content a client sees has been approved by a human lawyer.  
-**Summit demo deadline:** June 18–20, 2026 — Villa Rosa Kempinski, Nairobi
-
----
-
-## 2. Tech Stack (quick reference)
-
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js 16 App Router · TypeScript · Tailwind CSS v4 |
-| Database | Supabase PostgreSQL + pgvector (ivfflat, 1024-dim) |
-| Auth | Supabase Auth (cookie-based sessions) |
-| Storage | Supabase Storage (PDF uploads) |
-| AI Chat | Anthropic Claude `claude-sonnet-4-20250514` |
-| Embeddings | Voyage AI `voyage-3` (1024-dim) |
-| Email | Resend + React Email |
-| Edge Functions | Deno (Supabase Functions) |
-| Deployment | Vercel |
+This is not a generic SaaS. Every piece of content that reaches a client has been 
+reviewed and approved by a lawyer. The platform is an extension of MNL's legal practice.
 
 ---
 
-## 3. Full File Map
-
-```
-app/
-  layout.tsx                      Root layout (fonts, metadata)
-  page.tsx                        Public landing — "Request Access" form ONLY
-  globals.css                     Base Tailwind + CSS custom properties
-
-  (auth)/login/                   Unauthenticated login page
-
-  dashboard/                      CLIENT role
-    layout.tsx                    Client shell + bottom nav guard
-    page.tsx                      Redirect → /dashboard/briefings
-    bottom-nav.tsx                Mobile bottom navigation component
-    briefings/
-      page.tsx                    Client briefings list
-      [id]/page.tsx               Single briefing detail
-    documents/
-      page.tsx                    Client documents list
-      [id]/page.tsx               Single document viewer
-      doc-filters.tsx             Filter bar component
-    chat/
-      page.tsx                    AI chat UI (SSE consumer, full RAG chat)
-    profile/
-      page.tsx                    Client profile view
-
-  lawyer/                         LAWYER role
-    layout.tsx                    Lawyer shell + sidebar nav
-    page.tsx                      Lawyer dashboard overview
-    clients/
-      page.tsx                    Client list + onboarding
-      actions.ts                  onboardClientAction, suspendClientAction
-    briefings/
-      page.tsx                    Briefing list (draft/approved/sent)
-      actions.ts                  createBriefingAction, approveBriefingAction,
-                                  rejectBriefingAction, sendBriefingAction
-    documents/
-      page.tsx                    Document list + assignment management
-      actions.ts                  uploadDocumentAction, assignDocumentAction,
-                                  publishDocumentAction, unpublishDocumentAction
-      upload-form.tsx             Multi-step upload form component
-
-  admin/                          ADMIN role (Zachary only)
-    layout.tsx                    Admin shell
-    page.tsx                      Admin overview (stats)
-    clients/
-      page.tsx                    All clients across all lawyers
-      actions.ts                  Admin client management actions
-    lawyers/
-      page.tsx                    Lawyer account management
-      actions.ts                  createLawyerAction, deactivateLawyerAction
-    audit-logs/
-      page.tsx                    Full audit log viewer
-
-  api/
-    chat/route.ts                 SSE streaming endpoint — RAG query pipeline
-
-lib/
-  audit.ts                        logAudit(action, userId, meta) — call after mutations
-  supabase/
-    server.ts                     createClient() — cookie-based, respects RLS
-    admin.ts                      createAdminClient() — service role, bypasses RLS
-    client.ts                     Browser client (used in Client Components)
-    middleware.ts                 Session refresh + role-based redirects
-
-supabase/
-  migrations/
-    0001_initial_schema.sql       All tables: profiles, companies, documents, etc.
-    0002_rls_policies.sql         ALL Row Level Security policies
-    0003_document_metadata.sql    Added metadata columns to documents
-    0004_document_internal_notes.sql  Internal notes column
-    0005_rag_pipeline.sql         chunks table + match_chunks RPC + ivfflat index
-  functions/
-    on_document_upload/index.ts   Deno edge function: PDF → Claude extract → Voyage
-                                  embed → store chunks
-
-specs/
-  phase-a-gemini-migration.md     Migration spec (Claude→Gemini for embeddings phase)
-
-public/                           Static assets
-scripts/                          One-off utility scripts
-```
-
----
-
-## 4. Database Schema (tables)
-
-| Table | Key Columns | Notes |
-|---|---|---|
-| `profiles` | `id` (= auth.uid), `role` (admin/lawyer/client), `company_id` | Linked 1:1 to auth.users |
-| `companies` | `id`, `name`, `status` (pending_review/active/suspended) | Client companies |
-| `jurisdictions` | `id`, `name`, `code` | e.g. CBK, ODPC |
-| `client_jurisdictions` | `company_id`, `jurisdiction_id` | Junction table |
-| `documents` | `id`, `title`, `jurisdiction_id`, `storage_path`, `status`, `processed` | `processed` = RAG indexed |
-| `document_assignments` | `document_id`, `company_id` | Which client sees which doc |
-| `briefings` | `id`, `title`, `content`, `status` (draft/approved/sent), `approved_by` | |
-| `briefing_assignments` | `briefing_id`, `company_id` | Which client receives briefing |
-| `chunks` | `id`, `document_id`, `content`, `embedding` (vector 1024) | RAG source data |
-| `audit_logs` | `id`, `action`, `user_id`, `metadata`, `created_at` | Written by logAudit() |
-
-**Critical RPC:** `match_chunks(query_embedding, match_threshold, match_count, p_company_id)`  
-— cosine similarity search, SECURITY DEFINER, scoped to company's published documents.
-
----
-
-## 5. Auth & Role Flow
-
-```
-Request arrives
-  └── middleware.ts
-        ├── No session → redirect /login
-        ├── role = 'client' → redirect /dashboard
-        ├── role = 'lawyer' → redirect /lawyer
-        └── role = 'admin' → redirect /admin (also /lawyer accessible)
-```
-
-**Always use `supabase.auth.getUser()`** (not `getSession()`) for server-side auth checks.
-
----
-
-## 6. Supabase Client Rules
-
-| Situation | Client to use | Why |
-|---|---|---|
-| Server Component (read) | `createClient()` from `lib/supabase/server.ts` | Respects RLS |
-| Server Action (auth check) | `createClient()` | Respects RLS |
-| Server Action (DB write) | `createAdminClient()` from `lib/supabase/admin.ts` | Bypasses RLS to write across boundaries |
-| Client Component | `createClient()` from `lib/supabase/client.ts` | Browser client |
-| Edge Function | Inline with `SUPABASE_SERVICE_ROLE_KEY` | Deno environment |
-
----
-
-## 7. Server Action Pattern (copy this every time)
-
-```typescript
-'use server'
-import { createClient } from '@/lib/supabase/server'
-import { createAdminClient } from '@/lib/supabase/admin'
-import { logAudit } from '@/lib/audit'
-import { redirect } from 'next/navigation'
-
-export async function myAction(formData: FormData) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
-
-  const admin = createAdminClient()
-  const { error } = await admin.from('table').insert({ ... })
-  if (error) redirect('/path?error=message')
-
-  await logAudit('ACTION_NAME', user.id, { relevant: 'metadata' })
-  redirect('/path?success=true')
-}
-```
-
----
-
-## 8. RAG Pipeline
-
-### Indexing (Edge Function — Deno)
-`supabase/functions/on_document_upload/index.ts`
-
-1. Webhook fires on `documents` INSERT
-2. Download PDF from Supabase Storage
-3. Send to Claude API (`pdfs-2024-09-25` beta header) for text extraction
-4. Chunk: 2000 chars, 200-char overlap
-5. Embed via Voyage AI `voyage-3` in batches of 64 (`input_type: 'document'`)
-6. Insert into `chunks` table, mark `documents.processed = true`
-
-### Query (Node.js — `app/api/chat/route.ts`)
-
-1. Embed user message via Voyage AI (`input_type: 'query'`)
-2. Call `match_chunks` RPC (threshold 0.65, top 5, scoped to `company_id`)
-3. Stream Claude response as SSE:
-   - Event 1: `{ type: 'citations', citations: [...] }`
-   - Events 2–N: `{ type: 'text', text: '...' }` (streamed deltas)
-   - Final: `data: [DONE]`
-
----
-
-## 9. Status State Machines
-
-```
-Briefing:   draft → approved → sent   (rejection → back to draft)
-Document:   uploaded → assigned → published   (unpublish → back to assigned)
-Account:    pending_review → active → suspended
-```
-
----
-
-## 10. Absolute Rules (never violate)
-
-1. **No content reaches a client without lawyer approval.** Enforced by RLS + status checks.
-2. **No self-signup.** Landing page has Request Access only; lawyers onboard clients.
-3. **Jurisdiction gating at DB level.** Never rely on UI filters alone.
-4. **AI chat is company-scoped.** `match_chunks` RPC enforces this at SQL — no cross-client leakage.
-5. **Audit everything.** `logAudit()` after every approval, publish, rejection, creation.
-6. **Always `getUser()` not `getSession()`** for server auth checks.
-
----
-
-## 11. Environment Variables
+## Commands
 
 ```bash
+npm run dev        # Start Next.js dev server
+npm run build      # Production build
+npm run lint       # Run ESLint
+```
+
+There are no automated tests. TypeScript type-checking:
+```bash
+npx tsc --noEmit
+```
+
+Supabase migrations are applied manually via the Supabase MCP or dashboard — there is no local Supabase CLI workflow set up. Migration files live in `supabase/migrations/`.
+
+Deploy the Edge Function:
+```bash
+supabase functions deploy on_document_upload
+```
+
+---
+
+## Stack
+- **Frontend:** Next.js 16 App Router, TypeScript, Tailwind CSS v4
+- **Backend/DB:** Supabase (PostgreSQL, Auth, Storage, pgvector, Edge Functions)
+- **AI:** Google Gemini (`gemini-2.5-flash`) via File Search API — handles document indexing, retrieval, and chat generation in a single call
+- **Anthropic Claude:** Not used in the current architecture. `ANTHROPIC_API_KEY` is retained in env but not called.
+- **Email:** Resend + React Email
+- **Deployment:** Vercel
+
+---
+
+## Architecture
+
+### Route Structure
+```
+app/
+  (auth)/login/       — Unauthenticated login page
+  page.tsx            — Public landing page (Request Access form only — no signup)
+  dashboard/          — Client-facing routes (role: client)
+  lawyer/             — Lawyer routes (role: lawyer | admin)
+  admin/              — Admin-only routes (role: admin)
+  api/chat/route.ts   — SSE streaming chat endpoint (RAG pipeline)
+```
+
+### Middleware & Auth (`lib/supabase/middleware.ts`)
+The middleware runs on every request. It:
+1. Refreshes Supabase session via cookies
+2. Redirects unauthenticated users to `/login`
+3. Reads `profiles.role` and redirects authenticated users to their role dashboard
+4. Blocks `/admin` for non-admins and `/lawyer` for clients
+
+### Supabase Client Pattern
+Three distinct clients — always use the right one:
+- `lib/supabase/server.ts` — `createClient()` — cookie-based, respects RLS, use in Server Components
+- `lib/supabase/admin.ts` — `createAdminClient()` — service role, **bypasses RLS**, use only in Server Actions when you need to write across RLS boundaries
+- Edge Function — creates its own `@supabase/supabase-js` client with service role
+
+### Server Actions Pattern
+All mutations are Next.js Server Actions (`'use server'`) in `actions.ts` files co-located with their route. Pattern:
+1. `createClient()` for auth check (`supabase.auth.getUser()`)
+2. `createAdminClient()` for the actual DB write (bypasses RLS)
+3. `logAudit()` from `lib/audit.ts` after every significant mutation
+4. `redirect()` to navigate on success or error
+
+### RAG Pipeline — Gemini File Search (replaces Voyage AI + pgvector)
+The full RAG pipeline uses the **Gemini File Search API** — no manual chunking, embeddings, or vector DB needed.
+
+**Indexing** (triggered on document upload/publish):
+- Upload the PDF to a per-client **Gemini FileSearchStore** via the Files API
+- Google automatically handles chunking, embedding (Gemini embedding model), and indexing
+- Store the `fileSearchStoreName` reference on the client or document record in Supabase
+- Mark `documents.processed = true` after successful upload
+
+**Query** (`app/api/chat/route.ts`):
+- Auth guard → fetch `companies.gemini_store_name` for the authenticated client
+- Single `POST generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent` with:
+  - `systemInstruction` — MNL regulatory assistant persona
+  - `tools: [{ fileSearch: { fileSearchStoreNames: [gemini_store_name] } }]`
+  - Full conversation history + user message
+- Gemini retrieves relevant chunks AND generates the answer in one call — no separate Claude call
+- Extract text from `candidates[0].content.parts`, citations from `candidates[0].groundingMetadata.groundingChunks`
+- Emit as SSE: citations event → text event → `[DONE]`
+
+**What no longer exists:** `chunks` table, `match_chunks` RPC, Voyage AI calls, `on_document_upload` Edge Function chunking logic, `VOYAGE_API_KEY`.
+
+### Chat SSE Protocol
+The `/api/chat` endpoint streams Server-Sent Events in this order:
+1. `{ type: 'citations', citations: [...] }` — source documents returned by Gemini File Search
+2. `{ type: 'text', text: '...' }` — streamed text deltas
+3. `data: [DONE]`
+
+---
+
+## Database Tables
+
+| Table | Purpose |
+|---|---|
+| `profiles` | All users (admin, lawyer, client) with `role` field |
+| `companies` | Client company profiles |
+| `jurisdictions` | Reference table (CBK, ODPC) |
+| `client_jurisdictions` | Junction: client ↔ jurisdiction |
+| `documents` | Uploaded files with status, jurisdiction tag, storage path, `processed` flag |
+| `document_assignments` | Which documents are assigned to which clients |
+| `briefings` | Regulatory briefings with status, jurisdiction, `approved_by` |
+| `briefing_assignments` | Which briefings go to which clients |
+| `chunks` | **Deprecated** — replaced by Gemini File Search (can be dropped from schema) |
+| `audit_logs` | Every significant action logged |
+
+---
+
+## Roles & Permissions
+
+### Admin (MNL internal — Zachary)
+- Full platform access; manages lawyer accounts, views all content, billing records
+
+### Lawyer (MNL associates)
+- Onboard and manage clients, upload documents, write/approve/reject briefings, publish documents
+- Cannot access other lawyers' clients unless admin grants access
+
+### Client (External)
+- Read-only: view their own published briefings and documents, chat with AI scoped to their documents
+- Cannot see draft or unapproved content under any circumstance
+
+---
+
+## Core Rules — Never Break These
+
+1. **Human approval is mandatory.** No briefing or document reaches a client 
+   without a lawyer explicitly clicking approve/publish. Enforced at DB level via RLS.
+
+2. **Jurisdiction gating is enforced at DB level.** RLS policies enforce this — it is not a UI filter.
+
+3. **No self-signup.** Clients are onboarded by lawyers only. Landing page has a "Request Access" form only.
+
+4. **AI chat is document-scoped.** Each client has their own Gemini `FileSearchStore`. The `fileSearch` tool is always scoped to that client's store — no cross-client data leakage is possible.
+
+5. **Audit everything.** Call `logAudit()` after every approval, publish, rejection, and significant mutation.
+
+---
+
+## Status Flows
+
+### Briefing
+```
+draft → approved → sent
+```
+Rejection returns to `draft`. The `sendBriefingAction` updates status to `sent` (email via Resend Edge Function — Phase B, not yet wired).
+
+### Document
+```
+uploaded → assigned → published
+```
+Unpublish returns to `assigned`. Publishing triggers indexing into the client's Gemini FileSearchStore; unpublishing removes the document from the store.
+
+### Client Account
+```
+pending_review → active → suspended
+```
+
+---
+
+## Environment Variables
+```
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 ANTHROPIC_API_KEY=
 RESEND_API_KEY=
-VOYAGE_API_KEY=           # Required — chat/RAG disabled without this
+GEMINI_API_KEY=           # Required for File Search RAG and chat
+# VOYAGE_API_KEY — no longer needed (replaced by Gemini File Search)
 ```
 
 ---
 
-## 12. Out of Scope (do not build)
+## What Is Explicitly Out of Scope for MVP
+- WhatsApp alerts, CMA jurisdiction, self-signup, payment/billing, mobile app, multi-language, public API
 
-WhatsApp alerts · CMA jurisdiction · self-signup · payment/billing ·  
-mobile app · multi-language · public API
-
----
-
-## 13. Brand Tokens
-
-```css
---color-navy:    #1a2744;   /* Primary — headers, sidebar */
---color-burgundy: #8b1c3f;  /* Accent — CTAs, highlights */
---color-cream:   #f5f3ef;   /* Background */
---font-heading:  'Playfair Display';
---font-body:     'Inter';
-```
+Do not build any of the above. Redirect to post-summit roadmap.
 
 ---
 
-## 14. Dev Commands
+## Brand
+- **Primary:** Navy `#1a2744`
+- **Accent:** Burgundy `#8b1c3f`
+- **Background:** Cream `#f5f3ef`
+- **Headings:** Playfair Display
+- **Body:** Inter
 
-```bash
-npm run dev          # Start dev server
-npm run build        # Production build
-npm run lint         # ESLint
-npx tsc --noEmit     # Type check
+---
 
-# Supabase (via MCP or dashboard — no local CLI)
-supabase functions deploy on_document_upload
-```
-
-Migrations: apply via Supabase MCP tool or dashboard. Files in `supabase/migrations/`.
+## Key Dates
+- **Summit:** June 18–20, 2026 — Villa Rosa Kempinski, Nairobi
+- **Demo target:** Live product with at least 2 active paying clients
+- **Demo format:** Single regulatory scenario walkthrough (not a feature tour)
