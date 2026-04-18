@@ -28,10 +28,11 @@ async function triggerGeminiIndexing(
     return
   }
 
-  // Get all assigned companies and their store names
+  // REG-44: document_assignments has no company_id column — join through
+  // profiles.company_id → companies to get each assigned client's store name.
   const { data: assignments } = await admin
     .from('document_assignments')
-    .select('company_id, companies(gemini_store_name)')
+    .select('client_id, profiles:client_id(company_id, companies:company_id(gemini_store_name))')
     .eq('document_id', documentId)
 
   if (!assignments || assignments.length === 0) {
@@ -53,9 +54,13 @@ async function triggerGeminiIndexing(
 
   // Index into each assigned client's store
   for (const assignment of assignments) {
-    const storeName = (assignment.companies as unknown as { gemini_store_name: string | null } | null)?.gemini_store_name
+    const profile = (assignment.profiles as unknown as {
+      company_id: string | null
+      companies: { gemini_store_name: string | null } | null
+    } | null)
+    const storeName = profile?.companies?.gemini_store_name
     if (!storeName) {
-      console.warn('[gemini-index] No store for company:', assignment.company_id)
+      console.warn('[gemini-index] No store for client:', assignment.client_id)
       continue
     }
 
