@@ -51,7 +51,7 @@ export async function createBriefingAction(formData: FormData) {
     details: { title, jurisdiction_id: jurisdictionId, assigned_clients: clientIds },
   })
 
-  redirect('/lawyer/briefings')
+  redirect('/lawyer/briefings?success=' + encodeURIComponent('Briefing created'))
 }
 
 export async function approveBriefingAction(formData: FormData) {
@@ -83,7 +83,7 @@ export async function approveBriefingAction(formData: FormData) {
     entityId: briefingId,
   })
 
-  redirect('/lawyer/briefings')
+  redirect('/lawyer/briefings?success=' + encodeURIComponent('Briefing approved'))
 }
 
 export async function sendBriefingAction(formData: FormData) {
@@ -115,8 +115,8 @@ export async function sendBriefingAction(formData: FormData) {
     entityId: briefingId,
   })
 
-  // Email sending will be added in Phase B (on_briefing_approved edge function + Resend)
-  redirect('/lawyer/briefings')
+  // Email delivery is handled by the on_briefing_sent Edge Function (REG-13)
+  redirect('/lawyer/briefings?success=' + encodeURIComponent('Briefing sent to clients'))
 }
 
 export async function rejectBriefingAction(formData: FormData) {
@@ -148,5 +148,5 @@ export async function rejectBriefingAction(formData: FormData) {
     entityId: briefingId,
   })
 
-  redirect('/lawyer/briefings')
+  redirect('/lawyer/briefings?success=' + encodeURIComponent('Briefing returned to draft'))
 }

@@ -300,7 +300,11 @@ export async function uploadDocumentAction(formData: FormData) {
     },
   })
 
-  redirect('/lawyer/documents')
+  const successMsg =
+    submitMode === 'publish' ? 'Document uploaded and published' :
+    submitMode === 'assign'  ? 'Document uploaded and assigned' :
+                               'Document uploaded'
+  redirect('/lawyer/documents?success=' + encodeURIComponent(successMsg))
 }
 
 export async function assignDocumentAction(formData: FormData) {
@@ -363,7 +367,7 @@ export async function assignDocumentAction(formData: FormData) {
     await indexDocumentForClients(admin, documentId, clientIds)
   }
 
-  redirect('/lawyer/documents')
+  redirect('/lawyer/documents?success=' + encodeURIComponent('Document assigned to clients'))
 }
 
 export async function publishDocumentAction(formData: FormData) {
@@ -394,7 +398,7 @@ export async function publishDocumentAction(formData: FormData) {
     entityId: documentId,
   })
 
-  redirect('/lawyer/documents')
+  redirect('/lawyer/documents?success=' + encodeURIComponent('Document published to clients'))
 }
 
 export async function unpublishDocumentAction(formData: FormData) {
@@ -425,5 +429,5 @@ export async function unpublishDocumentAction(formData: FormData) {
     entityId: documentId,
   })
 
-  redirect('/lawyer/documents')
+  redirect('/lawyer/documents?success=' + encodeURIComponent('Document unpublished'))
 }

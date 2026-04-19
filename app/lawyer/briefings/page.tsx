@@ -1,12 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { createBriefingAction, approveBriefingAction, sendBriefingAction, rejectBriefingAction } from './actions'
+import FlashToast from '@/app/components/FlashToast'
 
 export default async function LawyerBriefingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string; success?: string }>
 }) {
-  const { error } = await searchParams
+  await searchParams
   const supabase = await createClient()
 
   const { data: briefings } = await supabase
@@ -33,18 +34,13 @@ export default async function LawyerBriefingsPage({
 
   return (
     <div className="max-w-6xl">
+      <FlashToast />
       <div className="flex items-center justify-between mb-10 pb-6 border-b border-primary/5">
         <div>
           <h1 className="text-3xl font-serif font-bold text-primary mb-2">Briefings</h1>
           <p className="text-[15px] font-sans text-primary/60">Create, review, approve, and send regulatory briefings.</p>
         </div>
       </div>
-
-      {error && (
-        <div className="mb-8 p-4 bg-accent/5 border-l-4 border-accent rounded-r-lg text-accent text-sm font-medium shadow-sm">
-          {error}
-        </div>
-      )}
 
       {/* Create Briefing Form */}
       <div className="mb-12 p-8 border border-primary/10 rounded-2xl bg-white shadow-sm relative overflow-hidden">

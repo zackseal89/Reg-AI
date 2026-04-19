@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { uploadDocumentAction, assignDocumentAction, publishDocumentAction, unpublishDocumentAction } from './actions'
 import UploadForm from './upload-form'
+import FlashToast from '@/app/components/FlashToast'
 
 const DOC_TYPE_LABELS: Record<string, string> = {
   circular: 'Circular',
@@ -24,9 +25,9 @@ function formatFileSize(bytes: number | null) {
 export default async function LawyerDocumentsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; assign?: string }>
+  searchParams: Promise<{ error?: string; success?: string; assign?: string }>
 }) {
-  const { error, assign } = await searchParams
+  const { assign } = await searchParams
   const supabase = await createClient()
 
   const { data: documents } = await supabase
@@ -73,11 +74,7 @@ export default async function LawyerDocumentsPage({
         </div>
       </div>
 
-      {error && (
-        <div className="mb-8 p-4 bg-accent/5 border-l-4 border-accent rounded-r-lg text-accent text-sm font-medium shadow-sm">
-          {error}
-        </div>
-      )}
+      <FlashToast />
 
       {/* Assign Panel (for existing documents) */}
       {assigningDoc && (
