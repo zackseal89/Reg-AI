@@ -123,7 +123,7 @@ export default function IntelligencePreview() {
                   className="font-sans text-xs mb-4 tracking-wide"
                   style={{ color: 'rgba(26,39,68,0.4)' }}
                 >
-                  Approved by Advocate M. Ndungu · Sent to your dashboard
+                  Approved by your MNL counsel · Sent to your dashboard
                 </p>
 
                 {/* Fake content lines */}
