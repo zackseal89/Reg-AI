@@ -13,11 +13,10 @@ import { createClientStore, indexDocumentInStore } from '../lib/gemini'
 async function main() {
   const admin = createAdminClient()
 
-  // 1. Get all companies without a Gemini store
+  // 1. Get all companies
   const { data: companies, error: compErr } = await admin
     .from('companies')
-    .select('id, name')
-    .is('gemini_store_name', null)
+    .select('id, name, gemini_store_name')
 
   if (compErr) {
     console.error('Failed to fetch companies:', compErr.message)
@@ -25,48 +24,61 @@ async function main() {
   }
 
   if (!companies || companies.length === 0) {
-    console.log('✓ All companies already have a Gemini store. Nothing to do.')
+    console.log('✓ No companies found. Nothing to do.')
     return
   }
 
-  console.log(`Found ${companies.length} companies without a Gemini store.\n`)
+  console.log(`Checking ${companies.length} companies for Gemini stores.\n`)
 
   for (const company of companies) {
-    console.log(`Creating store for "${company.name}" (${company.id})...`)
+    let storeName = company.gemini_store_name
+    console.log(`Processing "${company.name}" (${company.id})...`)
 
-    try {
-      const storeName = await createClientStore(company.id)
-      await admin
-        .from('companies')
-        .update({ gemini_store_name: storeName })
-        .eq('id', company.id)
+    if (!storeName) {
+      try {
+        storeName = await createClientStore(company.id)
+        await admin
+          .from('companies')
+          .update({ gemini_store_name: storeName })
+          .eq('id', company.id)
 
-      console.log(`  ✓ Store created: ${storeName}`)
-    } catch (err) {
-      console.error(`  ✗ Failed to create store:`, err)
-      continue
+        console.log(`  ✓ Store created: ${storeName}`)
+      } catch (err) {
+        console.error(`  ✗ Failed to create store:`, err)
+        continue
+      }
+    } else {
+      console.log(`  ✓ Store already exists: ${storeName}`)
     }
 
     // 2. Get their published documents via assignments
-    const { data: assignments } = await admin
-      .from('document_assignments')
-      .select('document_id, documents(storage_path, title, status)')
-      .eq('company_id', company.id)
+    const { data: profiles } = await admin
+      .from('profiles')
+      .select('id')
+      .eq('company_id', company.id);
 
-    if (!assignments || assignments.length === 0) {
-      console.log('  No document assignments found.\n')
+    const clientIds = profiles?.map(p => p.id) || [];
+
+    const { data: assignments, error: assignmentsError } = await admin
+      .from('document_assignments')
+      .select('document_id, documents!inner(storage_path, title, status)')
+      .in('client_id', clientIds)
+
+    if (assignmentsError) {
+      console.error('  ✗ Failed to fetch assignments:', assignmentsError.message)
       continue
     }
 
-    // Need the store name we just created
-    const { data: freshCompany } = await admin
-      .from('companies')
-      .select('gemini_store_name')
-      .eq('id', company.id)
-      .single()
+    if (!assignments || assignments.length === 0) {
+      console.log('  No published assignments found.\n')
+      continue
+    }
 
-    const storeName = freshCompany?.gemini_store_name
-    if (!storeName) continue
+    // Ensure store was successfully created or retrieved above
+    if (!storeName) {
+      console.log('  ✗ Skipped indexing due to missing store name.')
+      continue
+    }
 
     for (const assignment of assignments) {
       const doc = assignment.documents as unknown as {

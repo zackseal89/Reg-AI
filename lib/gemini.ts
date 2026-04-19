@@ -68,9 +68,18 @@ export async function indexDocumentInStore(
   // in format fileSearchStores/{store}/documents/{doc} — this is what we need
   // to store for deletion, NOT the Files API resource name (files/xxx) which
   // is a different namespace and would never match on lookup.
-  const storeDocName = (op.response as { document?: { name?: string } } | undefined)?.document?.name
+  let storeDocName = (op.response as { document?: { name?: string } } | undefined)?.document?.name
+
   if (!storeDocName) {
-    throw new Error(`[gemini] importFile operation completed but response.document.name is missing. op: ${JSON.stringify(op)}`)
+    const resp = op.response as any
+    if (resp?.documentName) {
+      const parent = resp.parent?.startsWith('fileSearchStores/') ? resp.parent : `fileSearchStores/${resp.parent || storeName.split('/')[1]}`
+      storeDocName = `${parent}/documents/${resp.documentName}`
+    }
+  }
+
+  if (!storeDocName) {
+    throw new Error(`[gemini] importFile operation completed but response formatting is unknown. op: ${JSON.stringify(op)}`)
   }
 
   return storeDocName
