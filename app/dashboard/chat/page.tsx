@@ -9,9 +9,9 @@ import Link from 'next/link'
 // ---------------------------------------------------------------------------
 
 interface Citation {
-  document_id: string
+  document_id: string | null
   document_title: string
-  document_type: string
+  document_type?: string
 }
 
 interface Message {
@@ -90,20 +90,34 @@ function MessageBubble({ message }: { message: Message }) {
             <p className="text-[10px] font-serif font-bold text-primary/40 uppercase tracking-widest mb-2">
               Sources
             </p>
-            {message.citations.map((c, ci) => (
-              <Link
-                key={c.document_id}
-                href={`/dashboard/documents/${c.document_id}`}
-                className="flex items-baseline gap-2 group"
-              >
+            {message.citations.map((c, ci) => {
+              const numberEl = (
                 <span className="text-[10px] text-primary/40 font-mono shrink-0 w-4 text-right font-semibold">
                   {ci + 1}.
                 </span>
+              )
+              const titleEl = (
                 <span className="text-[12px] font-sans text-primary/60 group-hover:text-accent transition-colors leading-tight underline decoration-primary/20 underline-offset-4 group-hover:decoration-accent/40">
                   {c.document_title}
                 </span>
-              </Link>
-            ))}
+              )
+
+              return c.document_id ? (
+                <Link
+                  key={`${c.document_id}-${ci}`}
+                  href={`/dashboard/documents/${c.document_id}`}
+                  className="flex items-baseline gap-2 group"
+                >
+                  {numberEl}
+                  {titleEl}
+                </Link>
+              ) : (
+                <div key={`unlinked-${ci}`} className="flex items-baseline gap-2 group">
+                  {numberEl}
+                  {titleEl}
+                </div>
+              )
+            })}
           </div>
         )}
       </div>
