@@ -7,15 +7,19 @@ export const runtime = 'nodejs'
 // System prompt — grounded regulatory assistant
 // ---------------------------------------------------------------------------
 
-function buildSystemPrompt(jurisdictions: string[]): string {
+function buildSystemPrompt(jurisdictions: string[], scopedDocumentTitle?: string): string {
   const jList =
     jurisdictions.length > 0
       ? jurisdictions.join(', ')
       : 'Kenyan regulatory bodies (CBK, ODPC, and related regulators)'
 
+  const scopeLine = scopedDocumentTitle
+    ? `\n\nThis conversation is scoped to a single document: "${scopedDocumentTitle}". Retrieval is filtered to that document only. If the user's question is not answerable from that document, say so and suggest they remove the document filter (the "×" on the pill above the input) to search across all their published documents.`
+    : ''
+
   return `You are RegWatch AI, the regulatory intelligence assistant for MNL Advocates LLP — a Nairobi-based legal tech law firm that advises fintech, crypto, SME, and international clients operating in Kenya.
 
-You are speaking to a client of the firm. Their published regulatory documents have been reviewed and approved by an MNL lawyer, and are the ONLY source of truth you may use. The client's active jurisdictions are: ${jList}.
+You are speaking to a client of the firm. Their published regulatory documents have been reviewed and approved by an MNL lawyer, and are the ONLY source of truth you may use. The client's active jurisdictions are: ${jList}.${scopeLine}
 
 ## Grounding — non-negotiable
 - Answer EXCLUSIVELY from the retrieved context (file search results). Do not rely on outside knowledge, general training data, or assumptions about Kenyan law.
@@ -116,7 +120,7 @@ export async function POST(req: Request) {
     return new Response('Bad request', { status: 400 })
   }
 
-  const { message, conversation_history = [] } = body
+  const { message, context_document_id, conversation_history = [] } = body
 
   if (!message?.trim()) {
     return new Response('Message is required', { status: 400 })
@@ -125,6 +129,32 @@ export async function POST(req: Request) {
   // 4. Check for GEMINI_API_KEY and store availability
   if (!process.env.GEMINI_API_KEY || !storeName) {
     return notConfiguredStream()
+  }
+
+  // 4b. If a document context was supplied, verify it is assigned to this
+  //     client and currently published. RLS on document_assignments +
+  //     documents enforces scope, but we still constrain the query to the
+  //     current user's id defensively.
+  let scopedDocumentId: string | null = null
+  let scopedDocumentTitle: string | null = null
+  if (context_document_id) {
+    const { data: scopedRow } = await supabase
+      .from('document_assignments')
+      .select('documents ( id, title, status )')
+      .eq('client_id', user.id)
+      .eq('document_id', context_document_id)
+      .maybeSingle()
+
+    const doc = (scopedRow?.documents as unknown as
+      | { id: string; title: string; status: string }
+      | null) ?? null
+
+    if (doc && doc.status === 'published') {
+      scopedDocumentId = doc.id
+      scopedDocumentTitle = doc.title
+    }
+    // Silently ignore an invalid/unauthorised context — the chat still works
+    // across the full store. No 403 so the UI doesn't have to special-case it.
   }
 
   // 5. Build Gemini contents from conversation history
@@ -136,20 +166,25 @@ export async function POST(req: Request) {
     { role: 'user' as const, parts: [{ text: message }] },
   ]
 
-  // 6. Stream from Gemini with fileSearch tool
+  // 6. Stream from Gemini with fileSearch tool (optionally scoped to a doc)
+  const fileSearch: {
+    fileSearchStoreNames: string[]
+    metadataFilter?: string
+  } = { fileSearchStoreNames: [storeName] }
+  if (scopedDocumentId) {
+    fileSearch.metadataFilter = `document_id="${scopedDocumentId}"`
+  }
+
   try {
     const stream = await ai.models.generateContentStream({
       model: CHAT_MODEL,
       contents,
       config: {
-        systemInstruction: buildSystemPrompt(jurisdictionNames),
-        tools: [
-          {
-            fileSearch: {
-              fileSearchStoreNames: [storeName],
-            },
-          },
-        ],
+        systemInstruction: buildSystemPrompt(
+          jurisdictionNames,
+          scopedDocumentTitle ?? undefined,
+        ),
+        tools: [{ fileSearch }],
       },
     })
 
