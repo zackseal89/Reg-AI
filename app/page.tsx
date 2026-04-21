@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     title: 'RegWatch — Regulatory Intelligence for East Africa',
     description:
       'AI-powered regulatory briefings, every one approved by a practising advocate. Exclusive to clients of MN Advocates LLP.',
-    url: 'https://regwatch.mnlegal.net',
+    url: 'https://www.regwatchmnl.net',
     siteName: 'RegWatch by MN Advocates LLP',
     locale: 'en_KE',
     type: 'website',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     follow: true,
   },
   alternates: {
-    canonical: 'https://regwatch.mnlegal.net',
+    canonical: 'https://www.regwatchmnl.net',
   },
 };
 
@@ -42,7 +42,7 @@ const jsonLd = {
       '@id': 'https://mnlegal.net/#organization',
       name: 'MN Advocates LLP',
       url: 'https://mnlegal.net',
-      sameAs: ['https://regwatch.mnlegal.net'],
+      sameAs: ['https://www.regwatchmnl.net'],
       address: {
         '@type': 'PostalAddress',
         addressLocality: 'Nairobi',
@@ -56,8 +56,8 @@ const jsonLd = {
     },
     {
       '@type': 'WebSite',
-      '@id': 'https://regwatch.mnlegal.net/#website',
-      url: 'https://regwatch.mnlegal.net',
+      '@id': 'https://www.regwatchmnl.net/#website',
+      url: 'https://www.regwatchmnl.net',
       name: 'RegWatch',
       description: 'Regulatory intelligence platform for East Africa',
       publisher: {

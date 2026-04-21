@@ -21,6 +21,7 @@ reviewed and approved by a lawyer. The platform is an extension of MNL's legal p
 npm run dev        # Start Next.js dev server
 npm run build      # Production build
 npm run lint       # Run ESLint
+npm run seed:test  # Seed test users (scripts/seed-test-users.ts via tsx)
 ```
 
 There are no automated tests. TypeScript type-checking:
@@ -30,16 +31,18 @@ npx tsc --noEmit
 
 Supabase migrations are applied manually via the Supabase MCP or dashboard — there is no local Supabase CLI workflow set up. Migration files live in `supabase/migrations/`.
 
-Deploy the Edge Function:
+Deploy Edge Functions:
 ```bash
 supabase functions deploy on_document_upload
+supabase functions deploy on_briefing_sent
 ```
+`on_briefing_sent` is invoked by a Supabase **Database Webhook** on the `briefings` table (UPDATE → `status='sent'`). The shared secret is read from **Supabase Vault** (not a Postgres GUC) — see commit `e76c491`. Note `tsconfig.json` excludes `supabase/functions/**` — they run on **Deno**, not Node.
 
 ---
 
 ## Stack
 - **Frontend:** Next.js 16 App Router, TypeScript, Tailwind CSS v4
-- **Backend/DB:** Supabase (PostgreSQL, Auth, Storage, pgvector, Edge Functions)
+- **Backend/DB:** Supabase (PostgreSQL, Auth, Storage, Edge Functions) — no pgvector; all retrieval is via Gemini File Search
 - **AI:** Google Gemini (`gemini-2.5-flash`) via File Search API — handles document indexing, retrieval, and chat generation in a single call
 - **Anthropic Claude:** Not used in the current architecture. `ANTHROPIC_API_KEY` is retained in env but not called.
 - **Email:** Resend + React Email
@@ -60,12 +63,14 @@ app/
   api/chat/route.ts   — SSE streaming chat endpoint (RAG pipeline)
 ```
 
-### Middleware & Auth (`lib/supabase/middleware.ts`)
-The middleware runs on every request. It:
+### Middleware & Auth
+The Next.js root middleware lives in **`proxy.ts`** (non-standard filename for this repo) and delegates to `lib/supabase/middleware.ts`. It:
 1. Refreshes Supabase session via cookies
 2. Redirects unauthenticated users to `/login`
-3. Reads `profiles.role` and redirects authenticated users to their role dashboard
+3. Reads `profiles.role` **once** per eligible request (gated on `needsProfile`) and redirects authenticated users to their role dashboard
 4. Blocks `/admin` for non-admins and `/lawyer` for clients
+
+Middleware is the first line of defense — the authoritative guards are RLS policies in the database.
 
 ### Supabase Client Pattern
 Three distinct clients — always use the right one:
@@ -83,11 +88,12 @@ All mutations are Next.js Server Actions (`'use server'`) in `actions.ts` files 
 ### RAG Pipeline — Gemini File Search (replaces Voyage AI + pgvector)
 The full RAG pipeline uses the **Gemini File Search API** — no manual chunking, embeddings, or vector DB needed.
 
-**Indexing** (triggered on document upload/publish):
-- Upload the PDF to a per-client **Gemini FileSearchStore** via the Files API
-- Google automatically handles chunking, embedding (Gemini embedding model), and indexing
-- Store the `fileSearchStoreName` reference on the client or document record in Supabase
-- Mark `documents.processed = true` after successful upload
+**Indexing** lives in **Server Actions** (`publishDocumentAction`), NOT the Edge Function. `on_document_upload` is now just a validation/audit hook; see `supabase/functions/on_document_upload/index.ts`. Flow in `lib/gemini.ts`:
+- First document publish per client: `createClientStore()` → saves resource name to `companies.gemini_store_name`.
+- `indexDocumentInStore()` uploads the PDF to the Files API, imports into the client's FileSearchStore, and **polls the long-running op** until done.
+- Stores the returned store-document name on `documents.gemini_file_id` and marks `documents.processed = true`.
+
+**Gotcha (lib/gemini.ts:71-79):** `gemini_file_id` must be the **store document name** (`fileSearchStores/{store}/documents/{doc}`), NOT the Files API name (`files/xxx`). Different namespaces; deletion lookup fails silently if you store the wrong one.
 
 **Query** (`app/api/chat/route.ts`):
 - Auth guard → fetch `companies.gemini_store_name` for the authenticated client
@@ -121,8 +127,9 @@ The `/api/chat` endpoint streams Server-Sent Events in this order:
 | `document_assignments` | Which documents are assigned to which clients |
 | `briefings` | Regulatory briefings with status, jurisdiction, `approved_by` |
 | `briefing_assignments` | Which briefings go to which clients |
-| `chunks` | **Deprecated** — replaced by Gemini File Search (can be dropped from schema) |
 | `audit_logs` | Every significant action logged |
+
+> The `chunks` table and `match_chunks` RPC were dropped in migration `0007_cleanup_rag.sql` — do not re-add them.
 
 ---
 
@@ -162,7 +169,7 @@ The `/api/chat` endpoint streams Server-Sent Events in this order:
 ```
 draft → approved → sent
 ```
-Rejection returns to `draft`. The `sendBriefingAction` updates status to `sent` (email via Resend Edge Function — Phase B, not yet wired).
+Rejection returns to `draft`. `sendBriefingAction` flips status to `sent`; the `briefings` DB webhook fires `on_briefing_sent`, which renders the React Email template and dispatches via Resend. The webhook secret is pulled from Supabase Vault.
 
 ### Document
 ```
@@ -182,10 +189,12 @@ pending_review → active → suspended
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
-ANTHROPIC_API_KEY=
-RESEND_API_KEY=
-GEMINI_API_KEY=           # Required for File Search RAG and chat
-# VOYAGE_API_KEY — no longer needed (replaced by Gemini File Search)
+GEMINI_API_KEY=           # Required for File Search indexing and chat
+RESEND_API_KEY=           # Transactional email
+APP_URL=                  # Public URL used in email CTAs
+RESEND_FROM=              # Optional — defaults to RegWatch <briefings@mnladvocates.com>
+WEBHOOK_SECRET=           # Optional — shared secret for briefing-sent webhook
+ANTHROPIC_API_KEY=        # Unused — retained from pre-Phase-A architecture; do not delete
 ```
 
 ---

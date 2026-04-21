@@ -52,7 +52,7 @@ function TypingIndicator() {
 // Message bubble
 // ---------------------------------------------------------------------------
 
-function MessageBubble({ message, index }: { message: Message; index: number }) {
+function MessageBubble({ message }: { message: Message }) {
   const isUser = message.role === 'user'
 
   if (isUser) {
@@ -336,7 +336,7 @@ function ChatContent() {
         ) : (
           <div className="px-4 md:px-8 py-6 space-y-8">
             {messages.map((m, i) => (
-              <MessageBubble key={i} message={m} index={i} />
+              <MessageBubble key={i} message={m} />
             ))}
             {showTyping && <TypingIndicator />}
             <div ref={bottomRef} className="h-4" />

@@ -127,7 +127,7 @@ The `on_briefing_sent` function is wired via a Supabase Database Webhook on the 
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase service-role key (bypasses RLS — server-only) |
 | `GEMINI_API_KEY` | Gemini API key for File Search indexing and chat |
 | `RESEND_API_KEY` | Resend API key for transactional email |
-| `APP_URL` | Public URL used in email CTAs (e.g. `https://regwatch.mnladvocates.com`) |
+| `APP_URL` | Public URL used in email CTAs (e.g. `https://www.regwatchmnl.net`) |
 | `RESEND_FROM` | *(optional)* From address, defaults to `RegWatch <briefings@mnladvocates.com>` |
 | `WEBHOOK_SECRET` | *(optional)* Shared secret for the briefing-sent webhook |
 | `ANTHROPIC_API_KEY` | *(unused)* Retained for future use, not called in current architecture |

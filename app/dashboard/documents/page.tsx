@@ -1,6 +1,10 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import { FolderOpen, ArrowRight } from 'lucide-react'
 import DocFilters from './doc-filters'
+import { PageHeader } from '@/components/ui/page-header'
+import { Badge } from '@/components/ui/badge'
+import { EmptyState } from '@/components/ui/empty-state'
 
 const DOC_TYPE_LABELS: Record<string, string> = {
   circular: 'Circular',
@@ -24,10 +28,10 @@ export default async function ClientDocumentsPage({
 
   let query = supabase
     .from('documents')
-    .select(`
-      id, title, doc_type, effective_date, created_at, summary,
-      jurisdictions ( name )
-    `)
+    .select(
+      `id, title, doc_type, effective_date, created_at, summary,
+      jurisdictions ( name )`
+    )
     .eq('status', 'published')
     .order('created_at', { ascending: false })
 
@@ -46,83 +50,85 @@ export default async function ClientDocumentsPage({
     .order('name')
 
   return (
-    <div className="px-4 py-6">
-      <h1 className="text-2xl font-serif font-semibold mb-1 tracking-tight">Documents</h1>
-      <p className="text-[13px] text-primary/50 mb-6">
-        Regulatory documents published to your account by your legal team.
-      </p>
+    <div className="max-w-5xl">
+      <PageHeader
+        title="Documents"
+        description="Regulatory documents published to your account by your legal team."
+      />
 
       <DocFilters jurisdictions={jurisdictions || []} />
 
-      {(!documents || documents.length === 0) ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="w-14 h-14 bg-primary/5 rounded-full flex items-center justify-center mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-7 h-7 text-primary/25">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg>
-          </div>
-          <p className="text-primary/45 text-[13px] max-w-[240px] leading-relaxed">
-            {q ? `No documents matching &ldquo;${q}&rdquo;.` : 'No documents have been shared with you yet.'}
-          </p>
-        </div>
+      {!documents || documents.length === 0 ? (
+        <EmptyState
+          icon={<FolderOpen className="w-6 h-6" />}
+          title={q ? 'No matching documents' : 'No documents yet'}
+          description={
+            q
+              ? `Nothing matches &ldquo;${q}&rdquo;. Try a different search.`
+              : 'No documents have been shared with you yet.'
+          }
+        />
       ) : (
         <div className="space-y-3">
           {documents.map(doc => {
-            const jur = doc.jurisdictions as unknown as { name: string } | null
-            const jName = jur?.name || ''
-            const jColor = jName === 'CBK'
-              ? 'bg-primary text-white'
-              : jName === 'ODPC'
-                ? 'bg-accent text-white'
-                : 'bg-primary/10 text-primary'
-            const typeLabel = doc.doc_type ? DOC_TYPE_LABELS[doc.doc_type] || doc.doc_type : null
+            const jur = doc.jurisdictions as unknown as {
+              name: string
+            } | null
+            const typeLabel = doc.doc_type
+              ? DOC_TYPE_LABELS[doc.doc_type] || doc.doc_type
+              : null
 
             return (
               <Link
                 key={doc.id}
                 href={`/dashboard/documents/${doc.id}`}
-                className="group relative flex overflow-hidden bg-white border border-[#1a2744]/8 rounded-xl transition-all duration-200 hover:border-[#1a2744]/18 hover:shadow-[0_4px_24px_rgba(26,39,68,0.07)] active:scale-[0.995]"
+                className="group relative flex overflow-hidden bg-white border border-primary/10 rounded-2xl transition-all duration-300 hover:border-accent/30 hover:shadow-[0_8px_30px_-10px_rgba(26,39,68,0.08)]"
               >
-                {/* Left accent stripe */}
-                <div className="w-1 shrink-0 bg-primary/20 group-hover:bg-primary/40 transition-colors" />
+                <div className="w-1 shrink-0 bg-primary/20 group-hover:bg-accent transition-colors" />
 
-                <div className="flex-1 px-4 py-4">
-                  {/* Title row */}
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-semibold text-[15px] leading-snug tracking-tight text-primary flex-1">
+                <div className="flex-1 px-5 py-4">
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <h3 className="font-serif font-semibold text-base leading-snug tracking-tight text-primary flex-1 group-hover:text-accent transition-colors">
                       {doc.title}
                     </h3>
-                    {jName && (
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider shrink-0 ${jColor}`}>
-                        {jName}
-                      </span>
-                    )}
+                    <div className="flex items-center gap-2 shrink-0">
+                      {jur?.name && <Badge variant="accent">{jur.name}</Badge>}
+                    </div>
                   </div>
 
-                  {/* Meta row */}
-                  <div className="flex items-center gap-2 text-[11px] text-primary/40 mb-2">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-primary/50 mb-2">
                     {typeLabel && typeLabel !== 'Other' && (
-                      <>
-                        <span className="px-2 py-0.5 bg-primary/5 rounded font-medium text-primary/55">
-                          {typeLabel}
-                        </span>
-                        <span className="text-primary/15">·</span>
-                      </>
+                      <Badge>{typeLabel}</Badge>
                     )}
                     <span>
                       {doc.effective_date
-                        ? `Issued ${new Date(doc.effective_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`
-                        : `Shared ${new Date(doc.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}`
-                      }
+                        ? `Issued ${new Date(
+                            doc.effective_date
+                          ).toLocaleDateString('en-GB', {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          })}`
+                        : `Shared ${new Date(doc.created_at).toLocaleDateString(
+                            'en-GB',
+                            {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric',
+                            }
+                          )}`}
                     </span>
                   </div>
 
                   {doc.summary && (
-                    <p className="text-[13px] text-primary/50 leading-[1.65] line-clamp-2">
+                    <p className="text-[13px] text-primary/60 leading-relaxed line-clamp-2">
                       {doc.summary}
                     </p>
                   )}
+                </div>
+
+                <div className="shrink-0 flex items-center pr-4 text-primary/30 opacity-0 group-hover:opacity-100 group-hover:text-accent transition-all">
+                  <ArrowRight className="w-4 h-4" />
                 </div>
               </Link>
             )

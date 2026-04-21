@@ -31,8 +31,11 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/login')
   const pathname = request.nextUrl.pathname
+  const isAuthRoute =
+    pathname.startsWith('/login') ||
+    pathname.startsWith('/lawyer-login') ||
+    pathname.startsWith('/admin-login')
 
   // Redirect unauthenticated users to login
   if (!user && !isAuthRoute && pathname !== '/') {

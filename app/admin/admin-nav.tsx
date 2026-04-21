@@ -2,17 +2,17 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, Users, FolderOpen, FileText } from 'lucide-react'
+import { BarChart3, Scale, Users, ScrollText } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
 const navItems: { href: string; label: string; icon: LucideIcon }[] = [
-  { href: '/lawyer', label: 'Overview', icon: LayoutDashboard },
-  { href: '/lawyer/clients', label: 'Clients', icon: Users },
-  { href: '/lawyer/documents', label: 'Documents', icon: FolderOpen },
-  { href: '/lawyer/briefings', label: 'Briefings', icon: FileText },
+  { href: '/admin', label: 'Metrics', icon: BarChart3 },
+  { href: '/admin/lawyers', label: 'Lawyers', icon: Scale },
+  { href: '/admin/clients', label: 'All Clients', icon: Users },
+  { href: '/admin/audit-logs', label: 'Audit Logs', icon: ScrollText },
 ]
 
-export default function LawyerNav() {
+export default function AdminNav() {
   const pathname = usePathname()
 
   return (
@@ -20,7 +20,7 @@ export default function LawyerNav() {
       {navItems.map(item => {
         const isActive =
           pathname === item.href ||
-          (item.href !== '/lawyer' && pathname.startsWith(item.href))
+          (item.href !== '/admin' && pathname.startsWith(item.href))
         const Icon = item.icon
 
         return (

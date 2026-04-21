@@ -1,44 +1,65 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
+import AdminNav from './admin-nav'
 
 export default async function AdminLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login');
+    redirect('/login')
   }
 
-  const { data: profile } = await supabase.from('profiles').select('role, first_name, email').eq('id', user.id).single();
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role, first_name, email')
+    .eq('id', user.id)
+    .single()
 
   if (profile?.role !== 'admin') {
-    redirect('/dashboard');
+    redirect('/dashboard')
   }
 
   return (
-    <div className="flex h-screen bg-cream">
-      <aside className="w-64 bg-zinc-900 text-white flex flex-col">
-        <div className="p-6">
-          <h2 className="text-xl font-serif font-semibold text-white">RegWatch <span className="text-zinc-400 text-sm font-sans block">Admin Operations</span></h2>
+    <div className="flex h-screen bg-[var(--background)]">
+      <aside className="w-64 bg-zinc-950 text-white flex flex-col border-r border-black shadow-2xl relative z-10 overflow-hidden">
+        <div className="px-6 py-8 border-b border-white/5 bg-gradient-to-b from-white/5 to-transparent relative">
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-accent shadow-[0_0_8px_rgba(139,28,63,0.8)]" />
+            <h2 className="text-2xl font-serif font-bold text-white tracking-tight">
+              RegWatch
+            </h2>
+          </div>
+          <span className="text-accent text-[11px] font-bold uppercase tracking-widest block ml-4">
+            Admin Operations
+          </span>
         </div>
-        <nav className="flex-1 px-4 py-4 space-y-2">
-          <a href="/admin" className="block px-4 py-2 bg-white/10 rounded">Metrics</a>
-          <a href="/admin/lawyers" className="block px-4 py-2 hover:bg-white/5 rounded">Lawyers</a>
-          <a href="/admin/clients" className="block px-4 py-2 hover:bg-white/5 rounded">All Clients</a>
-          <a href="/admin/audit-logs" className="block px-4 py-2 hover:bg-white/5 rounded">Audit Logs</a>
-        </nav>
-        <div className="p-4 border-t border-white/10">
-          <span className="text-sm">{profile?.email}</span>
+
+        <AdminNav />
+
+        <div className="p-6 border-t border-white/5 bg-black/30 relative">
+          <span className="text-[11px] text-white/50 block mb-1 uppercase tracking-widest font-semibold">
+            Signed in as
+          </span>
+          <span
+            className="text-sm font-medium text-white/90 truncate block"
+            title={profile?.email}
+          >
+            {profile?.email}
+          </span>
         </div>
       </aside>
 
-      <main className="flex-1 overflow-auto bg-white m-4 rounded-xl shadow-sm border border-black/5 p-8">
-        {children}
+      <main className="flex-1 overflow-auto bg-white/60 m-3 md:m-4 rounded-xl shadow-lg border border-primary/10 relative">
+        <div className="absolute inset-0 bg-white/40 backdrop-blur-3xl -z-10 rounded-xl" />
+        <div className="p-6 md:p-10 h-full">{children}</div>
       </main>
     </div>
-  );
+  )
 }
