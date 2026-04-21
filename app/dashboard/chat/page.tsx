@@ -3,6 +3,8 @@
 import { useSearchParams, useRouter } from 'next/navigation'
 import { useState, useRef, useEffect, Suspense, useCallback } from 'react'
 import Link from 'next/link'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -79,9 +81,80 @@ function MessageBubble({ message }: { message: Message }) {
       <div className="max-w-[85%] space-y-3">
         {/* Response bubble — legal document style */}
         <div className="bg-white border border-primary/15 rounded-2xl rounded-bl-sm px-6 py-5 shadow-sm border-l-4 border-l-primary/30">
-          <p className="text-[14.5px] font-sans text-primary leading-loose whitespace-pre-wrap">
-            {message.content}
-          </p>
+          <div className="text-[14.5px] font-sans text-primary leading-loose chat-markdown">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                p: ({ children }) => <p className="mb-3 last:mb-0">{children}</p>,
+                ul: ({ children }) => (
+                  <ul className="mb-3 last:mb-0 ml-5 list-disc space-y-1.5 marker:text-primary/40">
+                    {children}
+                  </ul>
+                ),
+                ol: ({ children }) => (
+                  <ol className="mb-3 last:mb-0 ml-5 list-decimal space-y-1.5 marker:text-primary/40">
+                    {children}
+                  </ol>
+                ),
+                li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+                strong: ({ children }) => (
+                  <strong className="font-semibold text-primary">{children}</strong>
+                ),
+                em: ({ children }) => <em className="italic text-primary/90">{children}</em>,
+                h1: ({ children }) => (
+                  <h3 className="font-serif font-bold text-lg text-primary mt-4 mb-2">
+                    {children}
+                  </h3>
+                ),
+                h2: ({ children }) => (
+                  <h3 className="font-serif font-bold text-base text-primary mt-4 mb-2">
+                    {children}
+                  </h3>
+                ),
+                h3: ({ children }) => (
+                  <h4 className="font-serif font-semibold text-[15px] text-primary mt-3 mb-1.5">
+                    {children}
+                  </h4>
+                ),
+                blockquote: ({ children }) => (
+                  <blockquote className="border-l-2 border-accent/40 pl-4 py-0.5 my-3 text-primary/70 italic">
+                    {children}
+                  </blockquote>
+                ),
+                code: ({ children }) => (
+                  <code className="px-1.5 py-0.5 bg-primary/5 rounded text-[13px] font-mono text-primary/80">
+                    {children}
+                  </code>
+                ),
+                a: ({ href, children }) => (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent"
+                  >
+                    {children}
+                  </a>
+                ),
+                hr: () => <hr className="my-4 border-primary/10" />,
+                table: ({ children }) => (
+                  <div className="my-3 overflow-x-auto">
+                    <table className="w-full text-[13px] border-collapse">{children}</table>
+                  </div>
+                ),
+                th: ({ children }) => (
+                  <th className="text-left font-semibold text-primary px-3 py-2 border-b border-primary/20">
+                    {children}
+                  </th>
+                ),
+                td: ({ children }) => (
+                  <td className="px-3 py-2 border-b border-primary/5 align-top">{children}</td>
+                ),
+              }}
+            >
+              {message.content}
+            </ReactMarkdown>
+          </div>
         </div>
 
         {/* Citations — formal legal footnotes */}
@@ -375,17 +448,30 @@ function ChatContent() {
             className="flex-1 text-[15px] font-sans bg-transparent focus:outline-none resize-none text-primary placeholder:text-primary/30 disabled:opacity-50 leading-relaxed py-1"
             style={{ maxHeight: 150 }}
           />
-          <button
-            onClick={() => sendMessage(input)}
-            disabled={!input.trim() || isStreaming}
-            className="p-2.5 rounded-xl bg-primary text-white disabled:opacity-30 transition-all duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent hover:shadow-md active:scale-95 cursor-pointer disabled:cursor-not-allowed"
-            aria-label="Send"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
-          </button>
+          {isStreaming ? (
+            <button
+              onClick={() => abortRef.current?.abort()}
+              className="p-2.5 rounded-xl bg-accent text-white transition-all duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent/90 hover:shadow-md active:scale-95 cursor-pointer"
+              aria-label="Stop generating"
+              title="Stop generating"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+                <rect x="6" y="6" width="12" height="12" rx="1.5" />
+              </svg>
+            </button>
+          ) : (
+            <button
+              onClick={() => sendMessage(input)}
+              disabled={!input.trim()}
+              className="p-2.5 rounded-xl bg-primary text-white disabled:opacity-30 transition-all duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent hover:shadow-md active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+              aria-label="Send"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
+                <line x1="22" y1="2" x2="11" y2="13" />
+                <polygon points="22 2 15 22 11 13 2 9 22 2" />
+              </svg>
+            </button>
+          )}
         </div>
         <p className="text-[11px] font-sans text-primary/30 text-center mt-3 tracking-wide">
           Responses grounded solely in documents published to your account · MN Legal AI
