@@ -49,13 +49,29 @@ export default async function LoginPage({
       errorMessage={errorMessage}
       action={login}
       footer={
-        <p>
-          Not yet a client?{' '}
-          <ShellFooterLink href="/">
-            Request concierge access
-          </ShellFooterLink>
-          .
-        </p>
+        <>
+          <p>
+            Not yet a client?{' '}
+            <ShellFooterLink href="/">
+              Request concierge access
+            </ShellFooterLink>
+            .
+          </p>
+          <p>
+            MNL counsel?{' '}
+            <ShellFooterLink href="/lawyer-login">
+              Counsel sign-in
+            </ShellFooterLink>
+            .
+          </p>
+          <p>
+            Platform admin?{' '}
+            <ShellFooterLink href="/admin-login">
+              Admin sign-in
+            </ShellFooterLink>
+            .
+          </p>
+        </>
       }
     />
   )

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
+import { PortalBadge } from '@/components/ui/portal-badge'
 
 export interface SignInShellProps {
   variant: 'client' | 'lawyer' | 'admin'
@@ -124,17 +125,20 @@ export function SignInShell({
 
       <section className="flex items-center justify-center p-8 sm:p-12 bg-[#f5f3ef]">
         <div className="w-full max-w-md">
-          <div className="flex items-center gap-3 mb-10">
-            <div
-              className="h-px w-5"
-              style={{ background: p.eyebrowColor }}
-            />
-            <span
-              className="font-sans text-xs tracking-[0.2em] uppercase"
-              style={{ color: p.eyebrowColor }}
-            >
-              {formTitle}
-            </span>
+          <div className="flex items-center justify-between gap-3 mb-10">
+            <div className="flex items-center gap-3">
+              <div
+                className="h-px w-5"
+                style={{ background: p.eyebrowColor }}
+              />
+              <span
+                className="font-sans text-xs tracking-[0.2em] uppercase"
+                style={{ color: p.eyebrowColor }}
+              >
+                {formTitle}
+              </span>
+            </div>
+            <PortalBadge variant={variant} tone="light" />
           </div>
 
           <h1

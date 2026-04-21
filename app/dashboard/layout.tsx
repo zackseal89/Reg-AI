@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ClientSidepanel } from './_components/client-sidepanel'
 import { MobileDrawer } from './_components/mobile-drawer'
+import { PortalBadge } from '@/components/ui/portal-badge'
 
 export default async function DashboardLayout({
   children,
@@ -56,13 +57,16 @@ export default async function DashboardLayout({
             </span>
           </div>
 
-          <Link
-            href="/dashboard/profile"
-            className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-[12px] font-semibold text-white shadow hover:bg-accent transition-all active:scale-95 duration-200"
-            aria-label="Profile"
-          >
-            {initials}
-          </Link>
+          <div className="flex items-center gap-3">
+            <PortalBadge variant="client" className="hidden sm:inline-flex" />
+            <Link
+              href="/dashboard/profile"
+              className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-[12px] font-semibold text-white shadow hover:bg-accent transition-all active:scale-95 duration-200"
+              aria-label="Profile"
+            >
+              {initials}
+            </Link>
+          </div>
         </header>
 
         <main className="flex-1 overflow-auto">

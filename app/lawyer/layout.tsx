@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import LawyerNav from "./lawyer-nav";
+import { PortalBadge } from "@/components/ui/portal-badge";
 
 export default async function LawyerLayout({
   children,
@@ -48,7 +49,16 @@ export default async function LawyerLayout({
 
       <main className="flex-1 overflow-auto bg-white/60 m-3 md:m-4 rounded-xl shadow-lg border border-primary/10 relative">
         <div className="absolute inset-0 bg-white/40 backdrop-blur-3xl -z-10 rounded-xl" />
-        <div className="p-6 md:p-10 h-full">
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-6 md:px-10 pt-5 pb-3 border-b border-primary/5 bg-white/50 backdrop-blur rounded-t-xl">
+          <PortalBadge variant="lawyer" tone="light" />
+          <span
+            className="font-sans text-[11px] text-primary/45 tracking-widest uppercase truncate max-w-[60%]"
+            title={profile?.email}
+          >
+            {profile?.email}
+          </span>
+        </div>
+        <div className="p-6 md:p-10">
           {children}
         </div>
       </main>
