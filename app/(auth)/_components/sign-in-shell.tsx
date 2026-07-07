@@ -95,7 +95,9 @@ export function SignInShell({
               <PortalBadge variant={variant} tone="light" />
             </div>
 
-            <h1 className="text-h2 text-primary mb-2">Sign in to RegWatch</h1>
+            <h1 className="text-h2 font-serif text-primary mb-2">
+              Sign in to RegWatch
+            </h1>
             <p className="font-sans text-body-sm text-ink-muted mb-8">
               {formSubtitle}
             </p>

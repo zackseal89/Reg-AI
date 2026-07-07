@@ -80,7 +80,7 @@ export default async function ProfilePage({
             {initials}
           </div>
           <div className="min-w-0">
-            <p className="text-h3 text-primary truncate">
+            <p className="text-h3 font-serif text-primary truncate">
               {profile?.first_name} {profile?.last_name}
             </p>
             <div className="flex items-center gap-2 mt-1">

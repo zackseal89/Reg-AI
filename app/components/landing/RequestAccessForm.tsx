@@ -114,7 +114,7 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
                 MNL Advocates LLP
               </span>
             </div>
-            <h2 id="request-form-title" className="text-h3 text-primary leading-tight">
+            <h2 id="request-form-title" className="text-h3 font-serif text-primary leading-tight">
               Request confidential access
             </h2>
           </div>
@@ -134,7 +134,7 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
               <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 bg-success/10">
                 <Check className="w-8 h-8 text-success" strokeWidth={1.5} />
               </div>
-              <h3 className="text-h3 text-primary mb-3">Request received</h3>
+              <h3 className="text-h3 font-serif text-primary mb-3">Request received</h3>
               <p className="font-sans text-body-sm text-ink-muted leading-relaxed max-w-sm">
                 Thank you. A member of the MNL team will be in touch within one
                 business day to discuss your onboarding.

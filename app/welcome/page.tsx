@@ -80,7 +80,7 @@ export default async function WelcomePage({
               </span>
             </div>
 
-            <h1 className="text-h2 text-primary mb-2">
+            <h1 className="text-h2 font-serif text-primary mb-2">
               {profile?.first_name
                 ? `Karibu, ${profile.first_name}`
                 : 'Set your password'}
