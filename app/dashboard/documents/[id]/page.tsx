@@ -2,6 +2,9 @@ import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { ArrowLeft, Download, MessageSquare } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 const DOC_TYPE_LABELS: Record<string, string> = {
   circular: 'Circular',
@@ -43,76 +46,71 @@ export default async function DocumentViewerPage({
     .createSignedUrl(doc.storage_path, 3600)
 
   const jurisdiction = doc.jurisdictions as unknown as { name: string } | null
-  const jName = jurisdiction?.name || ''
-  const jColor = jName === 'CBK'
-    ? 'bg-primary text-white'
-    : jName === 'ODPC'
-      ? 'bg-accent text-white'
-      : 'bg-primary/10 text-primary'
-  const typeLabel = doc.doc_type ? DOC_TYPE_LABELS[doc.doc_type] || doc.doc_type : null
+  const typeLabel = doc.doc_type
+    ? DOC_TYPE_LABELS[doc.doc_type] || doc.doc_type
+    : null
 
   return (
-    <div className="px-4 py-6">
-      {/* Back */}
-      <Link href="/dashboard/documents" className="inline-flex items-center gap-1 text-sm text-primary/50 hover:text-primary mb-4">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
+    <div className="max-w-3xl pb-20">
+      <Link
+        href="/dashboard/documents"
+        className="inline-flex items-center gap-1.5 text-caption font-medium text-ink-muted hover:text-primary mb-6 transition-colors"
+      >
+        <ArrowLeft className="w-3.5 h-3.5" />
         Back to Documents
       </Link>
 
-      {/* Header */}
       <div className="mb-4">
         <div className="flex items-start justify-between gap-3 mb-2">
-          <h1 className="text-xl font-serif font-semibold leading-tight flex-1">{doc.title}</h1>
+          <h1 className="text-h2 font-serif font-bold text-primary leading-tight flex-1">
+            {doc.title}
+          </h1>
           {signedUrl?.signedUrl && (
             <a
               href={signedUrl.signedUrl}
               download={doc.file_name || 'document.pdf'}
-              className="shrink-0 p-2 border border-black/10 rounded-lg hover:bg-cream transition-colors"
+              className="shrink-0 p-2 rounded-md border border-hairline text-ink-muted hover:bg-surface-low hover:text-primary transition-colors"
               title="Download PDF"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-5 h-5 text-primary/60">
-                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
+              <Download className="w-4 h-4" />
             </a>
           )}
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs text-primary/50">
-          {jName && (
-            <span className={`px-2 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wider ${jColor}`}>
-              {jName}
-            </span>
-          )}
-          {typeLabel && typeLabel !== 'Other' && (
-            <span className="px-2 py-0.5 bg-primary/5 rounded font-medium">{typeLabel}</span>
-          )}
+        <div className="flex flex-wrap items-center gap-2 text-caption text-ink-muted">
+          {jurisdiction?.name && <Badge variant="accent">{jurisdiction.name}</Badge>}
+          {typeLabel && typeLabel !== 'Other' && <Badge>{typeLabel}</Badge>}
           {doc.reference_number && <span>Ref: {doc.reference_number}</span>}
           {doc.issuing_body && <span>By: {doc.issuing_body}</span>}
           {doc.effective_date && (
-            <span>Issued {new Date(doc.effective_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+            <span>
+              Issued{' '}
+              {new Date(doc.effective_date).toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              })}
+            </span>
           )}
         </div>
       </div>
 
-      {/* Lawyer's Summary */}
       {doc.summary && (
-        <div className="mb-4 p-4 bg-cream rounded-xl border border-black/5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-primary/40 mb-2">Summary from your legal team</h2>
-          <p className="text-sm text-primary/80 leading-relaxed">{doc.summary}</p>
+        <div className="mb-4 p-4 bg-surface-low/60 rounded-lg border border-hairline/60">
+          <h2 className="text-eyebrow font-bold uppercase tracking-widest text-ink-muted mb-2">
+            Summary from your legal team
+          </h2>
+          <p className="text-body-sm text-ink-secondary leading-relaxed">
+            {doc.summary}
+          </p>
         </div>
       )}
 
-      {/* Description */}
       {doc.description && (
-        <p className="text-sm text-primary/70 mb-4">{doc.description}</p>
+        <p className="text-body-sm text-ink-secondary mb-4">{doc.description}</p>
       )}
 
-      {/* PDF Viewer */}
       {signedUrl?.signedUrl ? (
-        <div className="mb-6 rounded-xl overflow-hidden border border-black/10 bg-white">
+        <div className="mb-6 rounded-lg overflow-hidden border border-hairline bg-white">
           <iframe
             src={`${signedUrl.signedUrl}#toolbar=1&navpanes=0`}
             className="w-full h-[70vh] min-h-[400px]"
@@ -120,20 +118,18 @@ export default async function DocumentViewerPage({
           />
         </div>
       ) : (
-        <div className="mb-6 p-8 text-center border border-black/10 rounded-xl bg-white">
-          <p className="text-sm text-primary/50">Unable to load document preview.</p>
+        <div className="mb-6 p-8 text-center border border-hairline rounded-lg bg-white">
+          <p className="text-body-sm text-ink-muted">
+            Unable to load document preview.
+          </p>
         </div>
       )}
 
-      {/* Ask AI CTA */}
-      <Link
-        href={`/dashboard/chat?context=document&id=${doc.id}`}
-        className="fixed bottom-20 right-4 px-5 py-3 bg-accent text-white rounded-full text-sm font-medium shadow-lg hover:bg-accent/90 transition-colors z-40 flex items-center gap-2"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-        </svg>
-        Ask AI about this document
+      <Link href={`/dashboard/chat?context=document&id=${doc.id}`}>
+        <Button className="fixed bottom-20 right-4 shadow-elevated z-40">
+          <MessageSquare className="w-4 h-4" />
+          Ask AI about this document
+        </Button>
       </Link>
     </div>
   )

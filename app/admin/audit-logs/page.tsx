@@ -102,7 +102,7 @@ export default async function AdminAuditLogsPage({
         title="Audit Logs"
         description="Every significant action on the platform, in order."
       >
-        <span className="text-sm text-primary/50 font-medium">
+        <span className="text-body-sm text-ink-muted font-medium">
           {count ?? 0} entries
         </span>
       </PageHeader>
@@ -152,25 +152,25 @@ export default async function AdminAuditLogsPage({
         <Card className="overflow-hidden p-0">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-primary/[0.02] border-b border-primary/5">
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+              <tr className="bg-primary/[0.02] border-b border-hairline/60">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Time
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Action
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Entity
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Performed By
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Details
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-primary/5">
+            <tbody className="divide-y divide-hairline/60">
               {logs.map(log => {
                 const profile = log.profiles as unknown as {
                   email: string
@@ -187,7 +187,7 @@ export default async function AdminAuditLogsPage({
                     key={log.id}
                     className="hover:bg-primary/[0.02] transition-colors"
                   >
-                    <td className="px-6 py-5 text-sm text-primary/50 whitespace-nowrap">
+                    <td className="px-6 py-5 text-body-sm text-ink-muted whitespace-nowrap">
                       <div className="text-primary/70 font-medium">
                         {new Date(log.created_at).toLocaleDateString('en-GB', {
                           day: 'numeric',
@@ -195,7 +195,7 @@ export default async function AdminAuditLogsPage({
                           year: 'numeric',
                         })}
                       </div>
-                      <div className="text-xs text-primary/40">
+                      <div className="text-caption text-ink-faint">
                         {new Date(log.created_at).toLocaleTimeString('en-GB', {
                           hour: '2-digit',
                           minute: '2-digit',
@@ -212,7 +212,7 @@ export default async function AdminAuditLogsPage({
                         {log.entity_type.replace(/_/g, ' ')}
                       </div>
                       {log.entity_id && (
-                        <div className="text-xs text-primary/40 font-mono mt-0.5">
+                        <div className="text-caption text-ink-faint font-mono mt-0.5">
                           {log.entity_id.slice(0, 8)}…
                         </div>
                       )}
@@ -223,12 +223,12 @@ export default async function AdminAuditLogsPage({
                           <div className="font-medium text-primary">
                             {profile.first_name} {profile.last_name}
                           </div>
-                          <div className="text-xs text-primary/50 capitalize mt-0.5">
+                          <div className="text-caption text-ink-muted capitalize mt-0.5">
                             {profile.role}
                           </div>
                         </>
                       ) : (
-                        <span className="text-primary/40">System</span>
+                        <span className="text-ink-faint">System</span>
                       )}
                     </td>
                     <td className="px-6 py-5 text-xs text-primary/60 max-w-[240px]">
@@ -237,7 +237,7 @@ export default async function AdminAuditLogsPage({
                             .filter(([, v]) => v !== null && v !== undefined)
                             .map(([k, v]) => (
                               <div key={k} className="truncate">
-                                <span className="text-primary/40">{k}: </span>
+                                <span className="text-ink-faint">{k}: </span>
                                 <span className="text-primary/70 font-medium">
                                   {Array.isArray(v) ? v.join(', ') : String(v)}
                                 </span>
@@ -254,7 +254,7 @@ export default async function AdminAuditLogsPage({
       )}
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-6 text-sm text-primary/50">
+        <div className="flex items-center justify-between mt-6 text-body-sm text-ink-muted">
           <span>
             Page {page} of {totalPages}
           </span>

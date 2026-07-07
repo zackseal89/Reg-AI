@@ -16,11 +16,11 @@ export async function inviteLawyerAction(formData: FormData) {
   const firstName = formData.get('firstName') as string
   const lastName = formData.get('lastName') as string
 
-  const { data: authData, error: authError } = await admin.auth.admin.createUser({
-    email,
-    email_confirm: false,
-    user_metadata: { first_name: firstName, last_name: lastName },
-  })
+  const { data: authData, error: authError } =
+    await admin.auth.admin.inviteUserByEmail(email, {
+      data: { first_name: firstName, last_name: lastName },
+      redirectTo: `${process.env.APP_URL ?? ''}/auth/confirm?next=/welcome`,
+    })
 
   if (authError) redirect('/admin/lawyers?error=' + encodeURIComponent(authError.message))
 

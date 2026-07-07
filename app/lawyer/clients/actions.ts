@@ -30,12 +30,12 @@ export async function createClientAction(formData: FormData) {
     redirect('/lawyer/clients?error=' + encodeURIComponent(companyError.message))
   }
 
-  // 2. Create auth user with invite (sends magic link email)
-  const { data: authData, error: authError } = await admin.auth.admin.createUser({
-    email,
-    email_confirm: false,
-    user_metadata: { first_name: firstName, last_name: lastName },
-  })
+  // 2. Create auth user and send the invite email (link lands on /welcome)
+  const { data: authData, error: authError } =
+    await admin.auth.admin.inviteUserByEmail(email, {
+      data: { first_name: firstName, last_name: lastName },
+      redirectTo: `${process.env.APP_URL ?? ''}/auth/confirm?next=/welcome`,
+    })
 
   if (authError) {
     // Clean up company

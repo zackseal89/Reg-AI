@@ -78,7 +78,7 @@ export default async function AdminLawyersPage({
       </PageHeader>
 
       {error && (
-        <div className="mb-8 p-4 bg-accent/5 border-l-4 border-accent rounded-r-lg text-accent text-sm font-medium shadow-sm">
+        <div className="mb-8 p-4 bg-accent/5 border-l-4 border-accent rounded-r-lg text-accent text-body-sm font-medium shadow-soft">
           {error}
         </div>
       )}
@@ -93,25 +93,25 @@ export default async function AdminLawyersPage({
         <Card className="overflow-hidden p-0">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-primary/[0.02] border-b border-primary/5">
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+              <tr className="bg-primary/[0.02] border-b border-hairline/60">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Lawyer
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Clients Managed
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Status
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Joined
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50 text-right">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted text-right">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-primary/5">
+            <tbody className="divide-y divide-hairline/60">
               {enriched.map(lawyer => (
                 <tr
                   key={lawyer.id}
@@ -121,11 +121,11 @@ export default async function AdminLawyersPage({
                     <div className="font-medium text-primary">
                       {lawyer.first_name} {lawyer.last_name}
                     </div>
-                    <div className="text-primary/50 text-xs mt-0.5">
+                    <div className="text-ink-muted text-caption mt-0.5">
                       {lawyer.email}
                     </div>
                   </td>
-                  <td className="px-6 py-5 text-sm text-primary/70 font-medium">
+                  <td className="px-6 py-5 text-body-sm text-ink-secondary font-medium">
                     {lawyer.clientCount}
                   </td>
                   <td className="px-6 py-5">
@@ -135,7 +135,7 @@ export default async function AdminLawyersPage({
                       {lawyer.status}
                     </Badge>
                   </td>
-                  <td className="px-6 py-5 text-sm text-primary/50">
+                  <td className="px-6 py-5 text-body-sm text-ink-muted">
                     {new Date(lawyer.created_at).toLocaleDateString('en-GB', {
                       day: 'numeric',
                       month: 'short',
@@ -147,7 +147,7 @@ export default async function AdminLawyersPage({
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button
-                            className="p-2 rounded-lg text-primary/50 hover:bg-primary/5 hover:text-primary transition-colors"
+                            className="p-2 rounded-lg text-ink-muted hover:bg-primary/5 hover:text-primary transition-colors"
                             aria-label="More actions"
                           >
                             <MoreHorizontal className="w-4 h-4" />

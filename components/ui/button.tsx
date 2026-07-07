@@ -3,27 +3,33 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 font-sans font-semibold rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] select-none',
+  'inline-flex items-center justify-center gap-2 font-sans font-medium transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] select-none',
   {
     variants: {
       variant: {
+        /* Pill CTAs — burgundy is the one structural accent */
         primary:
-          'bg-primary text-white shadow-sm hover:bg-accent hover:shadow-md',
+          'bg-accent text-white rounded-full shadow-soft hover:bg-accent-active',
         accent:
-          'bg-accent text-white shadow-sm hover:bg-accent/90 hover:shadow-md',
+          'bg-accent text-white rounded-full shadow-soft hover:bg-accent-active',
+        /* White pill, soft shadow — hero/secondary CTA */
+        secondary:
+          'bg-white text-primary rounded-full border border-hairline shadow-soft hover:bg-cream',
+        /* Utility — tight 8px radius, hairline; nav + table actions */
         outline:
-          'border border-primary/15 text-primary bg-white hover:bg-primary/[0.03] hover:border-primary/25',
-        ghost: 'text-primary/70 hover:text-primary hover:bg-primary/[0.04]',
-        destructive:
-          'bg-accent/5 text-accent border border-accent/15 hover:bg-accent/10 hover:border-accent/25',
+          'bg-white text-primary rounded-md border border-hairline hover:border-ink-faint hover:bg-cream',
         subtle:
-          'bg-primary/[0.04] text-primary border border-primary/10 hover:bg-primary/[0.08] hover:border-primary/20',
+          'bg-white text-primary rounded-md border border-hairline hover:border-ink-faint hover:bg-cream',
+        ghost:
+          'text-ink-muted rounded-md hover:text-primary hover:bg-primary/[0.05]',
+        destructive:
+          'bg-white text-error rounded-md border border-error/25 hover:bg-error/5 hover:border-error/40',
       },
       size: {
-        sm: 'text-[11px] uppercase tracking-wider px-3 py-1.5',
-        md: 'text-[13px] uppercase tracking-widest px-5 py-2.5',
-        lg: 'text-[13px] uppercase tracking-widest px-7 py-3.5',
-        icon: 'p-2 rounded-lg',
+        sm: 'text-caption px-3.5 py-1.5',
+        md: 'text-body-sm px-5 py-2',
+        lg: 'text-body px-7 py-3',
+        icon: 'p-2 rounded-md',
       },
     },
     defaultVariants: {

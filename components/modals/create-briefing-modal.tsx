@@ -101,20 +101,20 @@ export function CreateBriefingModal({
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1 max-h-48 overflow-y-auto pr-1">
                 {clients.length === 0 ? (
-                  <p className="text-sm text-primary/50 col-span-full py-4 text-center bg-primary/5 rounded-xl">
+                  <p className="text-body-sm text-ink-muted col-span-full py-4 text-center bg-surface-low/60 rounded-lg">
                     No clients yet. Onboard one first.
                   </p>
                 ) : (
                   clients.map(c => (
                     <label
                       key={c.id}
-                      className="flex items-center gap-3 p-3 border border-primary/10 rounded-xl hover:bg-primary/5 hover:border-primary/20 transition-all cursor-pointer group"
+                      className="flex items-center gap-3 p-3 border border-hairline rounded-lg hover:bg-primary/5 hover:border-primary/20 transition-all cursor-pointer group"
                     >
                       <Checkbox name="clientIds" value={c.id} />
-                      <span className="text-sm font-medium text-primary group-hover:text-accent transition-colors">
+                      <span className="text-body-sm font-medium text-primary group-hover:text-accent transition-colors">
                         {c.first_name} {c.last_name}
                         {c.company_name && (
-                          <span className="text-primary/50 text-xs block font-normal">
+                          <span className="text-ink-muted text-caption block font-normal">
                             {c.company_name}
                           </span>
                         )}

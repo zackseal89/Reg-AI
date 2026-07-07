@@ -12,15 +12,15 @@ export const Select = React.forwardRef<
     ref={ref}
     style={{
       backgroundImage: chevronBg,
-      backgroundPosition: 'right 1rem center',
+      backgroundPosition: 'right 0.875rem center',
       backgroundSize: '1em',
       backgroundRepeat: 'no-repeat',
       ...style,
     }}
     className={cn(
-      'w-full px-4 py-3 pr-10 border border-primary/15 rounded-xl text-[15px] font-sans text-primary',
+      'w-full px-3.5 py-2.5 pr-10 border border-hairline rounded-xs text-body-sm font-sans text-primary',
       'bg-white appearance-none',
-      'focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent/40',
+      'focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent/50 focus:shadow-soft',
       'disabled:opacity-50 disabled:cursor-not-allowed',
       'transition-all',
       className

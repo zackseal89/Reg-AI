@@ -1,9 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import { ClientSidepanel } from './_components/client-sidepanel'
-import { MobileDrawer } from './_components/mobile-drawer'
-import { PortalBadge } from '@/components/ui/portal-badge'
+import { AppShell } from '@/components/layout/app-shell'
 
 export default async function DashboardLayout({
   children,
@@ -37,44 +34,13 @@ export default async function DashboardLayout({
       .toUpperCase() || '?'
 
   return (
-    <div className="flex h-screen bg-[var(--background)]">
-      <aside className="hidden lg:flex w-72 shrink-0">
-        <ClientSidepanel companyName={company?.name} />
-      </aside>
-
-      <div className="flex-1 flex flex-col min-w-0">
-        <header
-          className="h-[60px] bg-[var(--background)]/80 backdrop-blur-xl border-b border-primary/5 px-4 md:px-8 flex items-center justify-between shrink-0 z-40 sticky top-0"
-          style={{ paddingTop: 'env(safe-area-inset-top)' }}
-        >
-          <div className="flex items-center gap-3 min-w-0">
-            <MobileDrawer companyName={company?.name} />
-            <span className="lg:hidden text-lg font-serif font-bold text-primary tracking-tight truncate">
-              {company?.name || 'RegWatch'}
-            </span>
-            <span className="hidden lg:block text-[13px] font-medium text-primary/50 tracking-wide">
-              Welcome back, {profile?.first_name || 'there'}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <PortalBadge variant="client" className="hidden sm:inline-flex" />
-            <Link
-              href="/dashboard/profile"
-              className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-[12px] font-semibold text-white shadow hover:bg-accent transition-all active:scale-95 duration-200"
-              aria-label="Profile"
-            >
-              {initials}
-            </Link>
-          </div>
-        </header>
-
-        <main className="flex-1 overflow-auto">
-          <div className="px-4 md:px-8 lg:px-10 py-6 md:py-8 max-w-6xl mx-auto">
-            {children}
-          </div>
-        </main>
-      </div>
-    </div>
+    <AppShell
+      role="client"
+      companyName={company?.name}
+      displayName={profile?.first_name || 'there'}
+      initials={initials}
+    >
+      {children}
+    </AppShell>
   )
 }

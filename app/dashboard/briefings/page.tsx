@@ -41,7 +41,7 @@ export default async function ClientBriefingsPage() {
             const jName = jurisdiction?.name || ''
             const preview =
               b.content?.length > 200
-                ? b.content.slice(0, 200) + '…'
+                ? b.content.slice(0, 200) + 'â€¦'
                 : b.content
 
             const isRecent =
@@ -54,13 +54,13 @@ export default async function ClientBriefingsPage() {
               <Link
                 key={b.id}
                 href={`/dashboard/briefings/${b.id}`}
-                className="group relative flex overflow-hidden bg-white border border-primary/10 rounded-2xl transition-all duration-300 hover:border-accent/30 hover:shadow-[0_8px_30px_-10px_rgba(26,39,68,0.1)]"
+                className="group relative flex overflow-hidden bg-white border border-hairline rounded-lg transition-all duration-300 hover:border-accent/30 hover:shadow-elevated"
               >
                 <div className="w-1 shrink-0 bg-accent opacity-0 translate-x-[-100%] group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ease-out" />
 
                 <div className="flex-1 px-6 py-5 transition-transform duration-300 group-hover:translate-x-1">
                   <div className="flex items-start justify-between gap-4 mb-3">
-                    <h3 className="font-serif font-bold text-xl leading-snug tracking-tight text-primary flex-1 group-hover:text-accent transition-colors duration-300">
+                    <h3 className="font-serif font-bold text-title leading-snug tracking-tight text-primary flex-1 group-hover:text-accent transition-colors duration-300">
                       {b.title}
                     </h3>
                     <div className="flex items-center gap-2 shrink-0 pt-1">
@@ -74,12 +74,12 @@ export default async function ClientBriefingsPage() {
                     </div>
                   </div>
 
-                  <p className="text-[14px] text-primary/70 leading-relaxed line-clamp-2 mb-4">
+                  <p className="text-body-sm text-ink-secondary leading-relaxed line-clamp-2 mb-4">
                     {preview}
                   </p>
 
-                  <div className="flex items-center justify-between border-t border-primary/5 pt-3">
-                    <span className="text-[11px] text-primary/40 font-semibold tracking-wider uppercase">
+                  <div className="flex items-center justify-between border-t border-hairline/60 pt-3">
+                    <span className="text-eyebrow text-ink-faint font-semibold tracking-wider uppercase">
                       {b.sent_at
                         ? new Date(b.sent_at).toLocaleDateString('en-GB', {
                             day: 'numeric',
@@ -88,7 +88,7 @@ export default async function ClientBriefingsPage() {
                           })
                         : ''}
                     </span>
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-accent opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 flex items-center gap-1.5">
+                    <span className="text-eyebrow font-bold uppercase tracking-widest text-accent opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 flex items-center gap-1.5">
                       Read analysis
                       <ArrowRight className="w-3.5 h-3.5" />
                     </span>

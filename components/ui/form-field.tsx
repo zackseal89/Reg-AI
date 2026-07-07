@@ -29,10 +29,10 @@ export function FormField({
       </Label>
       {children}
       {hint && !error && (
-        <span className="text-[12px] text-primary/50">{hint}</span>
+        <span className="text-eyebrow font-normal text-ink-muted">{hint}</span>
       )}
       {error && (
-        <span className="text-[12px] text-accent font-medium">{error}</span>
+        <span className="text-eyebrow text-error">{error}</span>
       )}
     </div>
   )

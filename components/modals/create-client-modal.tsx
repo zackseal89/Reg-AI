@@ -96,10 +96,10 @@ export function CreateClientModal({
                 {jurisdictions.map(j => (
                   <label
                     key={j.id}
-                    className="flex items-center gap-2.5 px-4 py-2.5 border border-primary/10 rounded-xl hover:bg-primary/5 cursor-pointer group transition-all"
+                    className="flex items-center gap-2.5 px-4 py-2.5 border border-hairline rounded-lg hover:bg-primary/5 cursor-pointer group transition-all"
                   >
                     <Checkbox name="jurisdictions" value={j.id} />
-                    <span className="text-sm font-medium text-primary group-hover:text-accent transition-colors">
+                    <span className="text-body-sm font-medium text-primary group-hover:text-accent transition-colors">
                       {j.name}
                     </span>
                   </label>

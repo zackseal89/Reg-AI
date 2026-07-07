@@ -109,19 +109,19 @@ export default async function AdminClientsPage({
         title="All Clients"
         description="Platform-wide client accounts across every lawyer."
       >
-        <span className="text-sm text-primary/50 font-medium">
+        <span className="text-body-sm text-ink-muted font-medium">
           {filtered.length} client{filtered.length !== 1 ? 's' : ''}
         </span>
       </PageHeader>
 
       {error && (
-        <div className="mb-8 p-4 bg-accent/5 border-l-4 border-accent rounded-r-lg text-accent text-sm font-medium shadow-sm">
+        <div className="mb-8 p-4 bg-accent/5 border-l-4 border-accent rounded-r-lg text-accent text-body-sm font-medium shadow-soft">
           {error}
         </div>
       )}
 
       <div className="flex flex-wrap items-center gap-2 mb-6">
-        <span className="text-[11px] font-bold text-primary/50 uppercase tracking-widest mr-2">
+        <span className="text-eyebrow font-bold text-ink-muted uppercase tracking-widest mr-2">
           Status
         </span>
         <FilterChip href={filterLink({ status: undefined })} active={!statusFilter}>
@@ -140,9 +140,9 @@ export default async function AdminClientsPage({
           Suspended
         </FilterChip>
 
-        <span className="mx-2 h-4 w-px bg-primary/10" />
+        <span className="mx-2 h-4 w-px bg-hairline" />
 
-        <span className="text-[11px] font-bold text-primary/50 uppercase tracking-widest mr-2">
+        <span className="text-eyebrow font-bold text-ink-muted uppercase tracking-widest mr-2">
           Jurisdiction
         </span>
         <FilterChip
@@ -184,28 +184,28 @@ export default async function AdminClientsPage({
         <Card className="overflow-hidden p-0">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-primary/[0.02] border-b border-primary/5">
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+              <tr className="bg-primary/[0.02] border-b border-hairline/60">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Client
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Company
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Jurisdictions
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Status
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Joined
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50 text-right">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted text-right">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-primary/5">
+            <tbody className="divide-y divide-hairline/60">
               {filtered.map(client => (
                 <tr
                   key={client.id}
@@ -215,7 +215,7 @@ export default async function AdminClientsPage({
                     <div className="font-medium text-primary">
                       {client.first_name} {client.last_name}
                     </div>
-                    <div className="text-primary/50 text-xs mt-0.5">
+                    <div className="text-ink-muted text-caption mt-0.5">
                       {client.email}
                     </div>
                   </td>
@@ -224,7 +224,7 @@ export default async function AdminClientsPage({
                       {client.company?.name || '—'}
                     </div>
                     {client.company?.sector && (
-                      <div className="text-xs text-primary/50 mt-0.5">
+                      <div className="text-caption text-ink-muted mt-0.5">
                         {client.company.sector}
                       </div>
                     )}
@@ -236,7 +236,7 @@ export default async function AdminClientsPage({
                           <Badge key={j.id}>{j.name}</Badge>
                         ))
                       ) : (
-                        <span className="text-primary/30">—</span>
+                        <span className="text-ink-faint">—</span>
                       )}
                     </div>
                   </td>
@@ -249,7 +249,7 @@ export default async function AdminClientsPage({
                       {client.status}
                     </Badge>
                   </td>
-                  <td className="px-6 py-5 text-sm text-primary/50">
+                  <td className="px-6 py-5 text-body-sm text-ink-muted">
                     {new Date(client.created_at).toLocaleDateString('en-GB', {
                       day: 'numeric',
                       month: 'short',
@@ -261,7 +261,7 @@ export default async function AdminClientsPage({
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button
-                            className="p-2 rounded-lg text-primary/50 hover:bg-primary/5 hover:text-primary transition-colors"
+                            className="p-2 rounded-lg text-ink-muted hover:bg-primary/5 hover:text-primary transition-colors"
                             aria-label="More actions"
                           >
                             <MoreHorizontal className="w-4 h-4" />
@@ -325,10 +325,10 @@ function FilterChip({
   return (
     <Link
       href={href}
-      className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+      className={`px-3 py-1.5 rounded-full text-caption font-medium border transition-colors ${
         active
           ? 'bg-primary text-white border-primary'
-          : 'bg-white text-primary/70 border-primary/10 hover:border-primary/30 hover:text-primary'
+          : 'bg-white text-ink-secondary border-hairline hover:border-primary/30 hover:text-primary'
       }`}
     >
       {children}

@@ -3,12 +3,14 @@ import { cn } from '@/lib/utils'
 
 export function Card({
   className,
+  elevated = false,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.HTMLAttributes<HTMLDivElement> & { elevated?: boolean }) {
   return (
     <div
       className={cn(
-        'border border-primary/10 bg-white rounded-2xl shadow-sm',
+        'border border-hairline bg-white rounded-lg',
+        elevated && 'shadow-soft',
         className
       )}
       {...props}
@@ -23,7 +25,7 @@ export function CardHeader({
   return (
     <div
       className={cn(
-        'px-6 py-5 border-b border-primary/5 flex items-start justify-between gap-4',
+        'px-6 py-5 border-b border-hairline/60 flex items-start justify-between gap-4',
         className
       )}
       {...props}
@@ -37,7 +39,7 @@ export function CardTitle({
 }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn('font-serif text-xl font-semibold text-primary', className)}
+      className={cn('font-serif text-h3 text-primary', className)}
       {...props}
     />
   )
@@ -49,7 +51,7 @@ export function CardDescription({
 }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
-      className={cn('text-sm text-primary/60 mt-1', className)}
+      className={cn('text-body-sm text-ink-muted mt-1', className)}
       {...props}
     />
   )
@@ -69,7 +71,7 @@ export function CardFooter({
   return (
     <div
       className={cn(
-        'px-6 py-4 border-t border-primary/5 flex items-center gap-2',
+        'px-6 py-4 border-t border-hairline/60 flex items-center gap-2',
         className
       )}
       {...props}

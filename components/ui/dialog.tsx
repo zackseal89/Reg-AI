@@ -43,7 +43,7 @@ export const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         className={cn(
-          'fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 bg-surface border border-primary/10 rounded-2xl shadow-2xl',
+          'fixed left-1/2 top-1/2 z-50 w-[calc(100vw-2rem)] -translate-x-1/2 -translate-y-1/2 bg-white border border-hairline rounded-xl shadow-elevated',
           'max-h-[90vh] overflow-hidden flex flex-col',
           'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
           'max-sm:inset-x-0 max-sm:bottom-0 max-sm:top-auto max-sm:left-0 max-sm:translate-x-0 max-sm:translate-y-0 max-sm:w-full max-sm:rounded-b-none max-sm:rounded-t-2xl max-sm:max-h-[94vh]',
@@ -114,7 +114,7 @@ export const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      'font-serif text-2xl font-bold text-primary leading-tight',
+      'font-sans text-h3 text-primary leading-tight',
       className
     )}
     {...props}
@@ -128,7 +128,7 @@ export const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn('text-sm text-primary/60 mt-1.5', className)}
+    className={cn('text-body-sm text-ink-muted mt-1.5', className)}
     {...props}
   />
 ))

@@ -37,8 +37,8 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith('/lawyer-login') ||
     pathname.startsWith('/admin-login')
 
-  // Redirect unauthenticated users to login
-  if (!user && !isAuthRoute && pathname !== '/') {
+  // Redirect unauthenticated users to login (/auth/* handles invite links)
+  if (!user && !isAuthRoute && pathname !== '/' && !pathname.startsWith('/auth')) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)

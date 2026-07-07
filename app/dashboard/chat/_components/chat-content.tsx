@@ -5,6 +5,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { MessageSquare, FileText, X, Square, Send } from 'lucide-react'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -30,17 +31,15 @@ function TypingIndicator() {
   return (
     <div className="flex items-end gap-3.5">
       {/* Avatar */}
-      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow border border-primary/20">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={1.5} className="w-4 h-4">
-          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-        </svg>
+      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow border border-hairline">
+        <MessageSquare className="w-4 h-4 text-white" strokeWidth={1.5} />
       </div>
-      <div className="bg-white border border-primary/10 rounded-2xl rounded-bl-sm px-6 py-4 shadow-sm">
+      <div className="bg-white border border-hairline rounded-2xl rounded-bl-sm px-6 py-4 shadow-soft">
         <span className="flex gap-1.5 items-center h-4">
           {[0, 1, 2].map((i) => (
             <span
               key={i}
-              className="w-1.5 h-1.5 rounded-full bg-primary/40 animate-bounce"
+              className="w-1.5 h-1.5 rounded-full bg-ink-faint animate-bounce"
               style={{ animationDelay: `${i * 0.15}s`, animationDuration: '0.8s' }}
             />
           ))}
@@ -72,27 +71,25 @@ function MessageBubble({ message }: { message: Message }) {
   return (
     <div className="flex items-end gap-3.5">
       {/* Avatar */}
-      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow border border-primary/20">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth={1.5} className="w-4 h-4">
-          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-        </svg>
+      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow border border-hairline">
+        <MessageSquare className="w-4 h-4 text-white" strokeWidth={1.5} />
       </div>
 
       <div className="max-w-[85%] space-y-3">
         {/* Response bubble — legal document style */}
-        <div className="bg-white border border-primary/15 rounded-2xl rounded-bl-sm px-6 py-5 shadow-sm border-l-4 border-l-primary/30">
+        <div className="bg-white border border-hairline rounded-2xl rounded-bl-sm px-6 py-5 shadow-soft border-l-4 border-l-primary/30">
           <div className="text-[14.5px] font-sans text-primary leading-loose chat-markdown">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
                 p: ({ children }) => <p className="mb-3 last:mb-0">{children}</p>,
                 ul: ({ children }) => (
-                  <ul className="mb-3 last:mb-0 ml-5 list-disc space-y-1.5 marker:text-primary/40">
+                  <ul className="mb-3 last:mb-0 ml-5 list-disc space-y-1.5 marker:text-ink-faint">
                     {children}
                   </ul>
                 ),
                 ol: ({ children }) => (
-                  <ol className="mb-3 last:mb-0 ml-5 list-decimal space-y-1.5 marker:text-primary/40">
+                  <ol className="mb-3 last:mb-0 ml-5 list-decimal space-y-1.5 marker:text-ink-faint">
                     {children}
                   </ol>
                 ),
@@ -100,29 +97,29 @@ function MessageBubble({ message }: { message: Message }) {
                 strong: ({ children }) => (
                   <strong className="font-semibold text-primary">{children}</strong>
                 ),
-                em: ({ children }) => <em className="italic text-primary/90">{children}</em>,
+                em: ({ children }) => <em className="italic text-ink-secondary">{children}</em>,
                 h1: ({ children }) => (
-                  <h3 className="font-serif font-bold text-lg text-primary mt-4 mb-2">
+                  <h3 className="font-sans font-bold text-lg text-primary mt-4 mb-2">
                     {children}
                   </h3>
                 ),
                 h2: ({ children }) => (
-                  <h3 className="font-serif font-bold text-base text-primary mt-4 mb-2">
+                  <h3 className="font-sans font-bold text-base text-primary mt-4 mb-2">
                     {children}
                   </h3>
                 ),
                 h3: ({ children }) => (
-                  <h4 className="font-serif font-semibold text-[15px] text-primary mt-3 mb-1.5">
+                  <h4 className="font-sans font-semibold text-[15px] text-primary mt-3 mb-1.5">
                     {children}
                   </h4>
                 ),
                 blockquote: ({ children }) => (
-                  <blockquote className="border-l-2 border-accent/40 pl-4 py-0.5 my-3 text-primary/70 italic">
+                  <blockquote className="border-l-2 border-accent/40 pl-4 py-0.5 my-3 text-ink-secondary italic">
                     {children}
                   </blockquote>
                 ),
                 code: ({ children }) => (
-                  <code className="px-1.5 py-0.5 bg-primary/5 rounded text-[13px] font-mono text-primary/80">
+                  <code className="px-1.5 py-0.5 bg-surface-low rounded text-caption font-mono text-ink-secondary">
                     {children}
                   </code>
                 ),
@@ -136,19 +133,19 @@ function MessageBubble({ message }: { message: Message }) {
                     {children}
                   </a>
                 ),
-                hr: () => <hr className="my-4 border-primary/10" />,
+                hr: () => <hr className="my-4 border-hairline/60" />,
                 table: ({ children }) => (
                   <div className="my-3 overflow-x-auto">
-                    <table className="w-full text-[13px] border-collapse">{children}</table>
+                    <table className="w-full text-caption border-collapse">{children}</table>
                   </div>
                 ),
                 th: ({ children }) => (
-                  <th className="text-left font-semibold text-primary px-3 py-2 border-b border-primary/20">
+                  <th className="text-left font-semibold text-primary px-3 py-2 border-b border-hairline">
                     {children}
                   </th>
                 ),
                 td: ({ children }) => (
-                  <td className="px-3 py-2 border-b border-primary/5 align-top">{children}</td>
+                  <td className="px-3 py-2 border-b border-hairline/60 align-top">{children}</td>
                 ),
               }}
             >
@@ -159,18 +156,18 @@ function MessageBubble({ message }: { message: Message }) {
 
         {/* Citations — formal legal footnotes */}
         {message.citations && message.citations.length > 0 && (
-          <div className="pl-2 space-y-1.5 border-l-2 border-primary/10 ml-2">
-            <p className="text-[10px] font-serif font-bold text-primary/40 uppercase tracking-widest mb-2">
+          <div className="pl-2 space-y-1.5 border-l-2 border-hairline ml-2">
+            <p className="text-eyebrow font-sans font-bold text-ink-faint uppercase tracking-widest mb-2">
               Sources
             </p>
             {message.citations.map((c, ci) => {
               const numberEl = (
-                <span className="text-[10px] text-primary/40 font-mono shrink-0 w-4 text-right font-semibold">
+                <span className="text-eyebrow text-ink-faint font-mono shrink-0 w-4 text-right font-semibold">
                   {ci + 1}.
                 </span>
               )
               const titleEl = (
-                <span className="text-[12px] font-sans text-primary/60 group-hover:text-accent transition-colors leading-tight underline decoration-primary/20 underline-offset-4 group-hover:decoration-accent/40">
+                <span className="text-caption font-sans text-ink-muted group-hover:text-accent transition-colors leading-tight underline decoration-hairline underline-offset-4 group-hover:decoration-accent/40">
                   {c.document_title}
                 </span>
               )
@@ -212,24 +209,22 @@ function EmptyState({
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-16">
       {/* Monogram mark */}
-      <div className="w-16 h-16 rounded-full border border-primary/10 bg-white flex items-center justify-center mb-6 shadow-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1} className="w-7 h-7 text-primary/40">
-          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
-        </svg>
+      <div className="w-16 h-16 rounded-full border border-hairline bg-white flex items-center justify-center mb-6 shadow-soft">
+        <MessageSquare className="w-7 h-7 text-ink-faint" strokeWidth={1} />
       </div>
 
-      <h2 className="text-2xl font-serif font-semibold text-primary mb-2 tracking-tight">
+      <h2 className="text-h3 font-serif font-bold text-primary mb-2 tracking-tight">
         AI Regulatory Counsel
       </h2>
-      <p className="text-[14px] font-sans text-primary/50 max-w-[320px] leading-relaxed mb-10">
+      <p className="text-body-sm font-sans text-ink-muted max-w-[320px] leading-relaxed mb-10">
         Ask questions about your regulatory documents. Every response is grounded in content reviewed by your legal team at MN Legal.
       </p>
 
       {/* Divider */}
       <div className="flex items-center gap-4 mb-6 w-full max-w-sm">
-        <div className="flex-1 h-px bg-primary/5" />
-        <span className="text-[10px] text-primary/30 font-bold uppercase tracking-widest">Suggested Inquiries</span>
-        <div className="flex-1 h-px bg-primary/5" />
+        <div className="flex-1 h-px bg-hairline/60" />
+        <span className="text-eyebrow text-ink-faint font-bold uppercase tracking-widest">Suggested Inquiries</span>
+        <div className="flex-1 h-px bg-hairline/60" />
       </div>
 
       <div className="grid gap-3 w-full max-w-sm">
@@ -237,7 +232,7 @@ function EmptyState({
           <button
             key={p}
             onClick={() => onPrompt(p)}
-            className="text-left px-5 py-4 bg-white border border-primary/10 rounded-xl text-[13px] text-primary/60 hover:border-accent/40 hover:text-primary transition-all duration-300 leading-relaxed shadow-sm hover:shadow-md"
+            className="text-left px-5 py-4 bg-white border border-hairline rounded-lg text-caption text-ink-secondary hover:border-accent/40 hover:text-primary transition-all duration-300 leading-relaxed shadow-soft hover:shadow-elevated"
           >
             &ldquo;{p}&rdquo;
           </button>
@@ -397,21 +392,15 @@ function ChatContent({ suggestedPrompts }: { suggestedPrompts: string[] }) {
       {/* Document context pill */}
       {documentId && documentTitle && (
         <div className="px-4 md:px-8 pt-4 pb-2 flex-shrink-0">
-          <div className="inline-flex items-center gap-2 pl-4 pr-2.5 py-2 bg-white border border-primary/10 rounded-full text-xs text-primary/60 shadow-sm transition-all hover:border-primary/20">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.75} className="w-3.5 h-3.5 text-accent flex-shrink-0">
-              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg>
-            <span className="max-w-[220px] truncate font-medium text-primary/80 font-sans tracking-wide">{documentTitle}</span>
+          <div className="inline-flex items-center gap-2 pl-4 pr-2.5 py-2 bg-white border border-hairline rounded-full text-caption text-ink-secondary shadow-soft transition-all hover:border-primary/20">
+            <FileText className="w-3.5 h-3.5 text-accent flex-shrink-0" strokeWidth={1.75} />
+            <span className="max-w-[220px] truncate font-medium text-ink-secondary font-sans tracking-wide">{documentTitle}</span>
             <button
               onClick={() => router.replace('/dashboard/chat')}
-              className="ml-1 w-5 h-5 rounded-full flex items-center justify-center text-primary/40 hover:text-accent hover:bg-accent/5 transition-colors cursor-pointer"
+              className="ml-1 w-5 h-5 rounded-full flex items-center justify-center text-ink-faint hover:text-accent hover:bg-accent/5 transition-colors cursor-pointer"
               aria-label="Remove context"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5} className="w-3 h-3">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <X className="w-3 h-3" strokeWidth={2.5} />
             </button>
           </div>
         </div>
@@ -440,7 +429,7 @@ function ChatContent({ suggestedPrompts }: { suggestedPrompts: string[] }) {
         className="flex-shrink-0 px-4 md:px-8 pt-4 bg-gradient-to-t from-[var(--background)] via-[var(--background)] to-transparent"
         style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
       >
-        <div className="flex items-end gap-3 bg-white/95 backdrop-blur-md border border-primary/10 rounded-2xl px-5 py-3.5 shadow-lg max-w-4xl mx-auto focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all duration-300">
+        <div className="flex items-end gap-3 bg-white/95 backdrop-blur-md border border-hairline rounded-2xl px-5 py-3.5 shadow-elevated max-w-4xl mx-auto focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all duration-300">
           <textarea
             ref={textareaRef}
             value={input}
@@ -449,35 +438,30 @@ function ChatContent({ suggestedPrompts }: { suggestedPrompts: string[] }) {
             placeholder="Ask about your regulatory landscape..."
             rows={1}
             disabled={isStreaming}
-            className="flex-1 text-[15px] font-sans bg-transparent focus:outline-none resize-none text-primary placeholder:text-primary/30 disabled:opacity-50 leading-relaxed py-1"
+            className="flex-1 text-body-sm font-sans bg-transparent focus:outline-none resize-none text-primary placeholder:text-ink-faint disabled:opacity-50 leading-relaxed py-1"
             style={{ maxHeight: 150 }}
           />
           {isStreaming ? (
             <button
               onClick={() => abortRef.current?.abort()}
-              className="p-2.5 rounded-xl bg-accent text-white transition-all duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent/90 hover:shadow-md active:scale-95 cursor-pointer"
+              className="p-2.5 rounded-xl bg-accent text-white transition-all duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent-active hover:shadow-elevated active:scale-95 cursor-pointer"
               aria-label="Stop generating"
               title="Stop generating"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                <rect x="6" y="6" width="12" height="12" rx="1.5" />
-              </svg>
+              <Square className="w-4 h-4" fill="currentColor" />
             </button>
           ) : (
             <button
               onClick={() => sendMessage(input)}
               disabled={!input.trim()}
-              className="p-2.5 rounded-xl bg-primary text-white disabled:opacity-30 transition-all duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent hover:shadow-md active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+              className="p-2.5 rounded-xl bg-primary text-white disabled:opacity-30 transition-all duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent hover:shadow-elevated active:scale-95 cursor-pointer disabled:cursor-not-allowed"
               aria-label="Send"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-4 h-4">
-                <line x1="22" y1="2" x2="11" y2="13" />
-                <polygon points="22 2 15 22 11 13 2 9 22 2" />
-              </svg>
+              <Send className="w-4 h-4" strokeWidth={2} />
             </button>
           )}
         </div>
-        <p className="text-[11px] font-sans text-primary/30 text-center mt-3 tracking-wide">
+        <p className="text-eyebrow font-sans text-ink-faint text-center mt-3 tracking-wide">
           Responses grounded solely in documents published to your account · MN Legal AI
         </p>
       </div>

@@ -1,6 +1,12 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { ArrowRight, Check, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Select } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 
 interface RequestAccessFormProps {
   isOpen: boolean;
@@ -72,8 +78,7 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 transition-opacity duration-300"
-        style={{ background: 'rgba(10, 16, 33, 0.75)', backdropFilter: 'blur(4px)' }}
+        className="fixed inset-0 z-40 bg-primary/70 backdrop-blur-sm transition-opacity duration-300"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -84,11 +89,9 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
         role="dialog"
         aria-modal="true"
         aria-labelledby="request-form-title"
-        className="fixed right-0 top-0 h-full z-50 flex flex-col overflow-y-auto"
+        className="fixed right-0 top-0 h-full z-50 flex flex-col overflow-y-auto bg-white shadow-elevated"
         style={{
           width: 'min(520px, 100vw)',
-          background: '#f5f3ef',
-          boxShadow: '-8px 0 40px rgba(10,16,33,0.35)',
           animation: 'slideIn 0.32s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
@@ -97,76 +100,62 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
             from { transform: translateX(100%); opacity: 0; }
             to   { transform: translateX(0);    opacity: 1; }
           }
+          @media (prefers-reduced-motion: reduce) {
+            [role="dialog"] { animation: none !important; }
+          }
         `}</style>
 
         {/* Header */}
-        <div
-          className="px-10 py-8 flex items-start justify-between"
-          style={{ borderBottom: '1px solid #d1cdc5' }}
-        >
+        <div className="px-8 sm:px-10 py-8 flex items-start justify-between border-b border-hairline">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="h-px w-5" style={{ background: '#8b1c3f' }} />
-              <span className="font-sans text-xs tracking-[0.2em] uppercase" style={{ color: '#8b1c3f' }}>
-                MN Advocates LLP
+              <div className="h-px w-5 bg-accent" />
+              <span className="font-sans text-eyebrow uppercase tracking-[0.15em] text-accent">
+                MNL Advocates LLP
               </span>
             </div>
-            <h2
-              id="request-form-title"
-              className="font-serif text-2xl leading-tight"
-              style={{ color: '#1a2744' }}
-            >
-              Initiate a Confidential<br />Access Request
+            <h2 id="request-form-title" className="text-h3 text-primary leading-tight">
+              Request confidential access
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="mt-1 p-2 transition-opacity hover:opacity-60"
+            className="mt-1 p-2 rounded-md text-ink-muted hover:text-primary hover:bg-primary/5 transition-colors"
             aria-label="Close panel"
-            style={{ color: '#1a2744' }}
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-            </svg>
+            <X className="w-5 h-5" strokeWidth={1.5} />
           </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 px-10 py-8">
+        <div className="flex-1 px-8 sm:px-10 py-8">
           {status === 'success' ? (
             <div className="flex flex-col items-center justify-center h-full text-center py-16">
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center mb-6"
-                style={{ background: 'rgba(26,39,68,0.08)' }}
-              >
-                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="#1a2744" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-                </svg>
+              <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6 bg-success/10">
+                <Check className="w-8 h-8 text-success" strokeWidth={1.5} />
               </div>
-              <h3 className="font-serif text-2xl mb-3" style={{ color: '#1a2744' }}>Request Received</h3>
-              <p className="font-sans text-sm leading-relaxed" style={{ color: 'rgba(26,39,68,0.6)' }}>
-                Thank you. A member of the MN Legal team will be in touch within one business day to discuss your onboarding.
+              <h3 className="text-h3 text-primary mb-3">Request received</h3>
+              <p className="font-sans text-body-sm text-ink-muted leading-relaxed max-w-sm">
+                Thank you. A member of the MNL team will be in touch within one
+                business day to discuss your onboarding.
               </p>
-              <button
-                onClick={onClose}
-                className="mt-8 px-6 py-3 font-sans text-xs tracking-widest uppercase transition-opacity hover:opacity-70"
-                style={{ color: '#8b1c3f', borderBottom: '1px solid #8b1c3f' }}
-              >
+              <Button variant="outline" onClick={onClose} className="mt-8">
                 Close
-              </button>
+              </Button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-7" noValidate>
-              <p className="font-sans text-sm leading-relaxed" style={{ color: 'rgba(26,39,68,0.55)' }}>
-                This platform is exclusively available to clients of MN Advocates LLP. Complete the form below and our team will reach out to discuss onboarding.
+            <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+              <p className="font-sans text-body-sm text-ink-muted leading-relaxed">
+                This platform is exclusively available to clients of MNL
+                Advocates LLP. Complete the form below and our team will reach
+                out to discuss onboarding.
               </p>
 
-              {/* Name */}
-              <div className="flex flex-col gap-1">
-                <label htmlFor="req-name" className="font-sans text-xs tracking-widest uppercase" style={{ color: '#1a2744' }}>
-                  Full Name <span style={{ color: '#8b1c3f' }}>*</span>
-                </label>
-                <input
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="req-name">
+                  Full name <span className="text-accent">*</span>
+                </Label>
+                <Input
                   ref={firstInputRef}
                   id="req-name"
                   name="name"
@@ -174,96 +163,76 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="font-sans text-sm py-3 bg-transparent outline-none"
-                  style={{ borderBottom: '1px solid #d1cdc5', color: '#1a2744' }}
                   placeholder="Your full name"
                 />
               </div>
 
-              {/* Company */}
-              <div className="flex flex-col gap-1">
-                <label htmlFor="req-company" className="font-sans text-xs tracking-widest uppercase" style={{ color: '#1a2744' }}>
-                  Company / Organisation <span style={{ color: '#8b1c3f' }}>*</span>
-                </label>
-                <input
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="req-company">
+                  Company / organisation <span className="text-accent">*</span>
+                </Label>
+                <Input
                   id="req-company"
                   name="company"
                   type="text"
                   required
                   value={formData.company}
                   onChange={handleChange}
-                  className="font-sans text-sm py-3 bg-transparent outline-none"
-                  style={{ borderBottom: '1px solid #d1cdc5', color: '#1a2744' }}
                   placeholder="Your company or organisation"
                 />
               </div>
 
-              {/* Email */}
-              <div className="flex flex-col gap-1">
-                <label htmlFor="req-email" className="font-sans text-xs tracking-widest uppercase" style={{ color: '#1a2744' }}>
-                  Work Email <span style={{ color: '#8b1c3f' }}>*</span>
-                </label>
-                <input
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="req-email">
+                  Work email <span className="text-accent">*</span>
+                </Label>
+                <Input
                   id="req-email"
                   name="email"
                   type="email"
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="font-sans text-sm py-3 bg-transparent outline-none"
-                  style={{ borderBottom: '1px solid #d1cdc5', color: '#1a2744' }}
                   placeholder="name@company.com"
                 />
               </div>
 
-              {/* Area of Interest */}
-              <div className="flex flex-col gap-1">
-                <label htmlFor="req-area" className="font-sans text-xs tracking-widest uppercase" style={{ color: '#1a2744' }}>
-                  Primary Regulatory Area
-                </label>
-                <select
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="req-area">Primary regulatory area</Label>
+                <Select
                   id="req-area"
                   name="area"
                   value={formData.area}
                   onChange={handleChange}
-                  className="font-sans text-sm py-3 bg-transparent outline-none appearance-none cursor-pointer"
-                  style={{ borderBottom: '1px solid #d1cdc5', color: formData.area ? '#1a2744' : 'rgba(26,39,68,0.4)' }}
                 >
                   <option value="">Select an area of interest</option>
                   {AREAS_OF_INTEREST.map(a => (
                     <option key={a} value={a}>{a}</option>
                   ))}
-                </select>
+                </Select>
               </div>
 
-              {/* Message */}
-              <div className="flex flex-col gap-1">
-                <label htmlFor="req-message" className="font-sans text-xs tracking-widest uppercase" style={{ color: '#1a2744' }}>
-                  Brief Context <span className="normal-case opacity-50">(optional)</span>
-                </label>
-                <textarea
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="req-message">
+                  Brief context{' '}
+                  <span className="normal-case text-ink-faint">(optional)</span>
+                </Label>
+                <Textarea
                   id="req-message"
                   name="message"
                   rows={3}
                   value={formData.message}
                   onChange={handleChange}
-                  className="font-sans text-sm py-3 bg-transparent outline-none resize-none"
-                  style={{ borderBottom: '1px solid #d1cdc5', color: '#1a2744' }}
+                  className="min-h-[90px]"
                   placeholder="Any specific compliance areas or timelines we should know about..."
                 />
               </div>
 
-              {/* Submit */}
-              <button
+              <Button
                 type="submit"
+                size="lg"
                 disabled={status === 'submitting'}
-                className="relative flex items-center justify-center gap-2 py-4 font-sans text-sm tracking-widest uppercase transition-all duration-200 mt-2"
-                style={{
-                  background: '#1a2744',
-                  color: '#f5f3ef',
-                  opacity: status === 'submitting' ? 0.7 : 1,
-                  letterSpacing: '0.12em',
-                }}
+                className="mt-2 w-full"
                 id="request-form-submit-btn"
               >
                 {status === 'submitting' ? (
@@ -276,15 +245,13 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
                   </>
                 ) : (
                   <>
-                    Submit Request
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" />
-                    </svg>
+                    Submit request
+                    <ArrowRight className="w-4 h-4" />
                   </>
                 )}
-              </button>
+              </Button>
 
-              <p className="font-sans text-xs text-center" style={{ color: 'rgba(26,39,68,0.4)' }}>
+              <p className="font-sans text-caption text-ink-faint text-center">
                 All enquiries are treated with strict confidentiality.
               </p>
             </form>
@@ -292,15 +259,12 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
         </div>
 
         {/* Footer */}
-        <div
-          className="px-10 py-6 flex items-center gap-3"
-          style={{ borderTop: '1px solid #d1cdc5' }}
-        >
-          <div className="flex items-center justify-center w-8 h-8" style={{ border: '1px solid rgba(26,39,68,0.15)', borderRadius: '50%' }}>
-            <span className="font-serif text-xs" style={{ color: '#1a2744' }}>MN</span>
+        <div className="px-8 sm:px-10 py-6 flex items-center gap-3 border-t border-hairline bg-surface">
+          <div className="flex items-center justify-center w-8 h-8 rounded-full border border-hairline bg-white">
+            <span className="font-serif text-eyebrow text-primary">MN</span>
           </div>
-          <span className="font-sans text-xs" style={{ color: 'rgba(26,39,68,0.4)' }}>
-            MN Advocates LLP · Nairobi, Kenya
+          <span className="font-sans text-caption text-ink-muted">
+            MNL Advocates LLP · Nairobi, Kenya
           </span>
         </div>
       </div>

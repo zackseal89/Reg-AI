@@ -8,6 +8,7 @@ import {
 } from './actions'
 import FlashToast from '@/app/components/FlashToast'
 import { PageHeader } from '@/components/ui/page-header'
+import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -91,14 +92,14 @@ export default async function LawyerBriefingsPage({
             }[] | null
 
             return (
-              <div
+              <Card
                 key={b.id}
-                className="p-6 border border-primary/10 bg-white rounded-2xl hover:shadow-[0_8px_30px_-10px_rgba(26,39,68,0.08)] hover:border-primary/20 transition-all duration-300 group"
+                className="p-6 hover:shadow-elevated hover:border-primary/20 transition-all duration-300 group"
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <h3 className="font-serif text-xl font-semibold text-primary group-hover:text-accent transition-colors">
+                      <h3 className="font-serif text-title font-bold text-primary group-hover:text-accent transition-colors">
                         {b.title}
                       </h3>
                       <Badge
@@ -113,9 +114,9 @@ export default async function LawyerBriefingsPage({
                         {b.status}
                       </Badge>
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-primary/50">
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-caption text-ink-muted">
                       {jurisdiction && (
-                        <span className="flex items-center gap-1.5 text-primary/70 font-medium">
+                        <span className="flex items-center gap-1.5 text-ink-secondary font-medium">
                           <span className="w-1.5 h-1.5 rounded-full bg-accent/60" />
                           {jurisdiction.name}
                         </span>
@@ -123,7 +124,7 @@ export default async function LawyerBriefingsPage({
                       {author && (
                         <span>
                           By:{' '}
-                          <span className="font-medium text-primary/70">
+                          <span className="font-medium text-ink-secondary">
                             {author.first_name} {author.last_name}
                           </span>
                         </span>
@@ -131,21 +132,21 @@ export default async function LawyerBriefingsPage({
                       {approver && (
                         <span>
                           Approved by:{' '}
-                          <span className="font-medium text-primary/70">
+                          <span className="font-medium text-ink-secondary">
                             {approver.first_name} {approver.last_name}
                           </span>
                         </span>
                       )}
                       <span>
                         Created:{' '}
-                        <span className="font-medium text-primary/70">
+                        <span className="font-medium text-ink-secondary">
                           {new Date(b.created_at).toLocaleDateString()}
                         </span>
                       </span>
                       {b.sent_at && (
                         <span>
                           Sent:{' '}
-                          <span className="font-medium text-primary/70">
+                          <span className="font-medium text-ink-secondary">
                             {new Date(b.sent_at).toLocaleDateString()}
                           </span>
                         </span>
@@ -195,25 +196,22 @@ export default async function LawyerBriefingsPage({
                     )}
                   </div>
                 </div>
-                <p className="text-sm font-sans text-primary/80 line-clamp-3 mb-4 leading-relaxed bg-primary/[0.02] p-4 rounded-xl border border-primary/5">
+                <p className="text-body-sm text-ink-secondary line-clamp-3 mb-4 leading-relaxed bg-surface-low/60 p-4 rounded-lg border border-hairline/60">
                   {b.content}
                 </p>
                 {assignments && assignments.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-primary/5 text-xs text-primary/50">
-                    <span className="font-medium uppercase tracking-wider text-[10px]">
+                  <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-hairline/60 text-caption text-ink-muted">
+                    <span className="font-bold uppercase tracking-wider text-eyebrow">
                       Assigned to:
                     </span>
                     {assignments.map(a => (
-                      <span
-                        key={a.client_id}
-                        className="px-2.5 py-1 bg-primary/5 rounded border border-primary/5 font-medium text-primary/80"
-                      >
+                      <Badge key={a.client_id}>
                         {a.profiles.first_name} {a.profiles.last_name}
-                      </span>
+                      </Badge>
                     ))}
                   </div>
                 )}
-              </div>
+              </Card>
             )
           })}
         </div>

@@ -72,25 +72,25 @@ export default async function LawyerClientsPage({
         <Card className="overflow-hidden p-0">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-primary/[0.02] border-b border-primary/5">
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+              <tr className="bg-primary/[0.02] border-b border-hairline/60">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Contact
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Company
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Regulators
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted">
                   Added
                 </th>
-                <th className="px-6 py-4 text-[11px] font-bold uppercase tracking-widest text-primary/50 text-right">
+                <th className="px-6 py-4 text-eyebrow font-bold uppercase tracking-widest text-ink-muted text-right">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-primary/5">
+            <tbody className="divide-y divide-hairline/60">
               {clients.map(client => {
                 const company = client.companies as unknown as {
                   name: string
@@ -111,7 +111,7 @@ export default async function LawyerClientsPage({
                       <div className="font-medium text-primary">
                         {client.first_name} {client.last_name}
                       </div>
-                      <div className="text-primary/50 text-xs mt-0.5">
+                      <div className="text-ink-muted text-caption mt-0.5">
                         {client.email}
                       </div>
                     </td>
@@ -120,7 +120,7 @@ export default async function LawyerClientsPage({
                         {company?.name || '—'}
                       </div>
                       {company?.sector && (
-                        <div className="text-xs text-primary/50 mt-0.5">
+                        <div className="text-caption text-ink-muted mt-0.5">
                           {company.sector}
                         </div>
                       )}
@@ -132,11 +132,11 @@ export default async function LawyerClientsPage({
                             <Badge key={j}>{j}</Badge>
                           ))
                         ) : (
-                          <span className="text-primary/30">—</span>
+                          <span className="text-ink-faint">—</span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-5 text-sm text-primary/50">
+                    <td className="px-6 py-5 text-body-sm text-ink-muted">
                       {new Date(client.created_at).toLocaleDateString('en-GB', {
                         day: 'numeric',
                         month: 'short',
@@ -155,7 +155,7 @@ export default async function LawyerClientsPage({
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button
-                              className="p-2 rounded-lg text-primary/50 hover:bg-primary/5 hover:text-primary transition-colors"
+                              className="p-2 rounded-lg text-ink-muted hover:bg-primary/5 hover:text-primary transition-colors"
                               aria-label="More actions"
                             >
                               <MoreHorizontal className="w-4 h-4" />

@@ -8,6 +8,7 @@ import {
 } from './actions'
 import FlashToast from '@/app/components/FlashToast'
 import { PageHeader } from '@/components/ui/page-header'
+import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -112,14 +113,14 @@ export default async function LawyerDocumentsPage() {
             }[] | null
 
             return (
-              <div
+              <Card
                 key={doc.id}
-                className="p-6 border border-primary/10 bg-white rounded-2xl hover:shadow-[0_8px_30px_-10px_rgba(26,39,68,0.08)] hover:border-primary/20 transition-all duration-300 group"
+                className="p-6 hover:shadow-elevated hover:border-primary/20 transition-all duration-300 group"
               >
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
                   <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <h3 className="font-serif text-xl font-semibold text-primary group-hover:text-accent transition-colors">
+                      <h3 className="font-serif text-title font-bold text-primary group-hover:text-accent transition-colors">
                         {doc.title}
                       </h3>
                       <Badge
@@ -135,13 +136,13 @@ export default async function LawyerDocumentsPage() {
                       </Badge>
                     </div>
                     {doc.description && (
-                      <p className="text-sm text-primary/70 mb-4 leading-relaxed max-w-4xl">
+                      <p className="text-body-sm text-ink-secondary mb-4 leading-relaxed max-w-4xl">
                         {doc.description}
                       </p>
                     )}
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-primary/50">
+                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-caption text-ink-muted">
                       {jurisdiction && (
-                        <span className="flex items-center gap-1.5 text-primary/70 font-medium">
+                        <span className="flex items-center gap-1.5 text-ink-secondary font-medium">
                           <span className="w-1.5 h-1.5 rounded-full bg-accent/60" />
                           {jurisdiction.name}
                         </span>
@@ -154,7 +155,7 @@ export default async function LawyerDocumentsPage() {
                       {doc.reference_number && (
                         <span>
                           Ref:{' '}
-                          <span className="font-medium text-primary/70">
+                          <span className="font-medium text-ink-secondary">
                             {doc.reference_number}
                           </span>
                         </span>
@@ -162,7 +163,7 @@ export default async function LawyerDocumentsPage() {
                       {doc.issuing_body && (
                         <span>
                           By:{' '}
-                          <span className="font-medium text-primary/70">
+                          <span className="font-medium text-ink-secondary">
                             {doc.issuing_body}
                           </span>
                         </span>
@@ -170,7 +171,7 @@ export default async function LawyerDocumentsPage() {
                       {doc.effective_date && (
                         <span>
                           Effective:{' '}
-                          <span className="font-medium text-primary/70">
+                          <span className="font-medium text-ink-secondary">
                             {new Date(
                               doc.effective_date
                             ).toLocaleDateString()}
@@ -211,7 +212,7 @@ export default async function LawyerDocumentsPage() {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <button
-                            className="p-2 rounded-lg text-primary/50 hover:bg-primary/5 hover:text-primary transition-colors"
+                            className="p-2 rounded-lg text-ink-muted hover:bg-primary/5 hover:text-primary transition-colors"
                             aria-label="More actions"
                           >
                             <MoreHorizontal className="w-4 h-4" />
@@ -249,37 +250,34 @@ export default async function LawyerDocumentsPage() {
                 </div>
 
                 {doc.summary && (
-                  <div className="mt-5 p-4 bg-primary/[0.02] rounded-xl text-sm text-primary/80 border border-primary/5">
-                    <span className="flex items-center gap-2 text-[11px] font-bold text-primary/50 uppercase tracking-widest mb-1.5">
+                  <div className="mt-5 p-4 bg-surface-low/60 rounded-lg text-body-sm text-ink-secondary border border-hairline/60">
+                    <span className="flex items-center gap-2 text-eyebrow font-bold text-ink-muted uppercase tracking-widest mb-1.5">
                       Lawyer&apos;s Summary
                     </span>
                     <p className="leading-relaxed">{doc.summary}</p>
                   </div>
                 )}
                 {doc.internal_notes && (
-                  <div className="mt-3 p-4 bg-accent/[0.03] rounded-xl text-sm text-primary/80 border border-accent/10">
-                    <span className="flex items-center gap-2 text-[11px] font-bold text-accent/70 uppercase tracking-widest mb-1.5">
+                  <div className="mt-3 p-4 bg-accent/[0.03] rounded-lg text-body-sm text-ink-secondary border border-accent/10">
+                    <span className="flex items-center gap-2 text-eyebrow font-bold text-accent/70 uppercase tracking-widest mb-1.5">
                       Internal Notes (not visible to clients)
                     </span>
                     <p className="leading-relaxed">{doc.internal_notes}</p>
                   </div>
                 )}
                 {assignments && assignments.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-primary/5 text-xs text-primary/50">
-                    <span className="font-medium uppercase tracking-wider text-[10px]">
+                  <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-hairline/60 text-caption text-ink-muted">
+                    <span className="font-bold uppercase tracking-wider text-eyebrow">
                       Assigned to:
                     </span>
                     {assignments.map(a => (
-                      <span
-                        key={a.client_id}
-                        className="px-2.5 py-1 bg-primary/5 rounded border border-primary/5 font-medium text-primary/80"
-                      >
+                      <Badge key={a.client_id}>
                         {a.profiles.first_name} {a.profiles.last_name}
-                      </span>
+                      </Badge>
                     ))}
                   </div>
                 )}
-              </div>
+              </Card>
             )
           })}
         </div>

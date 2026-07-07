@@ -82,13 +82,13 @@ export default async function ClientDocumentsPage({
               <Link
                 key={doc.id}
                 href={`/dashboard/documents/${doc.id}`}
-                className="group relative flex overflow-hidden bg-white border border-primary/10 rounded-2xl transition-all duration-300 hover:border-accent/30 hover:shadow-[0_8px_30px_-10px_rgba(26,39,68,0.08)]"
+                className="group relative flex overflow-hidden bg-white border border-hairline rounded-lg transition-all duration-300 hover:border-accent/30 hover:shadow-elevated"
               >
                 <div className="w-1 shrink-0 bg-primary/20 group-hover:bg-accent transition-colors" />
 
                 <div className="flex-1 px-5 py-4">
                   <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="font-serif font-semibold text-base leading-snug tracking-tight text-primary flex-1 group-hover:text-accent transition-colors">
+                    <h3 className="font-serif font-bold text-body leading-snug tracking-tight text-primary flex-1 group-hover:text-accent transition-colors">
                       {doc.title}
                     </h3>
                     <div className="flex items-center gap-2 shrink-0">
@@ -96,7 +96,7 @@ export default async function ClientDocumentsPage({
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-primary/50 mb-2">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-eyebrow text-ink-muted mb-2">
                     {typeLabel && typeLabel !== 'Other' && (
                       <Badge>{typeLabel}</Badge>
                     )}
@@ -121,13 +121,13 @@ export default async function ClientDocumentsPage({
                   </div>
 
                   {doc.summary && (
-                    <p className="text-[13px] text-primary/60 leading-relaxed line-clamp-2">
+                    <p className="text-caption text-ink-secondary leading-relaxed line-clamp-2">
                       {doc.summary}
                     </p>
                   )}
                 </div>
 
-                <div className="shrink-0 flex items-center pr-4 text-primary/30 opacity-0 group-hover:opacity-100 group-hover:text-accent transition-all">
+                <div className="shrink-0 flex items-center pr-4 text-ink-faint opacity-0 group-hover:opacity-100 group-hover:text-accent transition-all">
                   <ArrowRight className="w-4 h-4" />
                 </div>
               </Link>

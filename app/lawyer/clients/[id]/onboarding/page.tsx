@@ -1,6 +1,11 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { ArrowLeft, Check } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 type Step = {
   num: number
@@ -126,83 +131,75 @@ export default async function ClientOnboardingPage({
       <div className="mb-6">
         <Link
           href="/lawyer/clients"
-          className="text-[12px] font-bold uppercase tracking-widest text-primary/50 hover:text-accent transition-colors"
+          className="inline-flex items-center gap-1.5 text-eyebrow font-bold uppercase tracking-widest text-ink-muted hover:text-accent transition-colors"
         >
-          ← Back to Clients
+          <ArrowLeft className="w-3 h-3" />
+          Back to Clients
         </Link>
       </div>
 
-      <div className="flex items-center justify-between mb-10 pb-6 border-b border-primary/5">
+      <div className="flex items-center justify-between mb-10 pb-6 border-b border-hairline/60">
         <div>
-          <h1 className="text-3xl font-serif font-bold text-primary mb-2">Pilot Onboarding</h1>
-          <p className="text-[15px] font-sans text-primary/60">
+          <h1 className="text-h1 font-serif font-bold text-primary mb-2">
+            Pilot Onboarding
+          </h1>
+          <p className="text-body font-sans text-ink-secondary">
             {client.first_name} {client.last_name}
             {company?.name ? ` · ${company.name}` : ''}
           </p>
-          <p className="text-[13px] font-sans text-primary/40 mt-1">{client.email}</p>
+          <p className="text-caption font-sans text-ink-faint mt-1">{client.email}</p>
         </div>
         <div className="text-right">
-          <div className="text-[12px] font-bold uppercase tracking-widest text-primary/50 mb-1">
+          <div className="text-eyebrow font-bold uppercase tracking-widest text-ink-muted mb-1">
             Progress
           </div>
-          <div className="text-3xl font-serif font-bold text-primary">
+          <div className="text-h1 font-serif font-bold text-primary">
             {completedCount}
-            <span className="text-primary/30"> / {totalCount}</span>
+            <span className="text-ink-faint"> / {totalCount}</span>
           </div>
           {allDone && (
-            <div className="mt-2 text-[11px] font-bold uppercase tracking-widest text-green-700">
+            <Badge variant="active" className="mt-2">
               Ready to go live
-            </div>
+            </Badge>
           )}
         </div>
       </div>
 
       <ol className="space-y-4">
         {steps.map(step => (
-          <li
-            key={step.num}
-            className={`flex gap-5 p-6 border rounded-2xl bg-white shadow-sm transition-all ${
-              step.done ? 'border-green-200/60' : 'border-primary/10'
-            }`}
-          >
-            <div
-              className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-[14px] ${
-                step.done
-                  ? 'bg-green-50 text-green-700 border border-green-200'
-                  : 'bg-primary/5 text-primary/60 border border-primary/10'
-              }`}
+          <li key={step.num}>
+            <Card
+              className={cn(
+                'flex gap-5 p-6 shadow-soft transition-all',
+                step.done && 'border-success/30'
+              )}
             >
-              {step.done ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  className="w-5 h-5"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              ) : (
-                step.num
-              )}
-            </div>
-            <div className="flex-1">
-              <h3 className="font-serif text-lg font-semibold text-primary mb-1">{step.title}</h3>
-              <p className="text-[14px] font-sans text-primary/60 mb-3 leading-relaxed">
-                {step.description}
-              </p>
-              {!step.done && step.href && step.cta && (
-                <Link
-                  href={step.href}
-                  className="inline-block px-4 py-2 text-[11px] font-bold uppercase tracking-wider bg-primary/5 border border-primary/10 rounded-lg text-primary hover:bg-primary/10 hover:border-primary/20 transition-all"
-                >
-                  {step.cta}
-                </Link>
-              )}
-            </div>
+              <div
+                className={cn(
+                  'shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-bold text-body-sm border',
+                  step.done
+                    ? 'bg-success/10 text-success border-success/25'
+                    : 'bg-primary/5 text-ink-secondary border-hairline'
+                )}
+              >
+                {step.done ? <Check className="w-5 h-5" /> : step.num}
+              </div>
+              <div className="flex-1">
+                <h3 className="font-serif text-title font-bold text-primary mb-1">
+                  {step.title}
+                </h3>
+                <p className="text-body-sm font-sans text-ink-secondary mb-3 leading-relaxed">
+                  {step.description}
+                </p>
+                {!step.done && step.href && step.cta && (
+                  <Link href={step.href}>
+                    <Button variant="subtle" size="sm">
+                      {step.cta}
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </Card>
           </li>
         ))}
       </ol>

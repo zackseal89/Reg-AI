@@ -201,7 +201,7 @@ export function UploadDocumentModal({
                 name="internalNotes"
                 rows={2}
                 placeholder="Review flags, follow-up items, context…"
-                className="bg-yellow-50/30"
+                className="bg-accent/[0.03] border-accent/10"
               />
             </FormField>
 
@@ -215,7 +215,7 @@ export function UploadDocumentModal({
             >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1">
                 {filteredClients.length === 0 ? (
-                  <p className="text-sm text-primary/50 col-span-full py-3">
+                  <p className="text-body-sm text-ink-muted col-span-full py-3">
                     {selectedJurisdiction
                       ? `No clients with ${selectedJurisdictionName}.`
                       : 'Pick a jurisdiction above.'}
@@ -224,13 +224,13 @@ export function UploadDocumentModal({
                   filteredClients.map(c => (
                     <label
                       key={c.id}
-                      className="flex items-center gap-3 p-3 border border-primary/10 rounded-xl hover:bg-primary/5 cursor-pointer group transition-all"
+                      className="flex items-center gap-3 p-3 border border-hairline rounded-lg hover:bg-primary/5 cursor-pointer group transition-all"
                     >
                       <Checkbox name="clientIds" value={c.id} />
-                      <span className="text-sm font-medium text-primary group-hover:text-accent transition-colors">
+                      <span className="text-body-sm font-medium text-primary group-hover:text-accent transition-colors">
                         {c.first_name} {c.last_name}
                         {c.company_name && (
-                          <span className="text-primary/50 text-xs block font-normal">
+                          <span className="text-ink-muted text-caption block font-normal">
                             {c.company_name}
                           </span>
                         )}
@@ -248,9 +248,9 @@ export function UploadDocumentModal({
                 type="file"
                 accept=".pdf,application/pdf"
                 required
-                className="w-full px-4 py-3 border border-primary/15 rounded-xl text-sm file:mr-3 file:px-3 file:py-1.5 file:border-0 file:bg-primary/5 file:text-primary file:rounded-md file:text-xs file:font-semibold file:cursor-pointer file:hover:bg-primary/10 bg-white"
+                className="w-full px-4 py-2.5 border border-hairline rounded-xs text-body-sm bg-white file:mr-3 file:px-3 file:py-1.5 file:border-0 file:bg-primary/5 file:text-primary file:rounded-md file:text-caption file:font-semibold file:cursor-pointer file:hover:bg-primary/10"
               />
-              <p className="text-xs text-primary/50 mt-1.5">
+              <p className="text-caption text-ink-muted mt-1.5">
                 Max 50 MB. PDF only.
               </p>
             </FormField>

@@ -9,7 +9,7 @@ export const Checkbox = React.forwardRef<
     ref={ref}
     type="checkbox"
     className={cn(
-      'w-5 h-5 rounded border-primary/20 text-accent focus:ring-accent/30 cursor-pointer',
+      'w-5 h-5 rounded-xs border-hairline text-accent focus:ring-accent/30 cursor-pointer',
       className
     )}
     {...props}
