@@ -150,3 +150,42 @@ export async function rejectBriefingAction(formData: FormData) {
 
   redirect('/lawyer/briefings?success=' + encodeURIComponent('Briefing returned to draft'))
 }
+
+export async function deleteBriefingAction(formData: FormData) {
+  const supabase = await createClient()
+  const admin = createAdminClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const briefingId = formData.get('briefingId') as string
+
+  const { data: briefing } = await admin
+    .from('briefings')
+    .select('title, status')
+    .eq('id', briefingId)
+    .single()
+
+  if (!briefing) {
+    redirect('/lawyer/briefings?error=' + encodeURIComponent('Briefing not found'))
+  }
+
+  // Assignments first, then the briefing itself
+  await admin.from('briefing_assignments').delete().eq('briefing_id', briefingId)
+
+  const { error } = await admin.from('briefings').delete().eq('id', briefingId)
+
+  if (error) {
+    redirect('/lawyer/briefings?error=' + encodeURIComponent(error.message))
+  }
+
+  await logAudit(admin, {
+    userId: user.id,
+    action: 'briefing_deleted',
+    entityType: 'briefing',
+    entityId: briefingId,
+    details: { title: briefing.title, status_at_deletion: briefing.status },
+  })
+
+  redirect('/lawyer/briefings?success=' + encodeURIComponent('Briefing deleted'))
+}

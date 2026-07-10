@@ -13,10 +13,9 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem,
 } from '@/components/ui/dropdown-menu'
 import { InviteLawyerModal } from '@/components/modals/invite-lawyer-modal'
-import { ConfirmModal } from '@/components/modals/confirm-modal'
+import { ConfirmMenuItem } from '@/components/modals/confirm-menu-item'
 
 export default async function AdminLawyersPage({
   searchParams,
@@ -69,7 +68,7 @@ export default async function AdminLawyersPage({
   }))
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <PageHeader
         title="Lawyers"
         description="Manage MNL Associates accounts and access."
@@ -155,36 +154,23 @@ export default async function AdminLawyersPage({
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           {lawyer.status === 'active' ? (
-                            <ConfirmModal
+                            <ConfirmMenuItem
+                              itemLabel="Deactivate"
                               title="Deactivate lawyer?"
                               description={`${lawyer.first_name} ${lawyer.last_name} will lose platform access until reactivated.`}
                               confirmLabel="Deactivate"
                               destructive
                               hiddenFields={{ lawyerId: lawyer.id }}
                               action={deactivateLawyerAction}
-                              trigger={
-                                <DropdownMenuItem
-                                  destructive
-                                  onSelect={e => e.preventDefault()}
-                                >
-                                  Deactivate
-                                </DropdownMenuItem>
-                              }
                             />
                           ) : (
-                            <ConfirmModal
+                            <ConfirmMenuItem
+                              itemLabel="Reactivate"
                               title="Reactivate lawyer?"
                               description={`Restore platform access for ${lawyer.first_name} ${lawyer.last_name}.`}
                               confirmLabel="Reactivate"
                               hiddenFields={{ lawyerId: lawyer.id }}
                               action={reactivateLawyerAction}
-                              trigger={
-                                <DropdownMenuItem
-                                  onSelect={e => e.preventDefault()}
-                                >
-                                  Reactivate
-                                </DropdownMenuItem>
-                              }
                             />
                           )}
                         </DropdownMenuContent>

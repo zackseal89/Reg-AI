@@ -18,7 +18,7 @@ export default async function AdminBriefingsPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <PageHeader
         title="Briefings"
         description="Every regulatory briefing drafted across the platform, by any lawyer."

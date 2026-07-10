@@ -431,3 +431,55 @@ export async function unpublishDocumentAction(formData: FormData) {
 
   redirect('/lawyer/documents?success=' + encodeURIComponent('Document unpublished'))
 }
+
+export async function deleteDocumentAction(formData: FormData) {
+  const supabase = await createClient()
+  const admin = createAdminClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const documentId = formData.get('documentId') as string
+
+  const { data: doc } = await admin
+    .from('documents')
+    .select('title, storage_path, status')
+    .eq('id', documentId)
+    .single()
+
+  if (!doc) {
+    redirect('/lawyer/documents?error=' + encodeURIComponent('Document not found'))
+  }
+
+  // Pull it out of every client's Gemini store first (no-op if never indexed)
+  await triggerGeminiRemoval(admin, documentId)
+
+  // Assignments, then storage object, then the record itself
+  await admin.from('document_assignments').delete().eq('document_id', documentId)
+
+  if (doc.storage_path) {
+    const { error: storageError } = await admin.storage
+      .from('documents')
+      .remove([doc.storage_path])
+    if (storageError) {
+      console.error('[delete-document] Storage removal failed:', storageError)
+      // Continue — an orphaned file is preferable to a half-deleted record
+    }
+  }
+
+  const { error } = await admin.from('documents').delete().eq('id', documentId)
+
+  if (error) {
+    redirect('/lawyer/documents?error=' + encodeURIComponent(error.message))
+  }
+
+  await logAudit(admin, {
+    userId: user.id,
+    action: 'document_deleted',
+    entityType: 'document',
+    entityId: documentId,
+    details: { title: doc.title, status_at_deletion: doc.status },
+  })
+
+  redirect('/lawyer/documents?success=' + encodeURIComponent('Document deleted'))
+}

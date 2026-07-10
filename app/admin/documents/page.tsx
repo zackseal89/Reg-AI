@@ -18,7 +18,7 @@ export default async function AdminDocumentsPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <PageHeader
         title="Documents"
         description="Every document uploaded across the platform, by any lawyer."

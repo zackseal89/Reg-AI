@@ -97,7 +97,7 @@ export default async function AdminAuditLogsPage({
   }
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <PageHeader
         title="Audit Logs"
         description="Every significant action on the platform, in order."

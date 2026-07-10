@@ -38,6 +38,14 @@ supabase functions deploy on_briefing_sent
 
 ---
 
+## Further Documentation
+This file is an index, not the full picture. Deeper docs live in `docs/` — see `docs/README.md` for the framework. Quick pointers:
+- Hit an error you had to dig into? Check `docs/runbooks/` before re-diagnosing — e.g. `supabaseKey is required` and stale-CSS-after-editing-`globals.css` are both already written up.
+- Wondering why something was built a particular way? Check `docs/decisions/` for the ADR before assuming it was arbitrary.
+- Proposing new work? Follow the shape of `specs/phase-a-gemini-migration.md`, not a new format.
+
+---
+
 ## Stack
 - **Frontend:** Next.js 16 App Router, TypeScript, Tailwind CSS v4
 - **Backend/DB:** Supabase (PostgreSQL, Auth, Storage, Edge Functions) — no pgvector; all retrieval is via Gemini File Search
@@ -208,8 +216,9 @@ Do not build any of the above. Redirect to post-summit roadmap.
 - **Primary:** Navy `#1a2744`
 - **Accent:** Burgundy `#8b1c3f`
 - **Background:** Cream `#f5f3ef`
-- **Headings:** Playfair Display
-- **Body:** Inter
+- **Headings:** Fraunces
+- **Body:** Instrument Sans
+- **Icons:** Lucide, uniform 1.5 stroke width (`svg.lucide` rule in `app/globals.css`) — emphasis comes from color, never stroke weight
 
 ---
 

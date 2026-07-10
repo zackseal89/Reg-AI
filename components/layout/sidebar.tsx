@@ -7,7 +7,6 @@ import {
   FileText,
   FolderOpen,
   MessageSquare,
-  Landmark,
   Users,
   Globe2,
   CalendarClock,
@@ -143,18 +142,13 @@ export function Sidebar({
 
   return (
     <div className="h-full w-full flex flex-col bg-sidebar text-sidebar-foreground">
-      <div className="px-6 py-6 flex items-center gap-2.5 border-b border-sidebar-border">
-        <span className="w-8 h-8 rounded-md bg-white/10 flex items-center justify-center shrink-0">
-          <Landmark className="w-4 h-4 text-white" strokeWidth={2} />
+      <div className="px-6 py-7 border-b border-sidebar-border">
+        <h2 className="font-serif text-[24px] font-semibold text-white tracking-tight leading-none">
+          RegWatch
+        </h2>
+        <span className="text-[10px] font-semibold text-sidebar-muted tracking-[0.24em] uppercase block mt-2">
+          MN Legal
         </span>
-        <div className="min-w-0">
-          <h2 className="text-title font-serif font-bold text-white tracking-tight leading-none">
-            RegWatch
-          </h2>
-          <span className="text-[10px] font-bold text-sidebar-muted tracking-[0.2em] block mt-1">
-            MN LEGAL
-          </span>
-        </div>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-5 overflow-y-auto">
@@ -217,7 +211,7 @@ export function Sidebar({
             Settings
           </Link>
           <Link
-            href="#"
+            href={`${root}/support`}
             className="flex items-center gap-3 px-3.5 py-2 rounded-md text-body-sm font-medium text-sidebar-muted hover:bg-sidebar-hover hover:text-white transition-colors duration-150"
           >
             <HelpCircle className="w-4 h-4 shrink-0" strokeWidth={1.75} />

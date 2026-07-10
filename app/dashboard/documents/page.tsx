@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { FolderOpen, ArrowRight } from 'lucide-react'
 import DocFilters from './doc-filters'
 import { PageHeader } from '@/components/ui/page-header'
-import { Badge } from '@/components/ui/badge'
 import { EmptyState } from '@/components/ui/empty-state'
 
 const DOC_TYPE_LABELS: Record<string, string> = {
@@ -50,7 +49,7 @@ export default async function ClientDocumentsPage({
     .order('name')
 
   return (
-    <div className="max-w-5xl">
+    <div className="max-w-5xl mx-auto">
       <PageHeader
         title="Documents"
         description="Regulatory documents published to your account by your legal team."
@@ -69,7 +68,7 @@ export default async function ClientDocumentsPage({
           }
         />
       ) : (
-        <div className="space-y-3">
+        <div className="divide-y divide-hairline">
           {documents.map(doc => {
             const jur = doc.jurisdictions as unknown as {
               name: string
@@ -82,53 +81,57 @@ export default async function ClientDocumentsPage({
               <Link
                 key={doc.id}
                 href={`/dashboard/documents/${doc.id}`}
-                className="group relative flex overflow-hidden bg-white border border-hairline rounded-lg transition-all duration-300 hover:border-accent/30 hover:shadow-elevated"
+                className="group block py-6 first:pt-0 last:pb-0"
               >
-                <div className="w-1 shrink-0 bg-primary/20 group-hover:bg-accent transition-colors" />
-
-                <div className="flex-1 px-5 py-4">
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="font-serif font-bold text-body leading-snug tracking-tight text-primary flex-1 group-hover:text-accent transition-colors">
-                      {doc.title}
-                    </h3>
-                    <div className="flex items-center gap-2 shrink-0">
-                      {jur?.name && <Badge variant="accent">{jur.name}</Badge>}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-eyebrow text-ink-muted mb-2">
-                    {typeLabel && typeLabel !== 'Other' && (
-                      <Badge>{typeLabel}</Badge>
-                    )}
-                    <span>
-                      {doc.effective_date
-                        ? `Issued ${new Date(
-                            doc.effective_date
-                          ).toLocaleDateString('en-GB', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric',
-                          })}`
-                        : `Shared ${new Date(doc.created_at).toLocaleDateString(
-                            'en-GB',
-                            {
-                              day: 'numeric',
-                              month: 'short',
-                              year: 'numeric',
-                            }
-                          )}`}
+                <div className="flex items-center gap-2.5 mb-2.5">
+                  {jur?.name && (
+                    <span className="text-eyebrow font-semibold uppercase tracking-wider text-accent">
+                      {jur.name}
                     </span>
-                  </div>
-
-                  {doc.summary && (
-                    <p className="text-caption text-ink-secondary leading-relaxed line-clamp-2">
-                      {doc.summary}
-                    </p>
+                  )}
+                  {typeLabel && typeLabel !== 'Other' && (
+                    <>
+                      {jur?.name && <span className="text-ink-faint">·</span>}
+                      <span className="text-eyebrow font-semibold uppercase tracking-wider text-ink-faint">
+                        {typeLabel}
+                      </span>
+                    </>
                   )}
                 </div>
 
-                <div className="shrink-0 flex items-center pr-4 text-ink-faint opacity-0 group-hover:opacity-100 group-hover:text-accent transition-all">
-                  <ArrowRight className="w-4 h-4" />
+                <h3 className="font-serif text-title font-semibold text-primary leading-snug tracking-tight max-w-[42ch] mb-2 transition-colors duration-200 group-hover:text-accent">
+                  {doc.title}
+                </h3>
+
+                {doc.summary && (
+                  <p className="text-body-sm text-ink-secondary leading-relaxed max-w-[62ch] line-clamp-2 mb-3">
+                    {doc.summary}
+                  </p>
+                )}
+
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-caption text-ink-faint">
+                    {doc.effective_date
+                      ? `Issued ${new Date(
+                          doc.effective_date
+                        ).toLocaleDateString('en-GB', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}`
+                      : `Shared ${new Date(doc.created_at).toLocaleDateString(
+                          'en-GB',
+                          {
+                            day: 'numeric',
+                            month: 'short',
+                            year: 'numeric',
+                          }
+                        )}`}
+                  </span>
+                  <span className="text-eyebrow font-semibold uppercase tracking-widest text-ink-faint opacity-0 -translate-x-1 transition-all duration-200 flex items-center gap-1.5 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-accent">
+                    View document
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
                 </div>
               </Link>
             )

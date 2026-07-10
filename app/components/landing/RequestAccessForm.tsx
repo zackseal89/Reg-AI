@@ -24,6 +24,13 @@ const AREAS_OF_INTEREST = [
 ];
 
 export default function RequestAccessForm({ isOpen, onClose }: RequestAccessFormProps) {
+  // Render the panel only while open — unmounting resets all form state
+  // without setState-in-effect gymnastics.
+  if (!isOpen) return null;
+  return <RequestAccessPanel onClose={onClose} />;
+}
+
+function RequestAccessPanel({ onClose }: { onClose: () => void }) {
   const [formData, setFormData] = useState({
     name: '',
     company: '',
@@ -35,15 +42,11 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
   const formRef = useRef<HTMLDivElement>(null);
   const firstInputRef = useRef<HTMLInputElement>(null);
 
-  // Focus first input when opened
+  // Focus first input on mount
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => firstInputRef.current?.focus(), 100);
-    } else {
-      setStatus('idle');
-      setFormData({ name: '', company: '', email: '', area: '', message: '' });
-    }
-  }, [isOpen]);
+    const t = setTimeout(() => firstInputRef.current?.focus(), 100);
+    return () => clearTimeout(t);
+  }, []);
 
   // Escape key close
   useEffect(() => {
@@ -54,11 +57,11 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
     return () => document.removeEventListener('keydown', handler);
   }, [onClose]);
 
-  // Lock body scroll
+  // Lock body scroll while mounted
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+    document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
-  }, [isOpen]);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -71,8 +74,6 @@ export default function RequestAccessForm({ isOpen, onClose }: RequestAccessForm
     await new Promise(r => setTimeout(r, 1400));
     setStatus('success');
   };
-
-  if (!isOpen) return null;
 
   return (
     <>

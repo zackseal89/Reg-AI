@@ -24,7 +24,7 @@ export default async function AdminJurisdictionsPage() {
   }))
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl mx-auto">
       <PageHeader
         title="Jurisdictions"
         description="Regulators tracked platform-wide, with client and document coverage."

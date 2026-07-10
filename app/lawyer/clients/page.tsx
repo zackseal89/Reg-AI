@@ -15,11 +15,10 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { CreateClientModal } from '@/components/modals/create-client-modal'
-import { ConfirmModal } from '@/components/modals/confirm-modal'
+import { ConfirmMenuItem } from '@/components/modals/confirm-menu-item'
 
 export default async function LawyerClientsPage({
   searchParams,
@@ -45,7 +44,7 @@ export default async function LawyerClientsPage({
     .order('name')
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <PageHeader
         title="Client Portfolio"
         description="Onboard and manage your client organisations."
@@ -162,36 +161,23 @@ export default async function LawyerClientsPage({
                             </button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <ConfirmModal
+                            <ConfirmMenuItem
+                              itemLabel="Activate account"
                               title="Activate client account?"
                               description={`Confirm the email for ${client.first_name} ${client.last_name} so they can sign in.`}
                               confirmLabel="Activate"
                               hiddenFields={{ clientId: client.id }}
                               action={activateClientAction}
-                              trigger={
-                                <DropdownMenuItem
-                                  onSelect={e => e.preventDefault()}
-                                >
-                                  Activate account
-                                </DropdownMenuItem>
-                              }
                             />
                             <DropdownMenuSeparator />
-                            <ConfirmModal
+                            <ConfirmMenuItem
+                              itemLabel="Suspend"
                               title="Suspend client?"
                               description={`${client.first_name} ${client.last_name} will lose access until reactivated.`}
                               confirmLabel="Suspend"
                               destructive
                               hiddenFields={{ clientId: client.id }}
                               action={suspendClientAction}
-                              trigger={
-                                <DropdownMenuItem
-                                  destructive
-                                  onSelect={e => e.preventDefault()}
-                                >
-                                  Suspend
-                                </DropdownMenuItem>
-                              }
                             />
                           </DropdownMenuContent>
                         </DropdownMenu>

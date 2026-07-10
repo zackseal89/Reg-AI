@@ -51,7 +51,7 @@ export default async function DocumentViewerPage({
     : null
 
   return (
-    <div className="max-w-3xl pb-20">
+    <div className="max-w-3xl mx-auto pb-20">
       <Link
         href="/dashboard/documents"
         className="inline-flex items-center gap-1.5 text-caption font-medium text-ink-muted hover:text-primary mb-6 transition-colors"
@@ -95,8 +95,8 @@ export default async function DocumentViewerPage({
       </div>
 
       {doc.summary && (
-        <div className="mb-4 p-4 bg-surface-low/60 rounded-lg border border-hairline/60">
-          <h2 className="text-eyebrow font-bold uppercase tracking-widest text-ink-muted mb-2">
+        <div className="mb-6 pl-4 border-l-2 border-accent/40">
+          <h2 className="text-eyebrow font-bold uppercase tracking-widest text-ink-faint mb-2">
             Summary from your legal team
           </h2>
           <p className="text-body-sm text-ink-secondary leading-relaxed">

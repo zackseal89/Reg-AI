@@ -10,7 +10,7 @@
   --color-accent: #8b1c3f; /* structural accent */
   --color-accent-active: #6e1632; /* pressed accent */
   --color-cream: #f5f3ef;
-  --color-success: #2d8f5a;
+  --color-success: #247848; /* ≥4.5:1 on white for caption-size text */
   --color-error: #ba1a1a;
 
   /* Surfaces — warm near-white canvas, white cards */
@@ -36,12 +36,12 @@
   --color-ink: #1a2744;
   --color-ink-secondary: #3e485f;
   --color-ink-muted: #5f6779;
-  --color-ink-faint: #99a0ad;
+  --color-ink-faint: #687080; /* 4.98:1 on white — captions stay AA */
 
   /* Fonts */
-  --font-sans: var(--font-inter), sans-serif;
-  --font-serif: var(--font-playfair), serif;
-  --font-label: var(--font-inter), sans-serif;
+  --font-sans: var(--font-instrument), sans-serif;
+  --font-serif: var(--font-fraunces), serif;
+  --font-label: var(--font-instrument), sans-serif;
 
   /* Type scale — Notion sizes + negative display tracking */
   --text-display-1: 64px;
@@ -107,9 +107,17 @@
     @apply font-sans;
   }
 
-  /* App chrome is Inter; marketing surfaces opt into Playfair via font-serif */
+  /* App chrome is the grotesque; surfaces opt into the serif via font-serif */
   h1, h2, h3, h4, h5, h6 {
     @apply font-sans font-bold text-primary tracking-tight;
     text-wrap: balance;
+  }
+
+  /*
+   * All Lucide icons render at a single thin stroke, overriding per-icon
+   * strokeWidth props — emphasis comes from colour, not weight.
+   */
+  svg.lucide {
+    stroke-width: 1.5;
   }
 }

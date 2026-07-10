@@ -5,6 +5,7 @@ import {
   assignDocumentAction,
   publishDocumentAction,
   unpublishDocumentAction,
+  deleteDocumentAction,
 } from './actions'
 import FlashToast from '@/app/components/FlashToast'
 import { PageHeader } from '@/components/ui/page-header'
@@ -16,12 +17,11 @@ import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { UploadDocumentModal } from '@/components/modals/upload-document-modal'
 import { AssignDocumentModal } from '@/components/modals/assign-document-modal'
-import { ConfirmModal } from '@/components/modals/confirm-modal'
+import { ConfirmMenuItem } from '@/components/modals/confirm-menu-item'
 
 const DOC_TYPE_LABELS: Record<string, string> = {
   circular: 'Circular',
@@ -82,7 +82,7 @@ export default async function LawyerDocumentsPage() {
   }))
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <FlashToast />
       <PageHeader
         title="Documents"
@@ -174,7 +174,7 @@ export default async function LawyerDocumentsPage() {
                           <span className="font-medium text-ink-secondary">
                             {new Date(
                               doc.effective_date
-                            ).toLocaleDateString()}
+                            ).toLocaleDateString('en-GB')}
                           </span>
                         </span>
                       )}
@@ -208,44 +208,48 @@ export default async function LawyerDocumentsPage() {
                         </Button>
                       </form>
                     )}
-                    {doc.status === 'published' && (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <button
-                            className="p-2 rounded-lg text-ink-muted hover:bg-primary/5 hover:text-primary transition-colors"
-                            aria-label="More actions"
-                          >
-                            <MoreHorizontal className="w-4 h-4" />
-                          </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <ConfirmModal
-                            title="Unpublish document?"
-                            description={`"${doc.title}" will be removed from client AI stores. It can be republished.`}
-                            confirmLabel="Unpublish"
-                            destructive
-                            hiddenFields={{ documentId: doc.id }}
-                            action={unpublishDocumentAction}
-                            trigger={
-                              <DropdownMenuItem
-                                destructive
-                                onSelect={e => e.preventDefault()}
-                              >
-                                Unpublish
-                              </DropdownMenuItem>
-                            }
-                          />
-                          <DropdownMenuSeparator />
-                          <AssignDocumentModal
-                            documentId={doc.id}
-                            documentTitle={doc.title}
-                            label="Assign more"
-                            clients={clientsForForm}
-                            action={assignDocumentAction}
-                          />
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          className="p-2 rounded-md text-ink-muted hover:bg-primary/5 hover:text-primary transition-colors"
+                          aria-label="More actions"
+                        >
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {doc.status === 'published' && (
+                          <>
+                            <ConfirmMenuItem
+                              itemLabel="Unpublish"
+                              title="Unpublish document?"
+                              description={`"${doc.title}" will be removed from client AI stores. It can be republished.`}
+                              confirmLabel="Unpublish"
+                              destructive
+                              hiddenFields={{ documentId: doc.id }}
+                              action={unpublishDocumentAction}
+                            />
+                            <AssignDocumentModal
+                              documentId={doc.id}
+                              documentTitle={doc.title}
+                              label="Assign more"
+                              clients={clientsForForm}
+                              action={assignDocumentAction}
+                            />
+                            <DropdownMenuSeparator />
+                          </>
+                        )}
+                        <ConfirmMenuItem
+                          itemLabel="Delete"
+                          title="Delete document?"
+                          description={`"${doc.title}" will be permanently deleted — removed from client AI stores, file storage, and all assignments. This cannot be undone.`}
+                          confirmLabel="Delete permanently"
+                          destructive
+                          hiddenFields={{ documentId: doc.id }}
+                          action={deleteDocumentAction}
+                        />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
 

@@ -50,7 +50,7 @@ export default async function ProfilePage({
       .toUpperCase() || '?'
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-3xl mx-auto">
       <PageHeader
         title="Profile"
         description="Your account, company, and regulatory focus."

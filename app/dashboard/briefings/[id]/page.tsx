@@ -36,7 +36,7 @@ export default async function BriefingDetailPage({
     .eq('jurisdiction_id', briefing.jurisdiction_id || '')
 
   return (
-    <div className="max-w-3xl">
+    <div className="max-w-3xl mx-auto">
       <Link
         href="/dashboard/briefings"
         className="inline-flex items-center gap-1.5 text-caption font-medium text-ink-muted hover:text-primary mb-6 transition-colors"

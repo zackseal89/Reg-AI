@@ -71,7 +71,9 @@ export async function indexDocumentInStore(
   let storeDocName = (op.response as { document?: { name?: string } } | undefined)?.document?.name
 
   if (!storeDocName) {
-    const resp = op.response as any
+    const resp = op.response as
+      | { documentName?: string; parent?: string }
+      | undefined
     if (resp?.documentName) {
       const parent = resp.parent?.startsWith('fileSearchStores/') ? resp.parent : `fileSearchStores/${resp.parent || storeName.split('/')[1]}`
       storeDocName = `${parent}/documents/${resp.documentName}`

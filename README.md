@@ -100,6 +100,7 @@ Open [http://localhost:3000](http://localhost:3000).
 npm run dev        # Next.js dev server
 npm run build      # Production build
 npm run lint       # ESLint
+npm run seed:test  # Seed admin/lawyer/client test accounts (scripts/seed-test-users.ts)
 npx tsc --noEmit   # TypeScript check (no test suite)
 ```
 
@@ -169,16 +170,17 @@ Account:   pending_review → active → suspended
 - **Navy** `#1a2744` (primary)
 - **Burgundy** `#8b1c3f` (accent)
 - **Cream** `#f5f3ef` (background)
-- **Headings** — Playfair Display
-- **Body** — Inter
+- **Headings** — Fraunces
+- **Body** — Instrument Sans
+- **Icons** — Lucide, uniform 1.5 stroke width
 
 ---
 
 ## Further Reading
 
 - [CLAUDE.md](./CLAUDE.md) — engineering playbook and architecture deep-dive
-- [ROADMAP.md](./ROADMAP.md) — build phases leading to the June 2026 Kempinski summit demo
-- [AGENTS.md](./AGENTS.md) — AI-agent collaboration guide
+- [docs/README.md](./docs/README.md) — documentation framework: specs, decisions (ADRs), runbooks
+- [AGENTS.md](./AGENTS.md) — pointer to CLAUDE.md, kept for tools that look for this filename by convention
 - [specs/phase-a-gemini-migration.md](./specs/phase-a-gemini-migration.md) — Phase A migration spec
 
 ---

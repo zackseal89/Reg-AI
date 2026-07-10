@@ -48,3 +48,14 @@ export function timeAgo(dateString: string): string {
   if (months < 12) return `${months}mo ago`
   return `${Math.floor(months / 12)}y ago`
 }
+
+/**
+ * Buckets how long an item has been waiting into an honest urgency tier
+ * based on real elapsed time — no fabricated risk scoring.
+ */
+export function urgencyTier(dateString: string): 'fresh' | 'aging' | 'stale' {
+  const hours = (Date.now() - new Date(dateString).getTime()) / 3_600_000
+  if (hours < 24) return 'fresh'
+  if (hours < 72) return 'aging'
+  return 'stale'
+}

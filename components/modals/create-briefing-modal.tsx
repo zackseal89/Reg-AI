@@ -32,14 +32,22 @@ interface CreateBriefingModalProps {
   jurisdictions: Jurisdiction[]
   clients: Client[]
   action: (formData: FormData) => Promise<void>
+  initialTitle?: string
+  initialContent?: string
+  initialJurisdictionId?: string
+  defaultOpen?: boolean
 }
 
 export function CreateBriefingModal({
   jurisdictions,
   clients,
   action,
+  initialTitle,
+  initialContent,
+  initialJurisdictionId,
+  defaultOpen = false,
 }: CreateBriefingModalProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(defaultOpen)
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -66,6 +74,7 @@ export function CreateBriefingModal({
                   id="title"
                   name="title"
                   required
+                  defaultValue={initialTitle}
                   placeholder="e.g. CBK Circular on Mobile Money Licensing"
                 />
               </FormField>
@@ -74,7 +83,12 @@ export function CreateBriefingModal({
                 htmlFor="jurisdictionId"
                 required
               >
-                <Select id="jurisdictionId" name="jurisdictionId" required>
+                <Select
+                  id="jurisdictionId"
+                  name="jurisdictionId"
+                  required
+                  defaultValue={initialJurisdictionId ?? ''}
+                >
                   <option value="">Select…</option>
                   {jurisdictions.map(j => (
                     <option key={j.id} value={j.id}>
@@ -91,6 +105,7 @@ export function CreateBriefingModal({
                 name="content"
                 required
                 rows={10}
+                defaultValue={initialContent}
                 placeholder="Write the regulatory briefing content here…"
               />
             </FormField>

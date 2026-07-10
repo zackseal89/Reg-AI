@@ -23,19 +23,160 @@ interface Message {
   citations?: Citation[]
 }
 
+interface Turn {
+  question: string
+  answer?: Message
+}
+
 // ---------------------------------------------------------------------------
-// Typing indicator
+// Answer prose — flowing text, no bubble, no shadow, no avatar
 // ---------------------------------------------------------------------------
 
-function TypingIndicator() {
+function AnswerProse({ content }: { content: string }) {
   return (
-    <div className="flex items-end gap-3.5">
-      {/* Avatar */}
-      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow border border-hairline">
-        <MessageSquare className="w-4 h-4 text-white" strokeWidth={1.5} />
+    <div className="text-[15px] font-sans text-primary leading-loose max-w-[68ch]">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          p: ({ children }) => <p className="mb-3 last:mb-0">{children}</p>,
+          ul: ({ children }) => (
+            <ul className="mb-3 last:mb-0 ml-5 list-disc space-y-1.5 marker:text-ink-faint">
+              {children}
+            </ul>
+          ),
+          ol: ({ children }) => (
+            <ol className="mb-3 last:mb-0 ml-5 list-decimal space-y-1.5 marker:text-ink-faint">
+              {children}
+            </ol>
+          ),
+          li: ({ children }) => <li className="leading-relaxed">{children}</li>,
+          strong: ({ children }) => (
+            <strong className="font-semibold text-primary">{children}</strong>
+          ),
+          em: ({ children }) => <em className="italic text-ink-secondary">{children}</em>,
+          h1: ({ children }) => (
+            <h3 className="font-serif font-semibold text-lg text-primary mt-5 mb-2">
+              {children}
+            </h3>
+          ),
+          h2: ({ children }) => (
+            <h3 className="font-serif font-semibold text-base text-primary mt-5 mb-2">
+              {children}
+            </h3>
+          ),
+          h3: ({ children }) => (
+            <h4 className="font-sans font-semibold text-[15px] text-primary mt-4 mb-1.5">
+              {children}
+            </h4>
+          ),
+          blockquote: ({ children }) => (
+            <blockquote className="border-l-2 border-accent/40 pl-4 py-0.5 my-3 text-ink-secondary italic">
+              {children}
+            </blockquote>
+          ),
+          code: ({ children }) => (
+            <code className="px-1.5 py-0.5 bg-surface-low rounded text-caption font-mono text-ink-secondary">
+              {children}
+            </code>
+          ),
+          a: ({ href, children }) => (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent"
+            >
+              {children}
+            </a>
+          ),
+          hr: () => <hr className="my-4 border-hairline/60" />,
+          table: ({ children }) => (
+            <div className="my-3 overflow-x-auto">
+              <table className="w-full text-caption border-collapse">{children}</table>
+            </div>
+          ),
+          th: ({ children }) => (
+            <th className="text-left font-semibold text-primary px-3 py-2 border-b border-hairline">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="px-3 py-2 border-b border-hairline/60 align-top">{children}</td>
+          ),
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Citations — endnotes, not source cards
+// ---------------------------------------------------------------------------
+
+function Citations({ citations }: { citations: Citation[] }) {
+  if (!citations.length) return null
+
+  return (
+    <div className="mt-5 pt-4 border-t border-hairline/70 max-w-[68ch]">
+      <p className="text-eyebrow font-sans font-semibold text-ink-faint uppercase tracking-widest mb-2.5">
+        Sources
+      </p>
+      <div className="flex flex-wrap gap-x-6 gap-y-2">
+        {citations.map((c, ci) => {
+          const inner = (
+            <>
+              <span className="text-eyebrow text-accent font-semibold shrink-0">{ci + 1}</span>
+              <span className="text-caption text-ink-muted group-hover:text-primary transition-colors leading-tight">
+                {c.document_title}
+              </span>
+            </>
+          )
+          return c.document_id ? (
+            <Link
+              key={`${c.document_id}-${ci}`}
+              href={`/dashboard/documents/${c.document_id}`}
+              className="inline-flex items-baseline gap-1.5 group"
+            >
+              {inner}
+            </Link>
+          ) : (
+            <div key={`unlinked-${ci}`} className="inline-flex items-baseline gap-1.5">
+              {inner}
+            </div>
+          )
+        })}
       </div>
-      <div className="bg-white border border-hairline rounded-2xl rounded-bl-sm px-6 py-4 shadow-soft">
-        <span className="flex gap-1.5 items-center h-4">
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Turn — one exchange, rendered as a memo entry: question as headline,
+// answer as flowing prose beneath it. No bubbles, no avatars.
+// ---------------------------------------------------------------------------
+
+function TurnBlock({
+  turn,
+  pending,
+}: {
+  turn: Turn
+  pending: boolean
+}) {
+  return (
+    <div className="py-8 first:pt-0">
+      <h3 className="font-serif text-title font-semibold text-primary leading-snug tracking-tight max-w-[42ch] mb-4">
+        {turn.question}
+      </h3>
+
+      {turn.answer ? (
+        <>
+          <AnswerProse content={turn.answer.content} />
+          <Citations citations={turn.answer.citations ?? []} />
+        </>
+      ) : pending ? (
+        <span className="flex gap-1.5 items-center h-5">
           {[0, 1, 2].map((i) => (
             <span
               key={i}
@@ -44,153 +185,7 @@ function TypingIndicator() {
             />
           ))}
         </span>
-      </div>
-    </div>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Message bubble
-// ---------------------------------------------------------------------------
-
-function MessageBubble({ message }: { message: Message }) {
-  const isUser = message.role === 'user'
-
-  if (isUser) {
-    return (
-      <div className="flex justify-end">
-        <div
-          className="max-w-[85%] bg-accent text-white rounded-2xl rounded-br-sm px-5 py-3.5 shadow-md border border-accent"
-        >
-          <p className="text-[14px] font-sans leading-relaxed whitespace-pre-wrap">{message.content}</p>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex items-end gap-3.5">
-      {/* Avatar */}
-      <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0 shadow border border-hairline">
-        <MessageSquare className="w-4 h-4 text-white" strokeWidth={1.5} />
-      </div>
-
-      <div className="max-w-[85%] space-y-3">
-        {/* Response bubble — legal document style */}
-        <div className="bg-white border border-hairline rounded-2xl rounded-bl-sm px-6 py-5 shadow-soft border-l-4 border-l-primary/30">
-          <div className="text-[14.5px] font-sans text-primary leading-loose chat-markdown">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-              components={{
-                p: ({ children }) => <p className="mb-3 last:mb-0">{children}</p>,
-                ul: ({ children }) => (
-                  <ul className="mb-3 last:mb-0 ml-5 list-disc space-y-1.5 marker:text-ink-faint">
-                    {children}
-                  </ul>
-                ),
-                ol: ({ children }) => (
-                  <ol className="mb-3 last:mb-0 ml-5 list-decimal space-y-1.5 marker:text-ink-faint">
-                    {children}
-                  </ol>
-                ),
-                li: ({ children }) => <li className="leading-relaxed">{children}</li>,
-                strong: ({ children }) => (
-                  <strong className="font-semibold text-primary">{children}</strong>
-                ),
-                em: ({ children }) => <em className="italic text-ink-secondary">{children}</em>,
-                h1: ({ children }) => (
-                  <h3 className="font-sans font-bold text-lg text-primary mt-4 mb-2">
-                    {children}
-                  </h3>
-                ),
-                h2: ({ children }) => (
-                  <h3 className="font-sans font-bold text-base text-primary mt-4 mb-2">
-                    {children}
-                  </h3>
-                ),
-                h3: ({ children }) => (
-                  <h4 className="font-sans font-semibold text-[15px] text-primary mt-3 mb-1.5">
-                    {children}
-                  </h4>
-                ),
-                blockquote: ({ children }) => (
-                  <blockquote className="border-l-2 border-accent/40 pl-4 py-0.5 my-3 text-ink-secondary italic">
-                    {children}
-                  </blockquote>
-                ),
-                code: ({ children }) => (
-                  <code className="px-1.5 py-0.5 bg-surface-low rounded text-caption font-mono text-ink-secondary">
-                    {children}
-                  </code>
-                ),
-                a: ({ href, children }) => (
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-accent underline decoration-accent/40 underline-offset-2 hover:decoration-accent"
-                  >
-                    {children}
-                  </a>
-                ),
-                hr: () => <hr className="my-4 border-hairline/60" />,
-                table: ({ children }) => (
-                  <div className="my-3 overflow-x-auto">
-                    <table className="w-full text-caption border-collapse">{children}</table>
-                  </div>
-                ),
-                th: ({ children }) => (
-                  <th className="text-left font-semibold text-primary px-3 py-2 border-b border-hairline">
-                    {children}
-                  </th>
-                ),
-                td: ({ children }) => (
-                  <td className="px-3 py-2 border-b border-hairline/60 align-top">{children}</td>
-                ),
-              }}
-            >
-              {message.content}
-            </ReactMarkdown>
-          </div>
-        </div>
-
-        {/* Citations — formal legal footnotes */}
-        {message.citations && message.citations.length > 0 && (
-          <div className="pl-2 space-y-1.5 border-l-2 border-hairline ml-2">
-            <p className="text-eyebrow font-sans font-bold text-ink-faint uppercase tracking-widest mb-2">
-              Sources
-            </p>
-            {message.citations.map((c, ci) => {
-              const numberEl = (
-                <span className="text-eyebrow text-ink-faint font-mono shrink-0 w-4 text-right font-semibold">
-                  {ci + 1}.
-                </span>
-              )
-              const titleEl = (
-                <span className="text-caption font-sans text-ink-muted group-hover:text-accent transition-colors leading-tight underline decoration-hairline underline-offset-4 group-hover:decoration-accent/40">
-                  {c.document_title}
-                </span>
-              )
-
-              return c.document_id ? (
-                <Link
-                  key={`${c.document_id}-${ci}`}
-                  href={`/dashboard/documents/${c.document_id}`}
-                  className="flex items-baseline gap-2 group"
-                >
-                  {numberEl}
-                  {titleEl}
-                </Link>
-              ) : (
-                <div key={`unlinked-${ci}`} className="flex items-baseline gap-2 group">
-                  {numberEl}
-                  {titleEl}
-                </div>
-              )
-            })}
-          </div>
-        )}
-      </div>
+      ) : null}
     </div>
   )
 }
@@ -208,8 +203,7 @@ function EmptyState({
 }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-6 text-center py-16">
-      {/* Monogram mark */}
-      <div className="w-16 h-16 rounded-full border border-hairline bg-white flex items-center justify-center mb-6 shadow-soft">
+      <div className="w-16 h-16 rounded-full border border-hairline bg-white flex items-center justify-center mb-6">
         <MessageSquare className="w-7 h-7 text-ink-faint" strokeWidth={1} />
       </div>
 
@@ -220,19 +214,18 @@ function EmptyState({
         Ask questions about your regulatory documents. Every response is grounded in content reviewed by your legal team at MN Legal.
       </p>
 
-      {/* Divider */}
-      <div className="flex items-center gap-4 mb-6 w-full max-w-sm">
+      <div className="flex items-center gap-4 mb-2 w-full max-w-sm">
         <div className="flex-1 h-px bg-hairline/60" />
         <span className="text-eyebrow text-ink-faint font-bold uppercase tracking-widest">Suggested Inquiries</span>
         <div className="flex-1 h-px bg-hairline/60" />
       </div>
 
-      <div className="grid gap-3 w-full max-w-sm">
+      <div className="divide-y divide-hairline w-full max-w-sm">
         {prompts.map((p) => (
           <button
             key={p}
             onClick={() => onPrompt(p)}
-            className="text-left px-5 py-4 bg-white border border-hairline rounded-lg text-caption text-ink-secondary hover:border-accent/40 hover:text-primary transition-all duration-300 leading-relaxed shadow-soft hover:shadow-elevated"
+            className="w-full text-left py-4 text-caption text-ink-secondary hover:text-accent transition-colors duration-200 leading-relaxed cursor-pointer"
           >
             &ldquo;{p}&rdquo;
           </button>
@@ -386,13 +379,23 @@ function ChatContent({ suggestedPrompts }: { suggestedPrompts: string[] }) {
 
   const hasMessages = messages.length > 0
 
+  const turns: Turn[] = []
+  for (let i = 0; i < messages.length; i++) {
+    if (messages[i].role !== 'user') continue
+    const next = messages[i + 1]
+    turns.push({
+      question: messages[i].content,
+      answer: next?.role === 'assistant' ? next : undefined,
+    })
+  }
+
   return (
     <div className="flex flex-col h-full bg-[var(--background)]">
 
       {/* Document context pill */}
       {documentId && documentTitle && (
         <div className="px-4 md:px-8 pt-4 pb-2 flex-shrink-0">
-          <div className="inline-flex items-center gap-2 pl-4 pr-2.5 py-2 bg-white border border-hairline rounded-full text-caption text-ink-secondary shadow-soft transition-all hover:border-primary/20">
+          <div className="inline-flex items-center gap-2 pl-4 pr-2.5 py-2 bg-white border border-hairline rounded-full text-caption text-ink-secondary transition-all hover:border-primary/20">
             <FileText className="w-3.5 h-3.5 text-accent flex-shrink-0" strokeWidth={1.75} />
             <span className="max-w-[220px] truncate font-medium text-ink-secondary font-sans tracking-wide">{documentTitle}</span>
             <button
@@ -414,11 +417,12 @@ function ChatContent({ suggestedPrompts }: { suggestedPrompts: string[] }) {
             onPrompt={(p) => { setInput(p); sendMessage(p) }}
           />
         ) : (
-          <div className="px-4 md:px-8 py-6 space-y-8">
-            {messages.map((m, i) => (
-              <MessageBubble key={i} message={m} />
-            ))}
-            {showTyping && <TypingIndicator />}
+          <div className="px-4 md:px-8 py-6 max-w-3xl mx-auto">
+            <div className="divide-y divide-hairline">
+              {turns.map((t, i) => (
+                <TurnBlock key={i} turn={t} pending={i === turns.length - 1 && showTyping} />
+              ))}
+            </div>
             <div ref={bottomRef} className="h-4" />
           </div>
         )}
@@ -429,7 +433,7 @@ function ChatContent({ suggestedPrompts }: { suggestedPrompts: string[] }) {
         className="flex-shrink-0 px-4 md:px-8 pt-4 bg-gradient-to-t from-[var(--background)] via-[var(--background)] to-transparent"
         style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
       >
-        <div className="flex items-end gap-3 bg-white/95 backdrop-blur-md border border-hairline rounded-2xl px-5 py-3.5 shadow-elevated max-w-4xl mx-auto focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all duration-300">
+        <div className="flex items-end gap-3 bg-white border border-hairline rounded-lg px-5 py-3.5 max-w-3xl mx-auto focus-within:border-primary/40 transition-colors duration-200">
           <textarea
             ref={textareaRef}
             value={input}
@@ -444,7 +448,7 @@ function ChatContent({ suggestedPrompts }: { suggestedPrompts: string[] }) {
           {isStreaming ? (
             <button
               onClick={() => abortRef.current?.abort()}
-              className="p-2.5 rounded-xl bg-accent text-white transition-all duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent-active hover:shadow-elevated active:scale-95 cursor-pointer"
+              className="p-2.5 rounded-md bg-accent text-white transition-colors duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent-active cursor-pointer"
               aria-label="Stop generating"
               title="Stop generating"
             >
@@ -454,7 +458,7 @@ function ChatContent({ suggestedPrompts }: { suggestedPrompts: string[] }) {
             <button
               onClick={() => sendMessage(input)}
               disabled={!input.trim()}
-              className="p-2.5 rounded-xl bg-primary text-white disabled:opacity-30 transition-all duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent hover:shadow-elevated active:scale-95 cursor-pointer disabled:cursor-not-allowed"
+              className="p-2.5 rounded-md bg-primary text-white disabled:opacity-30 transition-colors duration-200 flex-shrink-0 self-end mb-0.5 hover:bg-accent cursor-pointer disabled:cursor-not-allowed"
               aria-label="Send"
             >
               <Send className="w-4 h-4" strokeWidth={2} />

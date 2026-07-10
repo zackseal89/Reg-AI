@@ -1,14 +1,20 @@
 import { createClient } from '@/lib/supabase/server'
-import { FileText } from 'lucide-react'
+import { FileText, MoreHorizontal } from 'lucide-react'
 import {
   createBriefingAction,
   approveBriefingAction,
   sendBriefingAction,
   rejectBriefingAction,
+  deleteBriefingAction,
 } from './actions'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+} from '@/components/ui/dropdown-menu'
+import { ConfirmMenuItem } from '@/components/modals/confirm-menu-item'
 import FlashToast from '@/app/components/FlashToast'
 import { PageHeader } from '@/components/ui/page-header'
-import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { EmptyState } from '@/components/ui/empty-state'
@@ -17,9 +23,9 @@ import { CreateBriefingModal } from '@/components/modals/create-briefing-modal'
 export default async function LawyerBriefingsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; success?: string }>
+  searchParams: Promise<{ error?: string; success?: string; template?: string }>
 }) {
-  await searchParams
+  const { template: templateId } = await searchParams
   const supabase = await createClient()
 
   const { data: briefings } = await supabase
@@ -52,8 +58,33 @@ export default async function LawyerBriefingsPage({
       (c.companies as unknown as { name: string } | null)?.name ?? null,
   }))
 
+  // If arriving from the template library (?template=<id>), load that briefing
+  // template and pre-fill the draft modal.
+  let templatePrefill:
+    | { title: string; content: string; jurisdictionId?: string }
+    | undefined
+  if (templateId) {
+    const { data: template } = await supabase
+      .from('templates')
+      .select('title, body, jurisdiction, kind')
+      .eq('id', templateId)
+      .eq('kind', 'briefing')
+      .maybeSingle()
+
+    if (template) {
+      const matchedJurisdiction = (jurisdictions ?? []).find(
+        j => j.name === template.jurisdiction
+      )
+      templatePrefill = {
+        title: template.title,
+        content: template.body,
+        jurisdictionId: matchedJurisdiction?.id,
+      }
+    }
+  }
+
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <FlashToast />
       <PageHeader
         title="Briefings"
@@ -63,6 +94,10 @@ export default async function LawyerBriefingsPage({
           jurisdictions={jurisdictions ?? []}
           clients={clients}
           action={createBriefingAction}
+          initialTitle={templatePrefill?.title}
+          initialContent={templatePrefill?.content}
+          initialJurisdictionId={templatePrefill?.jurisdictionId}
+          defaultOpen={!!templatePrefill}
         />
       </PageHeader>
 
@@ -73,7 +108,7 @@ export default async function LawyerBriefingsPage({
           description="Start drafting your first regulatory briefing. Drafts require approval before they're sent."
         />
       ) : (
-        <div className="space-y-5">
+        <div className="divide-y divide-hairline">
           {briefings.map(b => {
             const jurisdiction = b.jurisdictions as unknown as {
               name: string
@@ -91,76 +126,87 @@ export default async function LawyerBriefingsPage({
               profiles: { first_name: string; last_name: string }
             }[] | null
 
+            const preview =
+              b.content?.length > 220
+                ? b.content.slice(0, 220) + '…'
+                : b.content
+
             return (
-              <Card
-                key={b.id}
-                className="p-6 hover:shadow-elevated hover:border-primary/20 transition-all duration-300 group"
-              >
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-4">
-                  <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-3 mb-2">
-                      <h3 className="font-serif text-title font-bold text-primary group-hover:text-accent transition-colors">
-                        {b.title}
-                      </h3>
-                      <Badge
-                        variant={
-                          b.status as
-                            | 'draft'
-                            | 'approved'
-                            | 'sent'
-                            | 'default'
-                        }
-                      >
-                        {b.status}
-                      </Badge>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-caption text-ink-muted">
-                      {jurisdiction && (
-                        <span className="flex items-center gap-1.5 text-ink-secondary font-medium">
-                          <span className="w-1.5 h-1.5 rounded-full bg-accent/60" />
-                          {jurisdiction.name}
+              <article key={b.id} className="group py-7 first:pt-0 last:pb-0">
+                <div className="flex items-center gap-2.5 mb-2.5">
+                  {jurisdiction && (
+                    <span className="text-eyebrow font-semibold uppercase tracking-wider text-accent">
+                      {jurisdiction.name}
+                    </span>
+                  )}
+                  <Badge
+                    variant={
+                      b.status as 'draft' | 'approved' | 'sent' | 'default'
+                    }
+                  >
+                    {b.status}
+                  </Badge>
+                </div>
+
+                <h3 className="font-serif text-h3 font-semibold text-primary leading-snug tracking-tight max-w-[34ch] mb-2.5 transition-colors duration-200 group-hover:text-accent">
+                  {b.title}
+                </h3>
+
+                <p className="text-body-sm text-ink-secondary leading-relaxed max-w-[56ch] line-clamp-2 mb-3">
+                  {preview}
+                </p>
+
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-caption text-ink-faint mb-4">
+                  {author && (
+                    <span>
+                      By {author.first_name} {author.last_name}
+                    </span>
+                  )}
+                  {approver && (
+                    <span>
+                      Approved by {approver.first_name} {approver.last_name}
+                    </span>
+                  )}
+                  <span>
+                    Created{' '}
+                    {new Date(b.created_at).toLocaleDateString('en-GB', {
+                      day: 'numeric',
+                      month: 'long',
+                      year: 'numeric',
+                    })}
+                  </span>
+                  {b.sent_at && (
+                    <span>
+                      Sent{' '}
+                      {new Date(b.sent_at).toLocaleDateString('en-GB', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2 min-w-0">
+                    {assignments && assignments.length > 0 && (
+                      <>
+                        <span className="text-eyebrow font-semibold uppercase tracking-wider text-ink-faint">
+                          Assigned to
                         </span>
-                      )}
-                      {author && (
-                        <span>
-                          By:{' '}
-                          <span className="font-medium text-ink-secondary">
-                            {author.first_name} {author.last_name}
-                          </span>
-                        </span>
-                      )}
-                      {approver && (
-                        <span>
-                          Approved by:{' '}
-                          <span className="font-medium text-ink-secondary">
-                            {approver.first_name} {approver.last_name}
-                          </span>
-                        </span>
-                      )}
-                      <span>
-                        Created:{' '}
-                        <span className="font-medium text-ink-secondary">
-                          {new Date(b.created_at).toLocaleDateString()}
-                        </span>
-                      </span>
-                      {b.sent_at && (
-                        <span>
-                          Sent:{' '}
-                          <span className="font-medium text-ink-secondary">
-                            {new Date(b.sent_at).toLocaleDateString()}
-                          </span>
-                        </span>
-                      )}
-                    </div>
+                        {assignments.map(a => (
+                          <Badge key={a.client_id}>
+                            {a.profiles.first_name} {a.profiles.last_name}
+                          </Badge>
+                        ))}
+                      </>
+                    )}
                   </div>
-                  <div className="flex flex-wrap gap-2 md:shrink-0 pt-1">
+
+                  <div className="flex flex-wrap items-center gap-2 shrink-0">
                     {b.status === 'draft' && (
                       <form action={approveBriefingAction}>
-                        <input
-                          type="hidden"
-                          name="briefingId"
-                          value={b.id}
-                        />
+                        <input type="hidden" name="briefingId" value={b.id} />
                         <Button type="submit" variant="subtle" size="sm">
                           Approve
                         </Button>
@@ -184,34 +230,40 @@ export default async function LawyerBriefingsPage({
                             name="briefingId"
                             value={b.id}
                           />
-                          <Button
-                            type="submit"
-                            variant="destructive"
-                            size="sm"
-                          >
+                          <Button type="submit" variant="destructive" size="sm">
                             Reject
                           </Button>
                         </form>
                       </>
                     )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          className="p-2 rounded-md text-ink-muted hover:bg-primary/5 hover:text-primary transition-colors"
+                          aria-label="More actions"
+                        >
+                          <MoreHorizontal className="w-4 h-4" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <ConfirmMenuItem
+                          itemLabel="Delete"
+                          title="Delete briefing?"
+                          description={
+                            b.status === 'sent'
+                              ? `"${b.title}" has already been sent — clients received it by email. Deleting removes it from their portal permanently. This cannot be undone.`
+                              : `"${b.title}" and its client assignments will be permanently deleted. This cannot be undone.`
+                          }
+                          confirmLabel="Delete permanently"
+                          destructive
+                          hiddenFields={{ briefingId: b.id }}
+                          action={deleteBriefingAction}
+                        />
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </div>
-                <p className="text-body-sm text-ink-secondary line-clamp-3 mb-4 leading-relaxed bg-surface-low/60 p-4 rounded-lg border border-hairline/60">
-                  {b.content}
-                </p>
-                {assignments && assignments.length > 0 && (
-                  <div className="flex flex-wrap items-center gap-2 mt-5 pt-4 border-t border-hairline/60 text-caption text-ink-muted">
-                    <span className="font-bold uppercase tracking-wider text-eyebrow">
-                      Assigned to:
-                    </span>
-                    {assignments.map(a => (
-                      <Badge key={a.client_id}>
-                        {a.profiles.first_name} {a.profiles.last_name}
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </Card>
+              </article>
             )
           })}
         </div>
