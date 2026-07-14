@@ -55,12 +55,10 @@ export default function HeroSection({ onRequestAccess }: HeroSectionProps) {
 
   return (
     <section className="relative min-h-[92vh] flex items-center overflow-hidden bg-primary pt-24 md:pt-16">
-      {/* Background glow orbs */}
+      {/* Background: one restrained glow + fine grid */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-accent/20 blur-[120px]" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-accent/15 blur-[150px]" />
-        {/* SVG Grid */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
+        <div className="absolute top-[-20%] right-[-10%] w-[55%] h-[70%] rounded-full bg-accent/15 blur-[140px]" />
+        <svg className="absolute inset-0 w-full h-full opacity-[0.05]" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" strokeWidth="0.5" />
@@ -78,54 +76,60 @@ export default function HeroSection({ onRequestAccess }: HeroSectionProps) {
         }}
       />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 py-20 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 py-20 w-full grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
         {/* Content Column */}
         <div className="lg:col-span-7 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/10 rounded-full mb-8 backdrop-blur-sm animate-in fade-in slide-in-from-top-4 duration-300">
-            <span className="flex h-2 w-2 rounded-full bg-accent animate-pulse" />
-            <span className="font-sans text-[11px] uppercase tracking-widest text-[#d98da4]">
-              MNL Advocates LLP · Concierge Compliance
+          {/* Firm attribution: the trust anchor, stated plainly */}
+          <div className="flex items-center gap-3 mb-7 animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="h-px w-8 bg-[#d98da4]" />
+            <span className="font-sans text-eyebrow uppercase tracking-[0.2em] text-[#d98da4]">
+              The client platform of MNL Advocates LLP, Nairobi
             </span>
           </div>
 
           <h1
-            className="font-serif font-semibold text-white leading-[1.08] mb-6 animate-in fade-in slide-in-from-left-4 duration-500"
-            style={{ fontSize: 'clamp(2.75rem, 5.5vw, 4.5rem)' }}
+            className="font-serif font-semibold text-white leading-[1.06] mb-6 animate-in fade-in slide-in-from-left-4 duration-500"
+            style={{ fontSize: 'clamp(2.4rem, 4.6vw, 3.6rem)' }}
           >
-            Regulatory intelligence,{' '}
-            <span className="italic text-cream/90 block lg:inline">human-approved.</span>
+            Know what the regulator changed,{' '}
+            <span className="italic text-cream/90">
+              and exactly what to do about it.
+            </span>
           </h1>
 
-          <p className="font-sans text-white/85 leading-relaxed mb-6 max-w-xl text-body md:text-[19px] animate-in fade-in slide-in-from-left-6 duration-600">
-            East Africa&apos;s regulatory foresight platform. Every briefing,
-            every document — reviewed and approved by a practising advocate
-            before it reaches your desk.
+          <p className="font-sans text-white/80 leading-relaxed mb-10 max-w-xl text-body md:text-[19px] animate-in fade-in slide-in-from-left-6 duration-600">
+            When a Kenyan regulator moves, an MNL Advocates lawyer briefs you:
+            what changed, whether it affects your business, and the deadline
+            to act.
           </p>
 
-          <p className="font-sans text-caption text-white/50 tracking-widest uppercase mb-12 animate-in fade-in slide-in-from-left-8 duration-700">
-            CBK · ODPC · CMA · KRA · CAK
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-bottom-6 duration-800">
+          {/* One dominant CTA; login demoted to a quiet text link */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-5 animate-in fade-in slide-in-from-bottom-6 duration-800">
             <Button
               onClick={onRequestAccess}
               size="lg"
               id="hero-request-access-btn"
-              className="group cursor-pointer"
+              className="group cursor-pointer sm:w-auto w-full"
             >
-              Request concierge access
+              Request access
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Button>
-
-            <Link href="/login" id="hero-client-login-link" className="w-full sm:w-auto">
-              <Button variant="secondary" size="lg" className="w-full">
-                Client access
-              </Button>
+            <Link
+              href="/login"
+              id="hero-client-login-link"
+              className="font-sans text-body-sm text-white/60 hover:text-white transition-colors text-center sm:text-left"
+            >
+              Existing client? <span className="underline underline-offset-4">Sign in</span>
             </Link>
           </div>
+
+          <p className="mt-8 font-sans text-caption text-white/45 animate-in fade-in duration-1000">
+            Built for fintech &amp; crypto startups, SMEs, and international
+            organisations operating in Kenya.
+          </p>
         </div>
 
-        {/* Visual Mockup Column */}
+        {/* Visual Mockup Column: RegWatch AI chat */}
         <div className="lg:col-span-5 hidden lg:block animate-in fade-in slide-in-from-right-8 duration-700">
           <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-xl overflow-hidden shadow-elevated w-full max-w-[420px] ml-auto relative group">
             {/* Soft decorative glow behind */}

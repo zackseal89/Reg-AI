@@ -12,7 +12,7 @@ const TRUST_PILLARS = [
     icon: ShieldCheck,
     title: 'Human approval gate',
     description:
-      'No briefing or document ever reaches a client without explicit approval from a qualified MNL advocate. Enforced at the database level — not just the UI.',
+      'No briefing or document ever reaches a client without explicit approval from a qualified MNL advocate. Enforced at the database level, not just the UI.',
     tag: 'Core policy',
     color: 'from-green-500/5 to-transparent',
     iconColor: 'text-green-600',
@@ -22,7 +22,7 @@ const TRUST_PILLARS = [
     icon: Landmark,
     title: 'Enterprise AI retrieval',
     description:
-      "Documents are indexed inside Google's enterprise AI infrastructure — no third-party embedding services, no export risk. Your corpus stays in one secure environment.",
+      "Documents are indexed inside Google's enterprise AI infrastructure, with no third-party embedding services and no export risk. Your corpus stays in one secure environment.",
     tag: 'AI architecture',
     color: 'from-blue-500/5 to-transparent',
     iconColor: 'text-blue-700',
@@ -32,7 +32,7 @@ const TRUST_PILLARS = [
     icon: Users,
     title: 'Company-scoped isolation',
     description:
-      'Each client organisation operates behind Row-Level Security. AI queries are scoped exclusively to your documents — cross-client data leakage is architecturally impossible.',
+      'Each client organisation operates behind Row-Level Security. AI queries are scoped exclusively to your documents, so cross-client data leakage is architecturally impossible.',
     tag: 'Data isolation',
     color: 'from-accent/5 to-transparent',
     iconColor: 'text-accent',
@@ -62,7 +62,7 @@ const TRUST_PILLARS = [
     icon: Globe2,
     title: 'Jurisdiction-level gating',
     description:
-      'Document access is enforced at the SQL row-security level by jurisdiction — not the UI. A client in one regulatory scope cannot see documents outside it.',
+      'Document access is enforced at the SQL row-security level by jurisdiction, not the UI. A client in one regulatory scope cannot see documents outside it.',
     tag: 'Data governance',
     color: 'from-teal-500/5 to-transparent',
     iconColor: 'text-teal-700',

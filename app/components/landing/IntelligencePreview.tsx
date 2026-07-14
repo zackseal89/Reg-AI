@@ -7,7 +7,7 @@ const PROCESS_STEPS = [
     step: '01',
     title: 'Document ingestion',
     description:
-      'Our team uploads regulatory circulars, gazettes, and policy notices to a secure document store — indexed by jurisdiction.',
+      'Our team uploads regulatory circulars, gazettes, and policy notices to a secure document store, indexed by jurisdiction.',
   },
   {
     step: '02',
@@ -25,7 +25,7 @@ const PROCESS_STEPS = [
     step: '04',
     title: 'Delivered to you',
     description:
-      'Approved briefings appear in your RegWatch dashboard — ask follow-up questions via AI chat, scoped only to your documents.',
+      'Approved briefings appear in your RegWatch dashboard. Ask follow-up questions via AI chat, scoped only to your documents.',
   },
 ];
 

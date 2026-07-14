@@ -29,7 +29,7 @@ const CONTACT_CHANNELS = [
     icon: MapPin,
     label: 'Office',
     value: 'Nairobi, Kenya',
-    detail: 'MN Advocates LLP',
+    detail: 'MNL Advocates LLP',
   },
   {
     icon: Clock,
@@ -58,7 +58,7 @@ export default function ContactPageClient() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
-    // Simulate async submission — wire to API route later
+    // Simulate async submission; wire to API route later
     await new Promise(r => setTimeout(r, 1400));
     setStatus('success');
   };
@@ -72,7 +72,7 @@ export default function ContactPageClient() {
           <span className="italic text-white/70">the firm.</span>
         </>
       }
-      subtitle="Whether you are exploring RegWatch, an existing client, or a regulator with a question — every enquiry reaches a member of the MN Advocates team, not a ticketing queue."
+      subtitle="Whether you are exploring RegWatch, an existing client, or a regulator with a question, every enquiry reaches a member of the MNL Advocates team, not a ticketing queue."
     >
       <section className="py-20 px-6 md:px-12 bg-white border-t border-hairline/60">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16">
@@ -142,7 +142,7 @@ export default function ContactPageClient() {
                 </div>
                 <h3 className="text-h3 font-serif text-primary mb-3">Message received</h3>
                 <p className="font-sans text-body-sm text-ink-muted leading-relaxed max-w-sm">
-                  Thank you. A member of the MN Advocates team will respond
+                  Thank you. A member of the MNL Advocates team will respond
                   within one business day.
                 </p>
               </div>
@@ -229,7 +229,7 @@ export default function ContactPageClient() {
                     value={formData.message}
                     onChange={handleChange}
                     className="min-h-[130px]"
-                    placeholder="Tell us how we can help — regulatory areas, timelines, or anything specific to your situation."
+                    placeholder="Tell us how we can help: regulatory areas, timelines, or anything specific to your situation."
                   />
                 </div>
 
@@ -256,7 +256,7 @@ export default function ContactPageClient() {
                     )}
                   </Button>
                   <p className="font-sans text-caption text-ink-faint">
-                    Handled confidentially by MN Advocates LLP.
+                    Handled confidentially by MNL Advocates LLP.
                   </p>
                 </div>
               </form>

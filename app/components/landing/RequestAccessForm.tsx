@@ -24,7 +24,7 @@ const AREAS_OF_INTEREST = [
 ];
 
 export default function RequestAccessForm({ isOpen, onClose }: RequestAccessFormProps) {
-  // Render the panel only while open — unmounting resets all form state
+  // Render the panel only while open; unmounting resets all form state
   // without setState-in-effect gymnastics.
   if (!isOpen) return null;
   return <RequestAccessPanel onClose={onClose} />;
@@ -70,7 +70,7 @@ function RequestAccessPanel({ onClose }: { onClose: () => void }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('submitting');
-    // Simulate async submission — wire to API route later
+    // Simulate async submission; wire to API route later
     await new Promise(r => setTimeout(r, 1400));
     setStatus('success');
   };

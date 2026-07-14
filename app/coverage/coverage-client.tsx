@@ -28,8 +28,8 @@ const JURISDICTION_DEEP_DIVES = [
       'CBK VASP Regulatory Framework 2025',
       'CBK Circulars (issued monthly)',
     ],
-    frequency: 'High — circulars and guidance issued on average 2–3 times monthly.',
-    example: 'CBK Circular No. 7/2026 — Enhanced Due Diligence Requirements for Virtual Asset Service Providers',
+    frequency: 'High: circulars and guidance issued on average 2–3 times monthly.',
+    example: 'CBK Circular No. 7/2026: Enhanced Due Diligence Requirements for Virtual Asset Service Providers',
   },
   {
     id: 'odpc',
@@ -39,7 +39,7 @@ const JURISDICTION_DEEP_DIVES = [
     iconColor: 'text-green-600',
     iconBg: 'bg-green-500/8 border-green-500/20',
     what:
-      'The ODPC enforces Kenya\'s Data Protection Act 2019 (DPA). Any business that collects, processes, or stores personal data of Kenyan residents — regardless of where the business is incorporated — is subject to DPA obligations.',
+      'The ODPC enforces Kenya\'s Data Protection Act 2019 (DPA). Any business that collects, processes, or stores personal data of Kenyan residents, regardless of where the business is incorporated, is subject to DPA obligations.',
     obligations: [
       'Registration as a Data Controller or Data Processor with the ODPC',
       'Appointment of a Data Protection Officer (DPO) for high-risk processing',
@@ -54,7 +54,7 @@ const JURISDICTION_DEEP_DIVES = [
       'Data Protection (Registration of Data Controllers and Processors) Regulations 2021',
       'ODPC Guidance Notes (issued periodically)',
     ],
-    frequency: 'Medium — regulations are maturing with new guidance notes and enforcement decisions every quarter.',
+    frequency: 'Medium: regulations are maturing with new guidance notes and enforcement decisions every quarter.',
     example: 'ODPC Guidance Note on Cross-Border Data Transfers (March 2026)',
   },
   {
@@ -79,8 +79,8 @@ const JURISDICTION_DEEP_DIVES = [
       'Capital Markets (Regulatory Sandbox) Guidelines 2019',
       'CMA Digital Asset Exchange Guidance (2025)',
     ],
-    frequency: 'Medium-High — active regulatory development, especially in crypto and digital assets space.',
-    example: 'CMA Digital Asset Exchange Licensing Framework — Consultation Paper (Q1 2026)',
+    frequency: 'Medium-High: active regulatory development, especially in crypto and digital assets space.',
+    example: 'CMA Digital Asset Exchange Licensing Framework: Consultation Paper (Q1 2026)',
   },
   {
     id: 'kra',
@@ -106,8 +106,8 @@ const JURISDICTION_DEEP_DIVES = [
       'Digital Service Tax Regulations 2020',
       'Annual Finance Acts (most recently Finance Act 2025)',
     ],
-    frequency: 'Medium — annual Finance Acts and periodic practice notes and ruling changes.',
-    example: 'Finance Act 2025 — Changes to DST scope and threshold for non-resident platforms',
+    frequency: 'Medium: annual Finance Acts and periodic practice notes and ruling changes.',
+    example: 'Finance Act 2025: Changes to DST scope and threshold for non-resident platforms',
   },
   {
     id: 'cak',
@@ -131,8 +131,8 @@ const JURISDICTION_DEEP_DIVES = [
       'Consumer Protection Act 2012',
       'CAK Sector Inquiries and Determinations',
     ],
-    frequency: 'Low-Medium — major merger decisions and occasional guidelines or market inquiries.',
-    example: 'CAK Determination on Merger of Two Nairobi Fintech Firms — Q4 2025',
+    frequency: 'Low-Medium: major merger decisions and occasional guidelines or market inquiries.',
+    example: 'CAK Determination on Merger of Two Nairobi Fintech Firms: Q4 2025',
   },
 ];
 
@@ -147,7 +147,7 @@ export default function CoveragePageClient() {
     <PageShell
       eyebrow="Regulatory Coverage"
       title={<>Every regulator. <span className="italic text-cream/80">One platform.</span></>}
-      subtitle="RegWatch monitors and synthesises changes across Kenya's five primary regulatory bodies — a single, lawyer-curated view of what matters to your business."
+      subtitle="RegWatch monitors and synthesises changes across Kenya's five primary regulatory bodies, a single lawyer-curated view of what matters to your business."
     >
       {/* Stats row */}
       <section className="py-14 px-6 md:px-12 bg-primary border-b border-white/10">
@@ -169,7 +169,7 @@ export default function CoveragePageClient() {
         </div>
       </section>
 
-      {/* Jurisdiction grid — reused from landing */}
+      {/* Jurisdiction grid: reused from landing */}
       <JurisdictionGrid />
 
       {/* Deep Dive Section */}

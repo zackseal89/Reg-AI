@@ -68,7 +68,7 @@ export default function HeaderSection({ onRequestAccess }: HeaderSectionProps) {
                 isScrolled ? 'text-ink-muted' : 'text-white/60'
               }`}
             >
-              by MN Advocates
+              by MNL Advocates
             </span>
           </div>
         </button>

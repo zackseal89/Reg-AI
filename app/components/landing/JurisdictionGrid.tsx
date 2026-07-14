@@ -71,7 +71,7 @@ export default function JurisdictionGrid() {
             </h2>
             <p className="font-sans text-body-sm text-ink-muted max-w-sm leading-relaxed">
               RegWatch monitors and synthesises changes across Kenya&apos;s
-              primary regulatory bodies — a single, lawyer-curated view of what
+              primary regulatory bodies, a single lawyer-curated view of what
               matters.
             </p>
           </div>

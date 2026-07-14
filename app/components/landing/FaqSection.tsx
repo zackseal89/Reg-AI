@@ -40,7 +40,7 @@ export default function FaqSection() {
           </FaqItem>
 
           <FaqItem question="Can any business sign up immediately?">
-            No. To maintain strict professional standards and legal compliance, we do not support open self-registration. Access is restricted to clients of MN Advocates LLP. If you are interested, request concierge access, and a team member will reach out to discuss the onboarding relationship.
+            No. To maintain strict professional standards and legal compliance, we do not support open self-registration. Access is restricted to clients of MNL Advocates LLP. If you are interested, request concierge access, and a team member will reach out to discuss the onboarding relationship.
           </FaqItem>
         </div>
       </div>

@@ -9,7 +9,7 @@ const STEP_DETAILS = [
     step: '01',
     icon: Upload,
     title: 'Document ingestion',
-    summary: 'Our team uploads regulatory circulars, gazettes, and policy notices to a secure document store — indexed by jurisdiction.',
+    summary: 'Our team uploads regulatory circulars, gazettes, and policy notices to a secure document store, indexed by jurisdiction.',
     detail:
       'MNL associates source documents directly from the official gazettes, regulator websites, and legal databases. Supported document types include CBK Circulars, Kenya Gazette Notices, ODPC guidance notes, CMA policy statements, and KRA public rulings. Each document is tagged with its issuing body, publication date, and jurisdiction before being uploaded. Nothing enters the system untagged.',
     techNote: 'Documents are stored in Supabase Storage and processed through the Google Gemini Files API, creating a dedicated FileSearchStore scoped to each client company.',
@@ -20,7 +20,7 @@ const STEP_DETAILS = [
     title: 'AI analysis',
     summary: 'AI-powered search extracts, indexes, and connects relevant content across all your assigned documents.',
     detail:
-      'Once a document is uploaded, it is indexed into the client\'s dedicated Gemini FileSearchStore. The AI model can then perform semantic search and retrieval across the entire corpus — finding relevant passages even when the exact wording differs from the query. The system connects obligations, definitions, and effective dates across multiple instruments automatically.',
+      'Once a document is uploaded, it is indexed into the client\'s dedicated Gemini FileSearchStore. The AI model can then perform semantic search and retrieval across the entire corpus, finding relevant passages even when the exact wording differs from the query. The system connects obligations, definitions, and effective dates across multiple instruments automatically.',
     techNote: 'Built on Google\'s Gemini 2.5 Flash with File Search (RAG). No manual chunking, no third-party embedding services, no vector database. The model retrieves and generates in a single API call.',
   },
   {
@@ -29,16 +29,16 @@ const STEP_DETAILS = [
     title: 'Lawyer review',
     summary: 'A qualified MNL advocate reviews every automated analysis and briefing before it is approved for publication.',
     detail:
-      'The MNL lawyer review checklist covers: factual accuracy against the primary source document, correct interpretation of legal obligations under Kenyan law, appropriate scope (the client\'s specific jurisdiction assignments), tone and clarity for a non-lawyer audience, and identification of action items with realistic timelines. A briefing cannot leave \'draft\' status without an explicit lawyer approval click — enforced at the database layer.',
-    techNote: 'Approval is recorded in the `briefings` table with the approving advocate\'s user ID and timestamp. This entry is immutable — it cannot be altered post-approval.',
+      'The MNL lawyer review checklist covers: factual accuracy against the primary source document, correct interpretation of legal obligations under Kenyan law, appropriate scope (the client\'s specific jurisdiction assignments), tone and clarity for a non-lawyer audience, and identification of action items with realistic timelines. A briefing cannot leave \'draft\' status without an explicit lawyer approval click, enforced at the database layer.',
+    techNote: 'Approval is recorded in the `briefings` table with the approving advocate\'s user ID and timestamp. This entry is immutable; it cannot be altered post-approval.',
   },
   {
     step: '04',
     icon: LayoutDashboard,
     title: 'Delivered to your dashboard',
-    summary: 'Approved briefings appear in your RegWatch dashboard — ask follow-up questions via AI chat, scoped only to your documents.',
+    summary: 'Approved briefings appear in your RegWatch dashboard. Ask follow-up questions via AI chat, scoped only to your documents.',
     detail:
-      'Once approved, the briefing is published to the client\'s dashboard and an email notification dispatched via Resend. Clients can read the full briefing, download it, and then ask clarifying questions via the RegWatch AI chat — which is scoped exclusively to documents assigned to their organisation. No cross-client data access is possible.',
+      'Once approved, the briefing is published to the client\'s dashboard and an email notification dispatched via Resend. Clients can read the full briefing, download it, and then ask clarifying questions via the RegWatch AI chat, which is scoped exclusively to documents assigned to their organisation. No cross-client data access is possible.',
     techNote: 'Email delivery uses React Email templates rendered server-side and dispatched via Resend. Chat queries use the same Gemini File Search pipeline as step 02, scoped to the client\'s store.',
   },
 ];
@@ -71,7 +71,7 @@ export default function HowItWorksPageClient() {
     <PageShell
       eyebrow="How it works"
       title={<>Intelligence that has <span className="italic text-cream/80">passed muster.</span></>}
-      subtitle="A four-step pipeline — document ingestion, AI analysis, lawyer review, and client delivery — ensures every briefing is accurate, timely, and approved by a qualified advocate."
+      subtitle="A four-step pipeline of document ingestion, AI analysis, lawyer review, and client delivery ensures every briefing is accurate, timely, and approved by a qualified advocate."
     >
       {/* Reused IntelligencePreview with interactive demo */}
       <IntelligencePreview />
@@ -175,7 +175,7 @@ export default function HowItWorksPageClient() {
             {/* Content panel */}
             <div className="lg:col-span-3 px-8 py-12 flex flex-col gap-6">
               <p className="font-sans text-body text-ink-muted leading-relaxed">
-                AI language models excel at finding, summarising, and connecting regulatory text — but they can hallucinate, misinterpret jurisdiction-specific nuances, or apply the wrong legal standard to a novel fact pattern.
+                AI language models excel at finding, summarising, and connecting regulatory text, but they can hallucinate, misinterpret jurisdiction-specific nuances, or apply the wrong legal standard to a novel fact pattern.
               </p>
               <p className="font-sans text-body text-ink-muted leading-relaxed">
                 MNL advocates cross-check every AI-generated briefing against the primary source instrument before it is published. They correct errors, add interpretive context where AI falls short, and flag action items with realistic Kenyan compliance timelines.
@@ -183,7 +183,7 @@ export default function HowItWorksPageClient() {
               <div className="flex items-start gap-4 p-4 bg-accent/5 border border-accent/15 rounded-lg">
                 <UserCheck className="w-5 h-5 text-accent mt-0.5 shrink-0" strokeWidth={1.5} />
                 <p className="font-sans text-body-sm text-primary font-medium leading-relaxed">
-                  No briefing or document ever reaches a client without an explicit approval click from a qualified MNL advocate — enforced at the database level, not just the UI.
+                  No briefing or document ever reaches a client without an explicit approval click from a qualified MNL advocate, enforced at the database level, not just the UI.
                 </p>
               </div>
             </div>
@@ -245,14 +245,14 @@ export default function HowItWorksPageClient() {
               Ask follow-up questions. <span className="italic text-ink-muted">Instantly.</span>
             </h3>
             <p className="font-sans text-body-sm text-ink-muted leading-relaxed">
-              Once briefings arrive on your dashboard, RegWatch AI is available for document-scoped chat. Ask about compliance deadlines, affected entities, penalty provisions — all answers drawn only from your organisation&apos;s assigned documents.
+              Once briefings arrive on your dashboard, RegWatch AI is available for document-scoped chat. Ask about compliance deadlines, affected entities, or penalty provisions: all answers drawn only from your organisation&apos;s assigned documents.
             </p>
           </div>
 
           <div className="w-full md:w-auto shrink-0 flex flex-col gap-3 bg-white border border-hairline rounded-xl p-5 shadow-soft max-w-sm">
             {[
               { q: 'What is the VASP registration deadline?', a: '31 October 2026 per CBK Circular 7/2026.' },
-              { q: 'Are crypto wallets covered?', a: 'Yes — custodial wallets fall under VASP definition.' },
+              { q: 'Are crypto wallets covered?', a: 'Yes, custodial wallets fall under VASP definition.' },
             ].map(item => (
               <div key={item.q} className="flex flex-col gap-1.5">
                 <div className="self-end bg-primary text-white text-eyebrow rounded-xl rounded-tr-none px-3 py-2 max-w-[85%] leading-relaxed">

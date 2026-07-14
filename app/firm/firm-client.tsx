@@ -27,31 +27,12 @@ const PRACTICE_AREAS = [
   'Employment & Labour Law',
 ];
 
-const LEADERSHIP = [
-  {
-    title: 'Founder & Managing Partner',
-    focus: 'Corporate & Commercial Law',
-  },
-  {
-    title: 'Chief Operations, Strategy & Growth',
-    focus: 'Firm operations',
-  },
-  {
-    title: 'AI & Digital Transformation Associate',
-    focus: 'Steward of the RegWatch platform',
-  },
-  {
-    title: 'Head of Cybersecurity',
-    focus: 'Platform security oversight',
-  },
-];
-
 const FIRM_ROLES = [
   {
     icon: FileSearch,
     title: 'Source & curate',
     detail:
-      'MNL advocates monitor the official gazettes, regulator circulars, and policy notices directly from the issuing bodies. Every document that enters RegWatch is selected, verified, and tagged by the legal team — nothing is scraped or ingested automatically.',
+      'MNL advocates monitor the official gazettes, regulator circulars, and policy notices directly from the issuing bodies. Every document that enters RegWatch is selected, verified, and tagged by the legal team; nothing is scraped or ingested automatically.',
   },
   {
     icon: PenLine,
@@ -63,7 +44,7 @@ const FIRM_ROLES = [
     icon: Stamp,
     title: 'Review & approve',
     detail:
-      'No briefing or document reaches a client without a qualified advocate explicitly approving it. The approval is recorded against the advocate\'s name and timestamp, and this gate is enforced at the database layer — not by policy alone.',
+      'No briefing or document reaches a client without a qualified advocate explicitly approving it. The approval is recorded against the advocate\'s name and timestamp, and this gate is enforced at the database layer, not by policy alone.',
   },
   {
     icon: MessagesSquare,
@@ -92,7 +73,7 @@ const ENGAGEMENT_STEPS = [
   {
     step: '04',
     label: 'Formal engagement',
-    sub: 'Full legal representation and advisory through MN Advocates LLP',
+    sub: 'Full legal representation and advisory through MNL Advocates LLP',
   },
 ];
 
@@ -101,7 +82,7 @@ const STANDARDS = [
     icon: UserCheck,
     title: 'Named accountability',
     detail:
-      'Every approval on the platform carries the name of the advocate who made it. Accountability is individual and permanent — approvals cannot be edited or deleted after the fact.',
+      'Every approval on the platform carries the name of the advocate who made it. Accountability is individual and permanent; approvals cannot be edited or deleted after the fact.',
   },
   {
     icon: Lock,
@@ -122,7 +103,7 @@ export default function FirmPageClient() {
     <PageShell
       eyebrow="The Firm"
       title={<>Built by advocates, <span className="italic text-cream/80">operated as a practice.</span></>}
-      subtitle="RegWatch is not a software company's product with lawyers attached. It is MN Advocates LLP's regulatory practice, delivered through a platform — every piece of intelligence carries the firm's professional judgment."
+      subtitle="RegWatch is not a software company's product with lawyers attached. It is MNL Advocates LLP's regulatory practice, delivered through a platform, and every piece of intelligence carries the firm's professional judgment."
     >
       {/* Who MNL is */}
       <section className="py-24 px-6 md:px-12 bg-white border-t border-hairline/60">
@@ -130,7 +111,7 @@ export default function FirmPageClient() {
           <div className="lg:col-span-7">
             <Image
               src="/mnl-logo.png"
-              alt="MN Advocates LLP (MN Legal)"
+              alt="MNL Advocates LLP (MN Legal)"
               width={220}
               height={70}
               className="h-12 w-auto mb-8"
@@ -138,7 +119,7 @@ export default function FirmPageClient() {
             <div className="flex items-center gap-3 mb-5">
               <div className="h-px w-8 bg-accent" />
               <span className="font-sans text-eyebrow uppercase tracking-[0.2em] text-accent">
-                MN Advocates LLP
+                MNL Advocates LLP
               </span>
             </div>
             <h2
@@ -149,14 +130,14 @@ export default function FirmPageClient() {
             </h2>
             <div className="mt-6 flex flex-col gap-4 font-sans text-body-sm text-ink-muted leading-relaxed max-w-xl">
               <p>
-                MN Advocates LLP is a Nairobi-based law firm advising fintech and
+                MNL Advocates LLP is a Nairobi-based law firm advising fintech and
                 digital-asset businesses, SMEs, and international organisations
                 operating in Kenya. The firm&apos;s practice sits at the intersection
                 of financial regulation, data protection, and emerging technology.
               </p>
               <p>
                 RegWatch grew out of a simple observation from that practice:
-                clients don&apos;t just need legal advice when something goes wrong —
+                clients don&apos;t just need legal advice when something goes wrong;
                 they need to know what changed, what it means for them, and what to
                 do about it, continuously. The platform is how the firm delivers
                 that watchfulness at scale, without ever removing the advocate from
@@ -274,7 +255,7 @@ export default function FirmPageClient() {
             </h2>
             <p className="mt-4 font-sans text-body-sm text-ink-muted max-w-xl leading-relaxed">
               RegWatch and the firm are not separate services. A subscription is a
-              standing relationship with MN Advocates LLP — the platform handles the
+              standing relationship with MNL Advocates LLP; the platform handles the
               continuous monitoring, and the advocates step in wherever a matter
               needs them.
             </p>
@@ -283,7 +264,7 @@ export default function FirmPageClient() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {ENGAGEMENT_STEPS.map((item, idx) => (
               <div key={item.step} className="relative">
-                <div className="bg-white border border-hairline rounded-xl p-6 h-full shadow-soft">
+                <div className="bg-canvas border border-hairline rounded-xl p-6 h-full shadow-soft">
                   <span className="font-serif text-[2.5rem] font-semibold text-primary/10 leading-none select-none block mb-4">
                     {item.step}
                   </span>
@@ -308,14 +289,14 @@ export default function FirmPageClient() {
           <p className="mt-8 font-sans text-caption text-ink-faint max-w-2xl leading-relaxed">
             RegWatch briefings are regulatory intelligence prepared by the firm for
             its clients. Where a matter requires formal legal advice or
-            representation, it is handled through an engagement with MN Advocates
+            representation, it is handled through an engagement with MNL Advocates
             LLP in the ordinary course.
           </p>
         </div>
       </section>
 
       {/* Professional standards */}
-      <section className="py-24 px-6 md:px-12 bg-white border-t border-hairline/60">
+      <section className="py-24 px-6 md:px-12 bg-canvas border-t border-hairline/60">
         <div className="max-w-6xl mx-auto">
           <div className="mb-14">
             <div className="flex items-center gap-3 mb-5">
@@ -338,7 +319,7 @@ export default function FirmPageClient() {
               return (
                 <div
                   key={item.title}
-                  className="bg-canvas border border-hairline rounded-xl p-6 md:p-8 shadow-soft"
+                  className="bg-white border border-hairline rounded-xl p-6 md:p-8 shadow-soft"
                 >
                   <div className="flex items-center justify-center w-12 h-12 rounded-xl border border-accent/15 bg-accent/5 text-accent mb-5">
                     <Icon className="w-5 h-5" strokeWidth={1.5} />
@@ -370,7 +351,7 @@ export default function FirmPageClient() {
       </section>
 
       {/* Contact strip */}
-      <section className="py-16 px-6 md:px-12 bg-canvas border-t border-hairline/60">
+      <section className="py-16 px-6 md:px-12 bg-white border-t border-hairline/60">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-8">
           <div className="flex flex-col sm:flex-row gap-6 sm:gap-10">
             <div className="flex items-center gap-3">

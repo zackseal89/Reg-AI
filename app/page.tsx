@@ -2,25 +2,25 @@ import type { Metadata } from 'next';
 import LandingPageClient from './landing-client';
 
 export const metadata: Metadata = {
-  title: 'RegWatch — Regulatory Intelligence for East Africa | MN Advocates LLP',
+  title: 'RegWatch: Regulatory Intelligence for East Africa | MNL Advocates LLP',
   description:
-    'The exclusive regulatory intelligence platform for clients of MN Advocates LLP. Navigate Kenya\'s regulatory landscape — CBK, ODPC, CMA — with AI-powered briefings, every one approved by a qualified advocate.',
+    'The exclusive regulatory intelligence platform for clients of MNL Advocates LLP. Navigate Kenya\'s regulatory landscape, including CBK, ODPC, and CMA, with AI-powered briefings, every one approved by a qualified advocate.',
   keywords: [
     'regulatory intelligence Kenya',
     'CBK compliance',
     'ODPC data protection',
     'fintech regulation Kenya',
     'MN Legal',
-    'MN Advocates LLP',
+    'MNL Advocates LLP',
     'East Africa regulatory',
     'legal technology Nairobi',
   ],
   openGraph: {
-    title: 'RegWatch — Regulatory Intelligence for East Africa',
+    title: 'RegWatch: Regulatory Intelligence for East Africa',
     description:
-      'AI-powered regulatory briefings, every one approved by a practising advocate. Exclusive to clients of MN Advocates LLP.',
+      'AI-powered regulatory briefings, every one approved by a practising advocate. Exclusive to clients of MNL Advocates LLP.',
     url: 'https://www.regwatchmnl.net',
-    siteName: 'RegWatch by MN Advocates LLP',
+    siteName: 'RegWatch by MNL Advocates LLP',
     locale: 'en_KE',
     type: 'website',
   },
@@ -40,7 +40,7 @@ const jsonLd = {
     {
       '@type': 'Organization',
       '@id': 'https://mnlegal.net/#organization',
-      name: 'MN Advocates LLP',
+      name: 'MNL Advocates LLP',
       url: 'https://mnlegal.net',
       sameAs: ['https://www.regwatchmnl.net'],
       address: {

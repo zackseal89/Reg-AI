@@ -65,7 +65,7 @@ const AUDIT_ENTRIES = [
     timestamp: '2026-07-14  14:23:01 UTC',
     actor: 'Z. Mwangi (Lawyer)',
     action: 'APPROVED briefing',
-    detail: '"CBK Circular 7/2026 — VASP Due Diligence Requirements"',
+    detail: '"CBK Circular 7/2026: VASP Due Diligence Requirements"',
     outcome: 'Published',
     outcomeBg: 'bg-green-500/10 text-green-700 border-green-500/20',
   },
@@ -81,7 +81,7 @@ const AUDIT_ENTRIES = [
     timestamp: '2026-07-13  17:58:22 UTC',
     actor: 'Z. Mwangi (Lawyer)',
     action: 'REJECTED briefing',
-    detail: '"ODPC Draft Guidance — Returned to draft for revision"',
+    detail: '"ODPC Draft Guidance: Returned to draft for revision"',
     outcome: 'Draft',
     outcomeBg: 'bg-amber-500/10 text-amber-700 border-amber-500/20',
   },
@@ -193,7 +193,7 @@ export default function GovernancePageClient() {
               Who can do what, <span className="italic text-ink-muted">by role.</span>
             </h2>
             <p className="mt-4 font-sans text-body-sm text-ink-muted max-w-xl leading-relaxed">
-              Three roles — Admin, Lawyer, and Client — each with a precisely defined permission scope. Enforced at the database row-security level, not the UI.
+              Three roles, Admin, Lawyer, and Client, each with a precisely defined permission scope. Enforced at the database row-security level, not the UI.
             </p>
           </div>
 
@@ -226,7 +226,7 @@ export default function GovernancePageClient() {
                             </svg>
                           </span>
                         ) : (
-                          <span className="font-sans text-body-sm text-ink-faint">—</span>
+                          <span className="font-sans text-body-sm text-ink-faint">-</span>
                         )}
                       </td>
                     ))}
@@ -256,7 +256,7 @@ export default function GovernancePageClient() {
                 Every action, <span className="italic text-ink-muted">permanently logged.</span>
               </h2>
               <p className="font-sans text-body-sm text-ink-muted max-w-xs leading-relaxed">
-                Approvals, rejections, logins, document accesses — all written to an immutable audit table. Accountability is architectural, not optional.
+                Approvals, rejections, logins, document accesses: all written to an immutable audit table. Accountability is architectural, not optional.
               </p>
             </div>
           </div>
@@ -271,7 +271,7 @@ export default function GovernancePageClient() {
                 <span className="w-2.5 h-2.5 rounded-full bg-white/20" />
               </div>
               <span className="font-sans text-eyebrow uppercase tracking-widest text-white/50">
-                Audit Log — RegWatch Platform
+                Audit Log: RegWatch Platform
               </span>
             </div>
             {/* Header row */}
@@ -311,7 +311,7 @@ export default function GovernancePageClient() {
           </div>
 
           <p className="mt-4 font-sans text-caption text-ink-faint text-right">
-            Audit entries are immutable — they cannot be edited or deleted after creation.
+            Audit entries are immutable; they cannot be edited or deleted after creation.
           </p>
         </div>
       </section>

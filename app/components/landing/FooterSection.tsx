@@ -19,7 +19,7 @@ const NAV_LINKS = [
 export default function FooterSection({ onRequestAccess }: FooterSectionProps) {
   return (
     <>
-      {/* Pre-footer CTA — deep navy-to-burgundy gradient */}
+      {/* Pre-footer CTA: deep navy-to-burgundy gradient */}
       <section className="relative py-20 px-6 md:px-12 overflow-hidden border-t border-hairline/60">
         {/* Gradient background */}
         <div
@@ -97,7 +97,7 @@ export default function FooterSection({ onRequestAccess }: FooterSectionProps) {
             </div>
             <div>
               <p className="font-serif text-caption text-white font-semibold">
-                MN Advocates LLP
+                MNL Advocates LLP
               </p>
               <p className="font-sans text-eyebrow text-white/40 tracking-widest uppercase">
                 Local Expertise · Global Talent
@@ -131,7 +131,7 @@ export default function FooterSection({ onRequestAccess }: FooterSectionProps) {
           </nav>
 
           <p className="font-sans text-caption text-white/30">
-            © {new Date().getFullYear()} MN Advocates LLP. All rights reserved.
+            © {new Date().getFullYear()} MNL Advocates LLP. All rights reserved.
           </p>
         </div>
       </footer>

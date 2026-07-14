@@ -34,7 +34,7 @@ export default async function LoginPage({
   return (
     <SignInShell
       variant="client"
-      eyebrow="MN Advocates LLP"
+      eyebrow="MNL Advocates LLP"
       headline={
         <>
           A confidential channel to your{' '}
@@ -45,7 +45,7 @@ export default async function LoginPage({
       }
       subheadline="Every briefing, every document — reviewed and approved by a practising advocate before it reaches your desk."
       formTitle="Client Access"
-      formSubtitle="Enter the credentials issued to you by MN Advocates."
+      formSubtitle="Enter the credentials issued to you by MNL Advocates."
       errorMessage={errorMessage}
       action={login}
       footer={
