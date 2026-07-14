@@ -7,29 +7,29 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        /* Pill CTAs — burgundy is the one structural accent */
+        /* Solid CTAs — sharp 4px corners, flat editorial fills, no borders */
         primary:
-          'bg-accent text-white rounded-full shadow-soft hover:bg-accent-active',
+          'bg-accent text-white rounded-xs shadow-soft hover:bg-accent-active',
         accent:
-          'bg-accent text-white rounded-full shadow-soft hover:bg-accent-active',
-        /* White pill, soft shadow — hero/secondary CTA */
+          'bg-accent text-white rounded-xs shadow-soft hover:bg-accent-active',
+        /* White fill on dark surfaces — shadow carries the edge, no hairline */
         secondary:
-          'bg-white text-primary rounded-full border border-hairline shadow-soft hover:bg-cream',
-        /* Utility — tight 8px radius, hairline; nav + table actions */
+          'bg-white text-primary rounded-xs shadow-soft hover:bg-cream',
+        /* Utility — tonal navy wash instead of outline; nav + table actions */
         outline:
-          'bg-white text-primary rounded-md border border-hairline hover:border-ink-faint hover:bg-cream',
+          'bg-primary/[0.06] text-primary rounded-xs hover:bg-primary/[0.11]',
         subtle:
-          'bg-white text-primary rounded-md border border-hairline hover:border-ink-faint hover:bg-cream',
+          'bg-primary/[0.06] text-primary rounded-xs hover:bg-primary/[0.11]',
         ghost:
-          'text-ink-muted rounded-md hover:text-primary hover:bg-primary/[0.05]',
+          'text-ink-muted rounded-xs hover:text-primary hover:bg-primary/[0.05]',
         destructive:
-          'bg-white text-error rounded-md border border-error/25 hover:bg-error/5 hover:border-error/40',
+          'bg-error/[0.08] text-error rounded-xs hover:bg-error/[0.14]',
       },
       size: {
         sm: 'text-caption px-3.5 py-1.5',
         md: 'text-body-sm px-5 py-2',
         lg: 'text-body px-7 py-3',
-        icon: 'p-2 rounded-md',
+        icon: 'p-2 rounded-xs',
       },
     },
     defaultVariants: {

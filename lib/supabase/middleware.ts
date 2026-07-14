@@ -36,9 +36,16 @@ export async function updateSession(request: NextRequest) {
     pathname.startsWith('/login') ||
     pathname.startsWith('/lawyer-login') ||
     pathname.startsWith('/admin-login')
+  const isPublicMarketingRoute =
+    pathname === '/' ||
+    pathname.startsWith('/coverage') ||
+    pathname.startsWith('/how-it-works') ||
+    pathname.startsWith('/governance') ||
+    pathname.startsWith('/firm') ||
+    pathname.startsWith('/contact')
 
   // Redirect unauthenticated users to login (/auth/* handles invite links)
-  if (!user && !isAuthRoute && pathname !== '/' && !pathname.startsWith('/auth')) {
+  if (!user && !isAuthRoute && !isPublicMarketingRoute && !pathname.startsWith('/auth')) {
     const url = request.nextUrl.clone()
     url.pathname = '/login'
     return NextResponse.redirect(url)
